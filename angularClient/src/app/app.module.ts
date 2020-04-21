@@ -20,6 +20,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatToolbarModule } from '@angular/material/toolbar';
+import { ErrorInterceptor } from './api/interceptor/error.interceptor';
 
 @NgModule({
   declarations: [
@@ -46,11 +48,17 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatButtonModule,
     MatCardModule,
     MatFormFieldModule,
+    MatToolbarModule,
   ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
+      multi: true,
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorInterceptor,
       multi: true,
     },
   ],

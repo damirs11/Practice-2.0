@@ -2,23 +2,17 @@
   <div class="example-loading-shade" *ngIf="isLoadingResults">
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
   </div>
+
   <mat-card class="example-card">
     <form [formGroup]="registerForm" (ngSubmit)="onFormSubmit(registerForm.value)">
       <mat-form-field class="example-full-width">
-        <input matInput type="fullname" placeholder="Full Name" formControlName="fullname"
-          [errorStateMatcher]="matcher">
+        <input matInput type="text" placeholder="Username" formControlName="username" [errorStateMatcher]="matcher">
         <mat-error>
-          <span *ngIf="!registerForm.get('fullname').valid && registerForm.get('fullname').touched">Please enter your
-            Full Name</span>
+          <span *ngIf="!registerForm.get('username').valid && registerForm.get('username').touched">Please enter your
+            username</span>
         </mat-error>
       </mat-form-field>
-      <mat-form-field class="example-full-width">
-        <input matInput type="email" placeholder="Email" formControlName="email" [errorStateMatcher]="matcher">
-        <mat-error>
-          <span *ngIf="!registerForm.get('email').valid && registerForm.get('email').touched">Please enter your
-            email</span>
-        </mat-error>
-      </mat-form-field>
+
       <mat-form-field class="example-full-width">
         <input matInput type="password" placeholder="Password" formControlName="password" [errorStateMatcher]="matcher">
         <mat-error>

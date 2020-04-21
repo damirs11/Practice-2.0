@@ -27,6 +27,10 @@ const routes: Routes = [
     component: RegisterComponent,
     data: { title: 'Register' },
   },
+  {
+    path: '**',
+    redirectTo: '',
+  },
 ];
 
 @NgModule({

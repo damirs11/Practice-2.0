@@ -15,7 +15,6 @@ export class ProductsComponent implements OnInit {
     private authService: AuthService,
     private router: Router
   ) {}
-  А;
   data: Product[] = [];
   displayedColumns: string[] = ['prodName', 'prodDesc', 'prodPrice'];
   isLoadingResults = true;
@@ -39,7 +38,7 @@ export class ProductsComponent implements OnInit {
   }
 
   logout() {
-    localStorage.removeItem('token');
+    this.authService.logout();
     this.router.navigate(['login']);
   }
 }

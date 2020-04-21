@@ -1,11 +1,12 @@
 <div class="example-container mat-elevation-z8">
-  <div class="example-loading-shade"
-       *ngIf="isLoadingResults">
+  <div class="example-loading-shade" *ngIf="isLoadingResults">
     <mat-spinner *ngIf="isLoadingResults"></mat-spinner>
   </div>
-  <div class="button-row">
-    <a mat-flat-button color="primary" (click)="logout()">Logout</a>
-  </div>
+
+  <mat-toolbar-row>
+    <button mat-raised-button (click)="getProducts()"> Refresh </button>
+  </mat-toolbar-row>
+
   <div class="mat-elevation-z8">
     <table mat-table [dataSource]="data" class="example-table">
 

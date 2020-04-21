@@ -10,50 +10,25 @@ import {
 import { Observable, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 import { map, catchError } from 'rxjs/operators';
+import { AuthService } from '../service/auth.service';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(private router: Router) {}
+  constructor(private authService: AuthService) {}
 
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    const token = localStorage.getItem('token');
-    if (token) {
+    const currentUser = this.authService.currentUserValue;
+    const isLoggedIn = currentUser && currentUser.token;
+    if (isLoggedIn) {
       req = req.clone({
         setHeaders: {
-          Authorization: token,
+          Authorization: `Bearer ${currentUser.token}`,
         },
       });
     }
-    if (!req.headers.has('Content-Type')) {
-      req = req.clone({
-        setHeaders: {
-          'content-type': 'application/json',
-        },
-      });
-    }
-    req = req.clone({
-      headers: req.headers.set('Accept', 'application/json'),
-    });
-    return next.handle(req).pipe(
-      map((event: HttpEvent<any>) => {
-        if (event instanceof HttpResponse) {
-          console.log('event--->>>', event);
-        }
-        return event;
-      }),
-      catchError((error: HttpErrorResponse) => {
-        console.log(error);
-        if (error.status === 401) {
-          this.router.navigate(['login']);
-        }
-        if (error.status === 400) {
-          alert(error.error);
-        }
-        return throwError(error);
-      })
-    );
+    return next.handle(req);
   }
 }

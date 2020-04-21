@@ -18,8 +18,7 @@ import { AuthService } from 'src/app/api/service/auth.service';
 })
 export class RegisterComponent implements OnInit {
   registerForm: FormGroup;
-  fullname = '';
-  email = '';
+  username = '';
   password = '';
   isLoadingResults = false;
   matcher = new MyErrorStateMatcher();
@@ -32,13 +31,13 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit(): void {
     this.registerForm = this.formBuilder.group({
-      fullname: [null, Validators.required],
-      email: [null, Validators.required],
+      username: [null, Validators.required],
       password: [null, Validators.required],
     });
   }
 
   onFormSubmit(form: NgForm) {
+    this.isLoadingResults = true;
     this.authService.register(form).subscribe(
       (res) => {
         this.router.navigate(['login']);
@@ -46,8 +45,14 @@ export class RegisterComponent implements OnInit {
       (err) => {
         console.log(err);
         alert(err.error);
+        this.isLoadingResults = false;
       }
     );
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['login']);
   }
 }
 

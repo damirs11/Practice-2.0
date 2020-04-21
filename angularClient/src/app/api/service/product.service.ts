@@ -4,7 +4,7 @@ import { Observable, of } from 'rxjs';
 import { Product } from '../entity/Product';
 import { tap, catchError } from 'rxjs/operators';
 
-const apiUrl = 'api/products';
+const apiUrl = 'http://localhost:8080/api/';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +13,7 @@ export class ProductService {
   constructor(private http: HttpClient) {}
 
   getProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(apiUrl + 'Product').pipe(
+    return this.http.get<Product[]>(apiUrl + 'products').pipe(
       tap((_) => this.log('fetched Products')),
       catchError(this.handleError('getProducts', []))
     );
