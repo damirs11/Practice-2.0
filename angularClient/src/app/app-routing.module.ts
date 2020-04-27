@@ -4,28 +4,37 @@ import { ProductsComponent } from './components/products/products.component';
 import { LoginComponent } from './components/auth/login/login.component';
 import { RegisterComponent } from './components/auth/register/register.component';
 import { AuthGuard } from './api/guard/auth.guard';
+import { LicensesComponent } from './components/licenses/licenses.component';
+import { NewKeyComponent } from './components/new-key/new-key.component';
 
 const routes: Routes = [
-  {
-    path: '',
-    redirectTo: 'products',
-    pathMatch: 'full',
-  },
   {
     path: 'products',
     canActivate: [AuthGuard],
     component: ProductsComponent,
-    data: { title: 'List of Products' },
+  },
+  {
+    path: 'licenses',
+    canActivate: [AuthGuard],
+    component: LicensesComponent,
+  },
+  {
+    path: 'newKey',
+    canActivate: [AuthGuard],
+    component: NewKeyComponent,
   },
   {
     path: 'login',
     component: LoginComponent,
-    data: { title: 'Login' },
   },
   {
     path: 'register',
     component: RegisterComponent,
-    data: { title: 'Register' },
+  },
+  {
+    path: '',
+    redirectTo: 'licenses',
+    pathMatch: 'full',
   },
   {
     path: '**',

@@ -1,0 +1,89 @@
+<div>
+  <div *ngIf="loading">
+    <mat-spinner *ngIf="loading"></mat-spinner>
+  </div>
+
+  <mat-card>
+    <form [formGroup]="newKeyForm" (ngSubmit)="onSubmit(newKeyForm.value)">
+
+      <mat-form-field class="full-width">
+        <input matInput type="name" placeholder="Имя" formControlName="name" [errorStateMatcher]="matcher">
+
+        <mat-error>
+          <span *ngIf="!newKeyForm.get('name').valid && newKeyForm.get('name').touched">
+            Пожалуйста введите имя
+          </span>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <input matInput [matDatepicker]="expiration" placeholder="Дата окончания" formControlName="expiration"
+          [errorStateMatcher]="matcher">
+        <mat-datepicker-toggle matSuffix [for]="expiration"></mat-datepicker-toggle>
+        <mat-datepicker #expiration></mat-datepicker>
+
+        <mat-error>
+          <span *ngIf="!newKeyForm.get('expiration').valid && newKeyForm.get('expiration').touched">
+            Пожалуйста введите дату
+          </span>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <input matInput type="number" min="1" placeholder="Число ядер" formControlName="coresCount"
+          [errorStateMatcher]="matcher">
+
+        <mat-error>
+          <span *ngIf="!newKeyForm.get('coresCount').valid && newKeyForm.get('coresCount').touched">
+            Пожалуйста введите количество ядер
+          </span>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <input matInput type="number" min="1" placeholder="Число пользователей" formControlName="usersCount"
+          [errorStateMatcher]="matcher">
+
+        <mat-error>
+          <span *ngIf="!newKeyForm.get('usersCount').valid && newKeyForm.get('usersCount').touched">
+            Пожалуйста введите количество пользователей
+          </span>
+        </mat-error>
+      </mat-form-field>
+
+      <div class="checkbox-group" formGroupName="moduleFlags">
+        <mat-checkbox formControlName="platformOk">ПлатформаОк</mat-checkbox>
+        <mat-checkbox formControlName="EDS">СЭД</mat-checkbox>
+        <mat-checkbox formControlName="features">Фичи</mat-checkbox>
+        <mat-checkbox formControlName="archive">Архив (2017)</mat-checkbox>
+      </div>
+
+      <mat-form-field class="full-width">
+        <input matInput type="text" placeholder="Название файла ключа" formControlName="keyFileName"
+          [errorStateMatcher]="matcher">
+
+        <mat-error>
+          <span *ngIf="!newKeyForm.get('keyFileName').valid && newKeyForm.get('keyFileName').touched">
+            Пожалуйста введите имя файла ключа
+          </span>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <input matInput type="text" placeholder="Комментарий" formControlName="comment" [errorStateMatcher]="matcher">
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <ngx-mat-file-input #activationFile formControlName="activationFile" placeholder="Файл активации">
+        </ngx-mat-file-input>
+        <button mat-icon-button matSuffix *ngIf="!activationFile.empty" (click)="activationFile.clear($event)">
+          <mat-icon>clear</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <button type="submit" [disabled]="!newKeyForm.valid" mat-flat-button color="primary">
+        Создать
+      </button>
+    </form>
+  </mat-card>
+</div>

@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit {
   ) {
     if (this.authService.currentUserValue) {
       console.log('redirect');
-      this.router.navigate(['/products']);
+      this.router.navigate(['/']);
     }
   }
 

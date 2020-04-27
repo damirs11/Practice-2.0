@@ -1,8 +1,10 @@
 <mat-toolbar *ngIf="currentUser">
-  <div class="button-row">
-    <button mat-flat-button color="primary" routerLink="/">Home</button>
-    <button mat-flat-button color="primary" (click)="logout()">Logout</button>
-  </div>
+  <button mat-flat-button color="primary" routerLink="/">Licenses</button>
+  <button mat-flat-button color="primary" routerLink="/products">Products</button>
+
+  <span class="toolbar-spacer"></span>
+
+  <button mat-flat-button color="primary" (click)="logout()">Logout</button>
 </mat-toolbar>
 
 <div class="container">

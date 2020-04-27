@@ -1,0 +1,14 @@
+<mat-list>
+  <div mat-subheader>
+    <span>Ключи</span>
+    <span class="spacer"></span>
+    <button mat-raised-button color="primary" routerLink="/newKey">+</button>
+  </div>
+  <mat-card (click)='downloadKey(2)' *ngFor="let key of data">
+    <mat-list-item>
+      <mat-icon mat-list-icon>vpn_key</mat-icon>
+      <div mat-line>{{key.name}}</div>
+      <div mat-line>{{key.expiration | date}}</div>
+    </mat-list-item>
+  </mat-card>
+</mat-list>
