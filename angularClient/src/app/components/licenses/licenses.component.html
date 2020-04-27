@@ -3,8 +3,11 @@
     <span>Ключи</span>
     <span class="spacer"></span>
     <button mat-raised-button color="primary" routerLink="/newKey">+</button>
+    <button mat-raised-button color="primary" (click)="refreshData()">
+      <mat-icon>refresh</mat-icon>
+    </button>
   </div>
-  <mat-card (click)='downloadKey(2)' *ngFor="let key of data">
+  <mat-card (click)='downloadKey(key.id)' *ngFor="let key of data">
     <mat-list-item>
       <mat-icon mat-list-icon>vpn_key</mat-icon>
       <div mat-line>{{key.name}}</div>

@@ -16,27 +16,18 @@ export class LicensesComponent implements OnInit {
   constructor(private keyService: KeyService) {}
 
   ngOnInit(): void {
-    this.generateFakeData();
+    this.refreshData();
+  }
+
+  refreshData() {
+    this.keyService.getKeys().subscribe((res) => {
+      console.log(res);
+      this.data = res;
+    });
   }
 
   downloadKey(keyFileId: number) {
-    console.log('download');
-    // this.keyService.downloadKey(keyFileId);
-  }
-
-  private generateFakeData() {
-    const key1 = new ParamsInput();
-    key1.name = 'название1';
-    key1.expiration = new Date();
-    key1.coresCount = 4;
-    key1.usersCount = 1;
-
-    const key2 = new ParamsInput();
-    key2.name = 'название2';
-    key2.expiration = new Date();
-    key2.coresCount = 2;
-    key2.usersCount = 2;
-
-    this.data.push(key1, key2);
+    console.log('download' + keyFileId);
+    this.keyService.downloadKey(keyFileId);
   }
 }

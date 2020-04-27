@@ -73,13 +73,14 @@
         <input matInput type="text" placeholder="Комментарий" formControlName="comment" [errorStateMatcher]="matcher">
       </mat-form-field>
 
-      <mat-form-field class="full-width">
-        <ngx-mat-file-input #activationFile formControlName="activationFile" placeholder="Файл активации">
+      <div class="full-width">
+        <!-- TODO: Загрузка файла активации -->
+        <!-- <ngx-mat-file-input #activationFile formControlName="activationFile" placeholder="Файл активации">
         </ngx-mat-file-input>
         <button mat-icon-button matSuffix *ngIf="!activationFile.empty" (click)="activationFile.clear($event)">
           <mat-icon>clear</mat-icon>
-        </button>
-      </mat-form-field>
+        </button> -->
+      </div>
 
       <button type="submit" [disabled]="!newKeyForm.valid" mat-flat-button color="primary">
         Создать

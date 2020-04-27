@@ -1,14 +1,18 @@
 package com.example.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
+import javax.persistence.MapsId;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "t_keyFiles")
+@Table(name = "t_key_files")
 public class KeyFile {
 
     @Id
@@ -18,6 +22,10 @@ public class KeyFile {
     private String fileName;
 
     private String fileType;
+
+    @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+    @MapsId
+    private Key key;
 
     @Lob
     private byte[] data;
@@ -61,5 +69,13 @@ public class KeyFile {
 
     public void setData(byte[] data) {
         this.data = data;
+    }
+
+    public Key getKey() {
+        return key;
+    }
+
+    public void setKey(Key key) {
+        this.key = key;
     }
 }

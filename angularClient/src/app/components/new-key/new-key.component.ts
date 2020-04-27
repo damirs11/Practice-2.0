@@ -24,6 +24,8 @@ export class NewKeyComponent implements OnInit {
   error = '';
   matcher = new MyErrorStateMatcher();
 
+  selectedFile: File;
+
   constructor(
     private formBuiler: FormBuilder,
     private route: ActivatedRoute,
@@ -48,23 +50,20 @@ export class NewKeyComponent implements OnInit {
       ),
       keyFileName: [null, Validators.required],
       comment: [null],
-      activationFile: [null],
     });
   }
 
-  get f() {
-    return this.newKeyForm.controls;
-  }
-
   onSubmit(form: NgForm) {
-    const keyParam = this.newKeyForm.value;
-    keyParam.moduleFlags = this.convertBooleanModuleFlagToByte(
-      keyParam.moduleFlags
+    const keyParams = this.newKeyForm.value;
+    keyParams.moduleFlags = this.convertBooleanModuleFlagToByte(
+      keyParams.moduleFlags
     );
-    console.log(keyParam);
 
-    this.keyService.createNewKey(keyParam).subscribe(
+    console.log(keyParams);
+
+    this.keyService.createNewKey(keyParams).subscribe(
       (res) => {
+        this.router.navigate(['licenses']);
       },
       (err) => {
         console.log(err);
@@ -85,10 +84,6 @@ export class NewKeyComponent implements OnInit {
       }
     }
     return byteFlag;
-  }
-
-  returnToLicenses() {
-    this.router.navigate(['licenses']);
   }
 }
 
