@@ -1,8 +1,12 @@
-package com.example.entity;
+package com.example.payload.request;
 
-public class AuthBody {
+import javax.validation.constraints.NotBlank;
 
+public class LoginRequest {
+    @NotBlank
     private String username;
+
+    @NotBlank
     private String password;
 
     public String getUsername() {

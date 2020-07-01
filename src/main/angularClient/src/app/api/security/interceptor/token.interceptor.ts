@@ -21,7 +21,8 @@ export class TokenInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const currentUser = this.authService.currentUserValue;
-    const isLoggedIn = currentUser && !this.authService.isTokenExpired(currentUser.token);
+    const isLoggedIn =
+      currentUser && !this.authService.isTokenExpired(currentUser.token);
     if (isLoggedIn) {
       req = req.clone({
         setHeaders: {

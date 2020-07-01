@@ -1,6 +1,12 @@
 package com.example.entity;
 
+import com.example.enums.RoleName;
+import org.hibernate.annotations.NaturalId;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -11,9 +17,12 @@ import javax.persistence.Table;
 public class Role {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String role;
+
+    @Enumerated(EnumType.STRING)
+    @NaturalId
+    private RoleName name;
 
     public Long getId() {
         return id;
@@ -23,11 +32,11 @@ public class Role {
         this.id = id;
     }
 
-    public String getRole() {
-        return role;
+    public RoleName getName() {
+        return name;
     }
 
-    public void setRole(String role) {
-        this.role = role;
+    public void setName(RoleName name) {
+        this.name = name;
     }
 }

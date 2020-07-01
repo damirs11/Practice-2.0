@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ParamsInput } from 'src/app/api/entity/paramsInput';
 import { KeyService } from 'src/app/api/service/key.service';
-import { DomSanitizer } from '@angular/platform-browser';
-import { HttpResponse } from '@angular/common/http';
-import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-licenses',

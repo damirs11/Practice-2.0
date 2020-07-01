@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { LoginComponent } from './components/auth/login/login.component';
 import { RegisterComponent } from './components/auth/register/register.component';
-import { AuthGuard } from './api/guard/auth.guard';
 import { LicensesComponent } from './components/licenses/licenses.component';
 import { NewKeyComponent } from './components/new-key/new-key.component';
+import { AuthGuard } from './api/security/guard/auth.guard';
 
 const routes: Routes = [
   {

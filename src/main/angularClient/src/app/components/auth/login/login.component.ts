@@ -9,7 +9,7 @@ import {
 } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { Router, ActivatedRoute } from '@angular/router';
-import { AuthService } from 'src/app/api/service/auth.service';
+import { AuthService } from 'src/app/api/security/service/auth.service';
 
 @Component({
   selector: 'app-login',

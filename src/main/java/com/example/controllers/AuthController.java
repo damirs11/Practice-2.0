@@ -1,73 +1,95 @@
 package com.example.controllers;
 
-import com.example.config.JwtTokenProvider;
-import com.example.entity.AuthBody;
+import com.example.security.jwt.JwtUtils;
+import com.example.entity.Role;
 import com.example.entity.User;
+import com.example.security.services.UserDetailsImpl;
+import com.example.enums.RoleName;
+import com.example.payload.request.LoginRequest;
+import com.example.payload.request.SignupRequest;
+import com.example.payload.response.JwtResponse;
+import com.example.payload.response.MessageResponse;
+import com.example.repository.RoleRepository;
 import com.example.repository.UserRepository;
-import com.example.service.CustomUserDetailService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.validation.Valid;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
+    final AuthenticationManager authenticationManager;
 
-    private final JwtTokenProvider jwtTokenProvider;
+    final UserRepository userRepository;
 
-    private final UserRepository userRepository;
+    final RoleRepository roleRepository;
 
-    private final CustomUserDetailService customUserDetailService;
+    final PasswordEncoder encoder;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserRepository userRepository, CustomUserDetailService customUserDetailService) {
+    final JwtUtils jwtUtils;
+
+    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder, JwtUtils jwtUtils) {
         this.authenticationManager = authenticationManager;
-        this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
-        this.customUserDetailService = customUserDetailService;
+        this.roleRepository = roleRepository;
+        this.encoder = encoder;
+        this.jwtUtils = jwtUtils;
     }
 
-    @SuppressWarnings("rawtypes")
-    @PostMapping("/login")
-    public ResponseEntity login(@RequestBody AuthBody data) {
-        try {
-            String username = data.getUsername();
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, data.getPassword()));
-            String token = jwtTokenProvider.createToken(username, this.userRepository.findByUsername(username).getRoles());
+    @PostMapping("/signin")
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
+        );
 
-            Map<Object, Object> model = new HashMap<>();
-            model.put("username", username);
-            model.put("token", token);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String jwt = jwtUtils.generateJwtToken(authentication);
 
-            return ResponseEntity.ok(model);
-        } catch (AuthenticationException e) {
-            throw new BadCredentialsException("Invalid email/password supplied");
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(item -> item.getAuthority())
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles));
+    }
+
+    @PostMapping("/signup")
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
+        if (userRepository.existsByUsername(signupRequest.getUsername())) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new MessageResponse("Error: Username is already taken!"));
         }
+
+        User user = new User(
+                signupRequest.getUsername(),
+                encoder.encode(signupRequest.getPassword())
+        );
+
+        Set<Role> roles = new HashSet<>();
+
+        Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
+                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+        roles.add(userRole);
+
+        user.setRoles(roles);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
-    @SuppressWarnings("rawtypes")
-    @PostMapping("/register")
-    public ResponseEntity register(@RequestBody User user) {
-        User userExists = customUserDetailService.findUserByUsername(user.getUsername());
-        if (userExists != null) {
-            throw new BadCredentialsException(String.format("User with username: %s already exists", user.getUsername()));
-        }
-        customUserDetailService.saveUser(user);
-        Map<Object, Object> model = new HashMap<>();
-        model.put("message", "User registered successfully");
-        return ResponseEntity.ok(model);
-    }
 }

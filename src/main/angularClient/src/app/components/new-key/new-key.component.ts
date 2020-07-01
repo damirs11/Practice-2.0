@@ -10,7 +10,6 @@ import {
 import { ErrorStateMatcher } from '@angular/material/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { KeyService } from 'src/app/api/service/key.service';
-import { ParamsInput } from 'src/app/api/entity/paramsInput';
 
 @Component({
   selector: 'app-new-key',

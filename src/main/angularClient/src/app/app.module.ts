@@ -47,12 +47,12 @@ import { MaterialFileInputModule } from 'ngx-material-file-input';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
-import { ErrorInterceptor } from './api/interceptor/error.interceptor';
-import { TokenInterceptor } from './api/interceptor/token.interceptor';
 import { LoginComponent } from './components/auth/login/login.component';
 import { RegisterComponent } from './components/auth/register/register.component';
 import { LicensesComponent } from './components/licenses/licenses.component';
 import { NewKeyComponent } from './components/new-key/new-key.component';
+import { TokenInterceptor } from './api/security/interceptor/token.interceptor';
+import { ErrorInterceptor } from './api/security/interceptor/error.interceptor';
 
 @NgModule({
   declarations: [
