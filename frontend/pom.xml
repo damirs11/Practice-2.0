@@ -28,7 +28,8 @@
                 <configuration>
                     <nodeVersion>${node-version}</nodeVersion>
                     <npmVersion>${npm-version}</npmVersion>
-                    <workingDirectory>src/main/web/</workingDirectory>
+
+
                 </configuration>
                 <executions>
 
