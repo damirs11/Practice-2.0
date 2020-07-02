@@ -17,7 +17,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java-version>11</java-version>
         <frontend-bundle-dir>${project.parent.basedir}/frontend/dist/angularClient/</frontend-bundle-dir>
-        <start-class>com.example.backend.Main</start-class>
     </properties>
 
     <dependencies>
@@ -80,19 +79,29 @@
 
             <!-- Gather the "dist" directory from frontend project -->
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
+                <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>copy-resources</id>
-                        <phase>validate</phase>
+                        <id>default-copy-resources</id>
+                        <phase>process-resources</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/classes/resources/</outputDirectory>
+                            <overwrite>true</overwrite>
+                            <!-- This folder is the folder where your angular files
+                            will be copied to. It must match the resulting war-file name.
+                            So if you have customized the name of war-file for ex. as "app.war"
+                            then below value should be ${project.build.directory}/app/
+                            Value given below is as per default war-file name -->
+                            <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${frontend-bundle-dir}</directory>
+                                    <directory>
+                                        ${project.basedir}/${frontend-bundle-dir}
+                                    </directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -104,9 +113,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <mainClass>${start-class}</mainClass>
-                </configuration>
                 <executions>
                     <execution>
                         <goals>

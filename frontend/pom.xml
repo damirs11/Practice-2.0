@@ -16,6 +16,9 @@
     <properties>
         <node-version>v12.18.2</node-version>
         <npm-version>6.11.3</npm-version>
+        <angular.project.location>webapp</angular.project.location>
+        <angular.project.nodeinstallation>${angular.project.location}/node_installation
+        </angular.project.nodeinstallation>
     </properties>
 
     <build>
@@ -28,8 +31,7 @@
                 <configuration>
                     <nodeVersion>${node-version}</nodeVersion>
                     <npmVersion>${npm-version}</npmVersion>
-
-
+                    <installDirectory>${angular.project.nodeinstallation}</installDirectory>
                 </configuration>
                 <executions>
 
@@ -47,18 +49,22 @@
                         <goals>
                             <goal>npm</goal>
                         </goals>
+                        <configuration>
+                            <workingDirectory>${angular.project.location}</workingDirectory>
+                            <arguments>install</arguments>
+                        </configuration>
                     </execution>
 
                     <!-- #3 Run package.json's build-prod script  -->
                     <execution>
-                        <id>build-prod</id>
+                        <id>npm build</id>
                         <goals>
                             <goal>npm</goal>
                         </goals>
                         <configuration>
-                            <arguments>run-script build-prod</arguments>
+                            <workingDirectory>${angular.project.location}</workingDirectory>
+                            <arguments>run build</arguments>
                         </configuration>
-                        <phase>generate-resources</phase>
                     </execution>
 
                 </executions>
