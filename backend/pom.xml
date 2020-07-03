@@ -16,7 +16,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java-version>11</java-version>
-        <frontend-bundle-dir>${project.parent.basedir}/frontend/dist/angularClient/</frontend-bundle-dir>
+        <frontend-bundle-dir>${project.parent.basedir}/angularClient/webapp/dist/angularClient/</frontend-bundle-dir>
     </properties>
 
     <dependencies>
@@ -59,7 +59,6 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>src/main/java</sourceDirectory>
         <plugins>
             <!-- Compile the project's source -->
             <plugin>
@@ -84,8 +83,8 @@
                 <version>3.1.0</version>
                 <executions>
                     <execution>
-                        <id>default-copy-resources</id>
-                        <phase>process-resources</phase>
+                        <id>copy-resources</id>
+                        <phase>validate</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
@@ -96,11 +95,11 @@
                             So if you have customized the name of war-file for ex. as "app.war"
                             then below value should be ${project.build.directory}/app/
                             Value given below is as per default war-file name -->
-                            <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
+                            <outputDirectory>${build.directory}/classes/static</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>
-                                        ${project.basedir}/${frontend-bundle-dir}
+                                        ${frontend-bundle-dir}
                                     </directory>
                                 </resource>
                             </resources>
