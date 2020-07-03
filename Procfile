@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT -jar $PATH_TO_JAR backend/target/backend-0.0.1-SNAPSHOT.war
+web: java -Dserver.port=$PORT -jar backend/target/backend-0.0.1-SNAPSHOT.war
