@@ -5,7 +5,7 @@ import { saveAs } from 'file-saver';
 import { ParamsInput } from '../entity/paramsInput';
 import { tap, catchError } from 'rxjs/operators';
 
-const apiUrl = 'http://localhost:8080/api/key';
+const apiUrl = 'api/key';
 
 @Injectable({
   providedIn: 'root',

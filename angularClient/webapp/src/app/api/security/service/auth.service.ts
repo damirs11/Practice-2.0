@@ -8,7 +8,7 @@ import { LoginRequest } from '../payload/request/loginRequest.model';
 import { RegisterRequest } from '../payload/request/registerRequest.model';
 import { MessageResponse } from '../payload/response/messageResponse.model';
 
-const apiUrl = 'http://localhost:8080/api/auth/';
+const apiUrl = 'api/auth';
 
 @Injectable({
   providedIn: 'root',
@@ -32,7 +32,7 @@ export class AuthService {
   }
 
   login(data: LoginRequest | any) {
-    return this.http.post<JwtResponse>(apiUrl + 'signin', data).pipe(
+    return this.http.post<JwtResponse>(`${apiUrl}/signin`, data).pipe(
       map((user) => {
         localStorage.setItem('currentUser', JSON.stringify(user));
 
@@ -45,7 +45,7 @@ export class AuthService {
   }
 
   register(data: RegisterRequest | any) {
-    return this.http.post<MessageResponse>(apiUrl + 'signup', data).pipe(
+    return this.http.post<MessageResponse>(`${apiUrl}/signup`, data).pipe(
       tap((message) => this.log(`AuthService.register: ${message.message}`)),
       catchError(this.handleError('AuthService.register', []))
     );
