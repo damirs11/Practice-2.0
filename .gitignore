@@ -33,5 +33,7 @@ build/
 /mvnw
 /.mvn/
 
-src/main/angularClient/node/
+frontend/node/
+frontend/node_modules/
 
+frontend/src/main/web/node/
