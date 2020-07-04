@@ -1,0 +1,44 @@
+<div class="container mat-elevation-z8">
+
+  <div class="loading-shade" *ngIf="loading">
+    <mat-spinner *ngIf="loading"></mat-spinner>
+  </div>
+
+  <mat-card class="card">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm.value)">
+
+      <mat-form-field class="full-width">
+        <input matInput type="username" placeholder="Логин" formControlName="username" [errorStateMatcher]="matcher">
+
+        <mat-error>
+          <span *ngIf="!loginForm.get('username').valid && loginForm.get('username').touched">
+            Пожалуйста введите логин
+          </span>
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field class="full-width">
+        <input matInput type="password" placeholder="Пароль" formControlName="password" [errorStateMatcher]="matcher">
+
+        <mat-error>
+          <span *ngIf="!loginForm.get('password').valid && loginForm.get('password').touched">
+            Пожалуйста введите пароль
+          </span>
+        </mat-error>
+      </mat-form-field>
+
+      <div class="button-row">
+        <button type="submit" [disabled]="!loginForm.valid" mat-flat-button color="primary">
+          Войти
+        </button>
+      </div>
+
+      <div class="button-row">
+        <button type="button" mat-flat-button color="primary" (click)="register()">
+          Регистрация
+        </button>
+      </div>
+
+    </form>
+  </mat-card>
+</div>
