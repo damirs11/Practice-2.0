@@ -19,5 +19,4 @@
         <module>angularClient</module>
         <module>backend</module>
     </modules>
-
 </project>

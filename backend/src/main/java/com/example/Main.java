@@ -5,6 +5,7 @@ import com.example.enums.RoleName;
 import com.example.repository.RoleRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -12,7 +13,7 @@ import java.util.stream.Collectors;
 @SpringBootApplication
 public class Main {
     public static void main(String[] args) {
-        var context = SpringApplication.run(Main.class, args);
+        ConfigurableApplicationContext context = SpringApplication.run(Main.class, args);
 
         context.getBean(RoleRepository.class).saveAll(
                 Arrays.stream(RoleName.values()).map(roleName -> {

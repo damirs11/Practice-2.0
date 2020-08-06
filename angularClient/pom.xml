@@ -63,15 +63,11 @@
                         </goals>
                         <configuration>
                             <workingDirectory>${angular.project.location}</workingDirectory>
-                            <arguments>run build-prod</arguments>
+                            <arguments>run build</arguments>
                         </configuration>
                     </execution>
-
                 </executions>
             </plugin>
-
-
         </plugins>
     </build>
-
 </project>

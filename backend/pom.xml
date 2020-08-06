@@ -15,8 +15,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>11</java.version>
+        <java.version>8</java.version>
         <frontend-bundle-dir>${project.parent.basedir}/angularClient/webapp/dist/angularClient/</frontend-bundle-dir>
+        <jwt-version>0.9.1</jwt-version>
     </properties>
 
     <dependencies>
@@ -44,28 +45,20 @@
         </dependency>
 
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
 
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
-            <version>0.9.1</version>
-        </dependency>
-
-        <!-- Tests -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
+            <version>${jwt-version}</version>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
-            <!-- Compile the project's source -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -73,12 +66,6 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
-            </plugin>
-
-            <!-- Run unit tests -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
 
             <!-- Gather the "dist" directory from frontend project -->
@@ -95,12 +82,7 @@
                         </goals>
                         <configuration>
                             <overwrite>true</overwrite>
-                            <!-- This folder is the folder where your angular files
-                            will be copied to. It must match the resulting war-file name.
-                            So if you have customized the name of war-file for ex. as "app.war"
-                            then below value should be ${project.build.directory}/app/
-                            Value given below is as per default war-file name -->
-                            <outputDirectory>${build.directory}/classes/static</outputDirectory>
+                            <outputDirectory>${project.build.directory}/classes/static</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>
@@ -113,30 +95,10 @@
                 </executions>
             </plugin>
 
-            <!-- Spring Boot's maven plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-
-            <plugin>
-                <groupId>com.heroku.sdk</groupId>
-                <artifactId>heroku-maven-plugin</artifactId>
-                <version>3.0.2</version>
-                <configuration>
-                    <appname>${build.finalName}</appname>
-                    <includetarget>false</includetarget>
-                    <includes>
-                        <include>${project.build.directory}/${project.build.finalName}.war</include>
-                    </includes>
-                    <jdkversion>${java.version}</jdkversion>
-                    <processtypes>
-                        <web>java $JAVA_OPTS -jar
-                            ${project.build.directory}/${project.build.finalName}.war</web>
-                    </processtypes>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-
 </project>

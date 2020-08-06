@@ -13,7 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "t_roles")
 public class Role {
 
     @Id
