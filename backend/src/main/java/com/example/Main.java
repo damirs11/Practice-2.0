@@ -8,19 +8,20 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Arrays;
-import java.util.stream.Collectors;
 
 @SpringBootApplication
 public class Main {
+
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(Main.class, args);
+        RoleRepository roleRepository = context.getBean(RoleRepository.class);
 
-        context.getBean(RoleRepository.class).saveAll(
-                Arrays.stream(RoleName.values()).map(roleName -> {
-                    Role temp = new Role();
-                    temp.setName(roleName);
-                    return temp;
-                }).collect(Collectors.toList())
-        );
+        Arrays.stream(RoleName.values()).forEach(roleName -> {
+            if (!roleRepository.findByName(roleName).isPresent()) {
+                Role role = new Role(roleName);
+
+                roleRepository.save(role);
+            }
+        });
     }
 }

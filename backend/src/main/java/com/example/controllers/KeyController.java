@@ -1,5 +1,6 @@
 package com.example.controllers;
 
+import com.example.dto.response.MessageResponse;
 import com.example.entity.Key;
 import com.example.entity.KeyFile;
 import com.example.service.KeyService;
@@ -8,7 +9,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,10 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.Map;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/key")
 public class KeyController {
@@ -48,12 +45,8 @@ public class KeyController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Map<String, String>> createNewKey(@RequestBody Key key) {
-
+    public MessageResponse createNewKey(@RequestBody Key key) {
         keyService.createNewKey(key);
-
-        Map<String, String> model = new HashMap<>();
-        model.put("message", "New key created");
-        return ResponseEntity.ok(model);
+        return new MessageResponse("Новый ключ создан");
     }
 }

@@ -1,8 +1,8 @@
-package com.example.payload.request;
+package com.example.dto.request;
 
 import javax.validation.constraints.NotBlank;
 
-public class SignupRequest {
+public class LoginRequest {
     @NotBlank
     private String username;
 
@@ -24,5 +24,4 @@ public class SignupRequest {
     public void setPassword(String password) {
         this.password = password;
     }
-
 }
