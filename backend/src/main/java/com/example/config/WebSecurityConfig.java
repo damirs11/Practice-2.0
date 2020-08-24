@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -33,12 +34,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/key/**").authenticated()
                 .anyRequest().authenticated()
                 .and()
-            .formLogin()
-                .loginPage("/auth/login")
+            .httpBasic()
             .and()
             .logout()
-                .logoutUrl("api/auth/logout")
-                .logoutSuccessUrl("/index.html")
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
+                .logoutRequestMatcher(new AntPathRequestMatcher("/api/auth/logout"))
                 .deleteCookies("JSESSIONID");
     }
 

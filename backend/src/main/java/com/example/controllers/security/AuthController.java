@@ -4,6 +4,8 @@ import com.example.dto.request.LoginRequest;
 import com.example.dto.request.SignupRequest;
 import com.example.service.AuthService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,5 +31,10 @@ public class AuthController {
     @PostMapping("/registration")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signupRequest) {
         return ResponseEntity.ok(authService.registerUser(signupRequest));
+    }
+
+    @GetMapping("/currentUser")
+    public ResponseEntity<?> currentUser() {
+        return ResponseEntity.ok(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
     }
 }
