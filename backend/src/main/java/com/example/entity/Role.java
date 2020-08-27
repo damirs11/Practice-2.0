@@ -12,12 +12,25 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+/**
+ * Реализация интерфейса GrantedAuthority
+ *
+ * @author DSalikhov
+ */
 @Entity
 @Table(name = "t_role")
 public class Role implements GrantedAuthority {
+
+    /**
+     * ID
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    /**
+     * Имя
+     */
     @Enumerated(EnumType.STRING)
     @NaturalId
     private RoleName name;

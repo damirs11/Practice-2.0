@@ -1,5 +1,10 @@
 package com.example.dto.response;
 
+/**
+ * DTO для отравки ответа
+ *
+ * @author DSalikhov
+ */
 public class MessageResponse {
     private String message;
 

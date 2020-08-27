@@ -14,15 +14,35 @@ import javax.persistence.Transient;
 import java.util.Collection;
 import java.util.Set;
 
+/**
+ * Реализация интерфейса UserDetails
+ *
+ * @author DSalikhov
+ */
 @Entity
 @Table(name = "t_user")
 public class User implements UserDetails {
 
+    /**
+     * ID
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    /**
+     * Логин пользователя
+     */
     private String username;
+
+    /**
+     * Пароль
+     */
     private String password;
+
+    /**
+     * Права
+     */
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Role> authorities;
 

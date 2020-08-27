@@ -2,10 +2,22 @@ package com.example.dto.request;
 
 import javax.validation.constraints.NotBlank;
 
+/**
+ * DTO для отравки запроса на логин
+ *
+ * @author DSalikhov
+ */
 public class LoginRequest {
+
+    /**
+     *  Логин пользователя
+     */
     @NotBlank
     private String username;
 
+    /**
+     * Пароль
+     */
     @NotBlank
     private String password;
 

@@ -10,12 +10,15 @@ import java.io.FileNotFoundException;
 import java.util.Date;
 
 /**
- * The type Key service.
+ * Сервис для работы с ключами
+ *
+ * @author DSalikhov
  */
 @Service
 public class KeyService {
 
     final KeyFileRepository keyFileRepository;
+
     final KeyRepository keyRepository;
 
     public KeyService(KeyFileRepository keyFileRepository, KeyRepository keyRepository) {
@@ -23,15 +26,32 @@ public class KeyService {
         this.keyRepository = keyRepository;
     }
 
+    /**
+     * Достать все мета данные ключей
+     *
+     * @return ключи
+     */
     public Iterable<Key> findAll() {
         return keyRepository.findAll();
     }
 
+    /**
+     * Скачать ключ
+     *
+     * @param keyFileId id ключа
+     * @return ответ
+     * @throws FileNotFoundException
+     */
     public KeyFile getKeyFile(Long keyFileId) throws FileNotFoundException {
         return keyFileRepository.findById(keyFileId)
                 .orElseThrow(() -> new FileNotFoundException("Key not found with id " + keyFileId));
     }
 
+    /**
+     * Создать новый ключ
+     *
+     * @param key входные данные для создания
+     */
     public void createNewKey(Key key) {
 
         byte[] keyFile = fakeXMLSecurity(

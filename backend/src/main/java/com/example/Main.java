@@ -9,9 +9,21 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.Arrays;
 
+/**
+ *
+ *
+ * @author DSalikhov
+ */
 @SpringBootApplication
 public class Main {
 
+    /**
+     * Входная точка приложения
+     *
+     * Здесь создаются роли в базе данных
+     *
+     * @param args
+     */
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(Main.class, args);
         RoleRepository roleRepository = context.getBean(RoleRepository.class);

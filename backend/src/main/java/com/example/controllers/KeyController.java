@@ -16,9 +16,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.FileNotFoundException;
 
+/**
+ * Котроллер для работы с ключами
+ *
+ * @author DSalikhov
+ */
 @RestController
 @RequestMapping("/api/key")
 public class KeyController {
@@ -29,13 +33,25 @@ public class KeyController {
         this.keyService = keyService;
     }
 
+    /**
+     * Достать все мета данные ключей
+     *
+     * @return ключи
+     */
     @GetMapping("")
     public Iterable<Key> getAllKeys() {
         return keyService.findAll();
     }
 
+    /**
+     * Скачать ключ
+     *
+     * @param keyFileId id ключа
+     * @return ответ
+     * @throws FileNotFoundException
+     */
     @GetMapping("/download/{keyFileId:.+}")
-    public ResponseEntity<Resource> downloadKeyFile(@PathVariable Long keyFileId, HttpServletRequest request) throws FileNotFoundException {
+    public ResponseEntity<Resource> downloadKeyFile(@PathVariable Long keyFileId) throws FileNotFoundException {
         KeyFile keyFile = keyService.getKeyFile(keyFileId);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(keyFile.getFileType()))
@@ -44,6 +60,12 @@ public class KeyController {
                 .body(new ByteArrayResource(keyFile.getData()));
     }
 
+    /**
+     * Создать новый ключ
+     *
+     * @param key входные данные для создания
+     * @return ответ
+     */
     @PostMapping("/create")
     public MessageResponse createNewKey(@RequestBody Key key) {
         keyService.createNewKey(key);

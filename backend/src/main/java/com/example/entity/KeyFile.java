@@ -11,22 +11,42 @@ import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+/**
+ * Файловое представление ключа
+ *
+ * @author DSalikhov
+ */
 @Entity
 @Table(name = "t_key_files")
 public class KeyFile {
 
+    /**
+     * ID
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    /**
+     * Имя
+     */
     private String fileName;
 
+    /**
+     * Тип файла
+     */
     private String fileType;
 
+    /**
+     * Мета данные ключа
+     */
     @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     @MapsId
     private Key key;
 
+    /**
+     * Сам файл
+     */
     @Lob
     private byte[] data;
 

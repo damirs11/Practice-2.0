@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+/**
+ * DAO для ролей
+ */
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
 

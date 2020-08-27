@@ -6,6 +6,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+/**
+ * Реализация интерфейса UserDetailsService
+ *
+ * @author DSalikhov
+ */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -15,6 +20,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Проверяет наличие пользователя в базе данных
+     *
+     * @param username имя
+     * @return данные пользователя
+     * @throws UsernameNotFoundException
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username)

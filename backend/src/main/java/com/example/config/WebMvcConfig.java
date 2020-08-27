@@ -9,9 +9,17 @@ import org.springframework.web.servlet.resource.PathResourceResolver;
 
 import java.io.IOException;
 
+/**
+ * Конфигурация контекста Spring
+ *
+ * @author DSalikhov
+ */
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
+    /**
+     * Переадресация в index.html для корректной работы angular
+     */
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/**/*")
