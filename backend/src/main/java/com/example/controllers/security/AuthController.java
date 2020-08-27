@@ -4,7 +4,6 @@ import com.example.dto.request.LoginRequest;
 import com.example.dto.request.SignupRequest;
 import com.example.service.AuthService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -35,6 +34,6 @@ public class AuthController {
 
     @GetMapping("/currentUser")
     public ResponseEntity<?> currentUser() {
-        return ResponseEntity.ok(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        return ResponseEntity.ok(authService.currentUser());
     }
 }

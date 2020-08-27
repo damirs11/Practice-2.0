@@ -19,7 +19,17 @@
         <angular.project.location>webapp</angular.project.location>
         <angular.project.nodeinstallation>${angular.project.location}/node_installation
         </angular.project.nodeinstallation>
+        <angular.npm.buildCommand>build</angular.npm.buildCommand>
     </properties>
+
+    <profiles>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <angular.npm.buildCommand>build-prod</angular.npm.buildCommand>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>

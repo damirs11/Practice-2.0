@@ -1,10 +1,10 @@
 package com.example.service;
 
-import com.example.entity.Role;
-import com.example.entity.User;
 import com.example.dto.request.LoginRequest;
 import com.example.dto.request.SignupRequest;
 import com.example.dto.response.MessageResponse;
+import com.example.entity.Role;
+import com.example.entity.User;
 import com.example.enums.RoleName;
 import com.example.repository.RoleRepository;
 import com.example.repository.UserRepository;
@@ -12,6 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,23 +42,21 @@ public class AuthService {
         this.encoder = encoder;
     }
 
-    public List<String> authenticateUser(LoginRequest loginRequest) {
+    public MessageResponse authenticateUser(LoginRequest loginRequest) {
+        if (!userRepository.existsByUsername(loginRequest.getUsername())) {
+            return new MessageResponse("Логин или пароль введины не правильно");
+        }
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
         );
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        User user = (User) authentication.getPrincipal();
-
-
-        return user.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+        return new MessageResponse("Вход прошел успешно");
     }
 
     public MessageResponse registerUser(@Valid @RequestBody SignupRequest signupRequest) {
         if (userRepository.existsByUsername(signupRequest.getUsername())) {
-            return new MessageResponse("Ошибка: Имя уже занято");
+            return new MessageResponse("Имя уже занято");
         }
 
         User user = new User(
@@ -67,12 +66,20 @@ public class AuthService {
 
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository.findByName(RoleName.ROLE_USER)
-                .orElseThrow(() -> new RuntimeException("Ошибка: Роль не найдена"));
+                .orElseThrow(() -> new RuntimeException("Роль не найдена"));
         roles.add(userRole);
 
         user.setRoles(roles);
         userRepository.save(user);
 
         return new MessageResponse("Регистрация прошла успешно");
+    }
+
+    public Object currentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ANONYMOUS"))) {
+            return null;
+        }
+        return authentication.getPrincipal();
     }
 }

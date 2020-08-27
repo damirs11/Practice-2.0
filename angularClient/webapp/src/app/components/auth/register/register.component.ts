@@ -1,72 +1,53 @@
-import { Component, OnInit } from '@angular/core';
-import {
-  FormGroup,
-  FormControl,
-  FormGroupDirective,
-  NgForm,
-  FormBuilder,
-  Validators,
-} from '@angular/forms';
-import { ErrorStateMatcher } from '@angular/material/core';
-import { Router } from '@angular/router';
-import { AuthService } from 'src/app/api/security/service/auth.service';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, NgForm, Validators,} from '@angular/forms';
+import {Router} from '@angular/router';
+import {AuthService} from 'src/app/api/service/auth/auth.service';
+import {FormStateMatcher} from "../../../shared/state-matchers/form.state-matcher";
+import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
+import {ErrorModalComponent} from "../../../shared/modals/error-modal/error-modal.component";
+import {LoginRequest} from "../../../api/entity/dto/request/loginRequest.model";
+import {RegisterRequest} from "../../../api/entity/dto/request/registerRequest.model";
 
 @Component({
-  selector: 'app-register',
-  templateUrl: './register.component.html',
-  styleUrls: ['./register.component.less'],
+    selector: 'app-register',
+    templateUrl: './register.component.html',
+    styleUrls: ['./register.component.less'],
 })
 export class RegisterComponent implements OnInit {
-  registerForm: FormGroup;
-  username = '';
-  password = '';
-  isLoadingResults = false;
-  matcher = new MyErrorStateMatcher();
+    registerForm: FormGroup;
+    isLoadingResults: boolean = false;
+    matcher = new FormStateMatcher();
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private router: Router,
-    private authService: AuthService
-  ) {}
+    constructor(
+        private formBuilder: FormBuilder,
+        private router: Router,
+        private modal: MatDialog,
+        private authService: AuthService
+    ) {
+    }
 
-  ngOnInit(): void {
-    this.registerForm = this.formBuilder.group({
-      username: [null, Validators.required],
-      password: [null, Validators.required],
-    });
-  }
+    ngOnInit(): void {
+        this.registerForm = this.formBuilder.group({
+            username: [null, Validators.required],
+            password: [null, Validators.required],
+        });
+    }
 
-  onFormSubmit(form: NgForm) {
-    this.isLoadingResults = true;
-    this.authService.register(form).subscribe(
-      (res) => {
-        this.router.navigate(['login']);
-      },
-      (err) => {
-        console.log(err);
-        alert(err.error);
-        this.isLoadingResults = false;
-      }
-    );
-  }
-
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['login']);
-  }
+    registration(form: NgForm): void {
+        this.isLoadingResults = true;
+        this.authService.registration(new RegisterRequest(form['username'], form['password'])).subscribe(
+            (res) => {
+                this.isLoadingResults = false;
+                this.router.navigate(['/auth/login']);
+            },
+            (err) => {
+                const modalConfig = new MatDialogConfig();
+                modalConfig.data = err;
+                const modalDialog =  this.modal.open(ErrorModalComponent, modalConfig);
+                this.isLoadingResults = false;
+            }
+        );
+    }
 }
 
-/** Error when invalid control is dirty, touched, or submitted. */
-export class MyErrorStateMatcher implements ErrorStateMatcher {
-  isErrorState(
-    control: FormControl | null,
-    form: FormGroupDirective | NgForm | null
-  ): boolean {
-    const isSubmitted = form && form.submitted;
-    return !!(
-      control &&
-      control.invalid &&
-      (control.dirty || control.touched || isSubmitted)
-    );
-  }
-}
+
