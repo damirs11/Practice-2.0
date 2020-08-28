@@ -1,4 +1,16 @@
+/**
+ * Роль
+ *
+ * @author DSalikhov
+ * @export
+ */
 export class Authority {
-  id:number;
-  name:string;
+  /**
+   * ID
+   */
+  id: number;
+  /**
+   * Имя
+   */
+  name: string;
 }

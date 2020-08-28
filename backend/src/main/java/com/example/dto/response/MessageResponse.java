@@ -1,7 +1,7 @@
 package com.example.dto.response;
 
 /**
- * DTO для отравки ответа
+ * DTO для отправки ответа
  *
  * @author DSalikhov
  */

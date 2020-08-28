@@ -1,22 +1,39 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, NgForm, Validators,} from '@angular/forms';
+import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from 'src/app/api/service/auth/auth.service';
-import {FormStateMatcher} from "../../../shared/state-matchers/form.state-matcher";
-import {MatDialog, MatDialogConfig} from "@angular/material/dialog";
-import {ErrorModalComponent} from "../../../shared/modals/error-modal/error-modal.component";
-import {LoginRequest} from "../../../api/entity/dto/request/loginRequest.model";
+import {FormStateMatcher} from '../../../shared/state-matchers/form.state-matcher';
+import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
+import {ErrorModalComponent} from '../../../shared/modals/error-modal/error-modal.component';
+import {LoginRequest} from '../../../api/entity/dto/request/loginRequest.model';
 
+/**
+ * Компонент логина
+ *
+ * @author DSalikhov
+ * @export
+ */
 @Component({
     selector: 'app-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.less'],
 })
 export class LoginComponent implements OnInit {
+    /**
+     * Форма логина
+     */
     loginForm: FormGroup;
-    isLoadingResults: boolean = false;
-    submitted: boolean = false;
+    /**
+     * boolean для спинера загрузки
+     */
+    isLoadingResults = false;
+    /**
+     * По какой ссылки перейти после успешного логина
+     */
     returnUrl: string;
+    /**
+     * Валидатор
+     */
     matcher = new FormStateMatcher();
 
     constructor(
@@ -37,9 +54,14 @@ export class LoginComponent implements OnInit {
         this.returnUrl = this.route.snapshot.queryParams.returnUrl || '/';
     }
 
-    login(form: NgForm): void {
+    /**
+     * Производит логин основывая на данных из формы
+     *
+     * @param formData - форма с данными
+     */
+    login(formData: NgForm): void {
         this.isLoadingResults = true;
-        this.authService.login(new LoginRequest(form['username'], form['password'])).subscribe(
+        this.authService.login(new LoginRequest(formData.username, formData.password)).subscribe(
             (res) => {
                 this.isLoadingResults = false;
                 this.router.navigate([this.returnUrl]);

@@ -1,6 +1,12 @@
 import {ErrorHandler, Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 
+/**
+ * Сервис логгирования
+ *
+ * @author DSalikhov
+ * @export
+ */
 @Injectable({
   providedIn: 'root'
 })
@@ -9,6 +15,9 @@ export class LoggerService {
   constructor(private errorHandler: ErrorHandler) {
   }
 
+  /**
+   * Обычных лог, работает только при дебаге
+   */
   log(value: any, ...rest: any[]): void {
     if (!environment.production) {
       console.log(value, ...rest);

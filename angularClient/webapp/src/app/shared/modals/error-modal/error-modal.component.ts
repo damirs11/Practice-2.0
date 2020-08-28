@@ -1,5 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
+/**
+ * Компонент модалки с ошибкой
+ *
+ * @author DSalikhov
+ * @export
+ */
 @Component({
   selector: 'app-error-modal',
   templateUrl: './error-modal.component.html',
@@ -7,9 +14,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ErrorModalComponent implements OnInit {
 
-  constructor() { }
+  /**
+   * В data должно быть только поле error
+   *
+   * @author DSalikhov
+   */
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit(): void {
   }
-
 }

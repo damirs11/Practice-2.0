@@ -3,7 +3,7 @@ package com.example.dto.request;
 import javax.validation.constraints.NotBlank;
 
 /**
- * DTO для отравки запроса на регистрацию
+ * DTO для отправки запроса на регистрацию
  *
  * @author DSalikhov
  */
