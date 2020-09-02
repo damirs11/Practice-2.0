@@ -1,6 +1,8 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, CanActivateChild, Router, RouterStateSnapshot} from '@angular/router';
-import {AuthService} from '../service/auth/auth.service';
+import {AuthStore} from '../../shared/store/auth.store';
+import {map} from 'rxjs/operators';
+import {Observable} from 'rxjs';
 
 /**
  *  LoggedInGuard служит для запрета входа на защищенные станицы,
@@ -13,7 +15,7 @@ import {AuthService} from '../service/auth/auth.service';
     providedIn: 'root',
 })
 export class LoggedInGuard implements CanActivateChild, CanActivate {
-    constructor(private authService: AuthService, private router: Router) {
+    constructor(private authStore: AuthStore, private router: Router) {
     }
 
     /**
@@ -26,13 +28,17 @@ export class LoggedInGuard implements CanActivateChild, CanActivate {
     canActivateChild(
         childRoute: ActivatedRouteSnapshot,
         state: RouterStateSnapshot
-    ): boolean {
-        if (this.authService.currentUserValue) {
-            return true;
-        }
-
-        this.router.navigate(['/auth/login'], {queryParams: {returnUrl: state.url}});
-        return false;
+    ): Observable<boolean> {
+        return this.authStore.getCurrentUser().pipe(
+            map(user => {
+                if (user) {
+                    return true;
+                } else {
+                    this.router.navigate(['/auth/login'], {queryParams: {returnUrl: state.url}});
+                    return false;
+                }
+            }),
+        );
     }
 
     /**
@@ -45,13 +51,16 @@ export class LoggedInGuard implements CanActivateChild, CanActivate {
     canActivate(
         route: ActivatedRouteSnapshot,
         state: RouterStateSnapshot
-    ): boolean {
-        const currentUser = this.authService.currentUserValue;
-        if (currentUser) {
-            return true;
-        }
-
-        this.router.navigate(['/auth/login'], {queryParams: {returnUrl: state.url}});
-        return false;
+    ): Observable<boolean> {
+        return this.authStore.getCurrentUser().pipe(
+            map(user => {
+                if (user) {
+                    return true;
+                } else {
+                    this.router.navigate(['/auth/login'], {queryParams: {returnUrl: state.url}});
+                    return false;
+                }
+            }),
+        );
     }
 }

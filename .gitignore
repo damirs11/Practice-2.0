@@ -1,5 +1,24 @@
-target/
-.idea
-.vscode/
-.mvn
-*.iml
+# IDEs and editors
+**/.idea
+**/.project
+**/.classpath
+**/.c9/
+**/*.launch
+**/.settings/
+**/*.sublime-workspace
+**/.vscode/
+
+**/target
+**/.mvn
+**/*.iml
+
+# compiled output
+**/build
+**/tmp
+**/out-tsc
+
+# dependencies
+**/node_modules
+**/node_installation
+**/package-lock.json
+**/.angulardoc.json

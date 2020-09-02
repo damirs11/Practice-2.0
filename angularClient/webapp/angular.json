@@ -21,18 +21,17 @@
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.app.json",
             "aot": true,
             "assets": [
               "src/favicon.ico",
-              "src/images",
-              "src/assets"
+              "src/images"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
-              "src/css/styles.less"
+              "src/css/app.less"
             ],
-            "scripts": []
+            "scripts": [],
+            "tsConfig": "configuration/tsconfig.app.json"
           },
           "configurations": {
             "production": {
@@ -89,15 +88,15 @@
           "options": {
             "main": "src/test.ts",
             "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
+            "tsConfig": "configuration/tsconfig.spec.json",
+            "karmaConfig": "configuration/karma.conf.js",
             "assets": [
               "src/favicon.ico",
               "src/assets"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
-              "src/styles.less"
+              "src/css/app.less"
             ],
             "scripts": []
           }
@@ -106,8 +105,8 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "tsconfig.app.json",
-              "tsconfig.spec.json"
+              "configuration/tsconfig.app.json",
+              "configuration/tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**"

@@ -5,12 +5,12 @@
  * @export
  */
 export class Authority {
-  /**
-   * ID
-   */
-  id: number;
-  /**
-   * Имя
-   */
-  name: string;
+    /**
+     * ID
+     */
+    id: number;
+    /**
+     * Имя
+     */
+    name: string;
 }

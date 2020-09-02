@@ -1,0 +1,12 @@
+<mat-toolbar>
+    <button mat-flat-button color="primary" [routerLink]="['/home']">Home</button>
+    <button mat-flat-button color="primary" [routerLink]="['/home/licenses']">Лицензии</button>
+    <span class="spacer"></span>
+    <button mat-flat-button color="primary" (click)="logout()">Выход</button>
+</mat-toolbar>
+
+<div class="loading-shade" *ngIf="isUpdating$ | async">
+    <mat-spinner></mat-spinner>
+</div>
+
+<router-outlet></router-outlet>

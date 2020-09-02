@@ -9,33 +9,20 @@ import {MaterialFileInputModule} from 'ngx-material-file-input';
 
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
-import {LoginComponent} from './components/auth/login/login.component';
-import {RegisterComponent} from './components/auth/register/register.component';
-import {HomeComponent} from './components/home/home.component';
-import {AuthComponent} from './components/auth/auth.component';
-import {AngularMaterialModule} from "./components/angular-material/angular-material.module";
-import {LicensesComponent} from "./components/home/licenses/licenses.component";
-import {NewKeyComponent} from "./components/home/new-key/new-key.component";
-import {AuthService} from "./api/service/auth/auth.service";
 import {ErrorModalComponent} from './shared/modals/error-modal/error-modal.component';
-import {HttpErrorInterceptor} from "./api/interceptor/http-error-interceptor.service";
-import { ForbiddenComponent } from './components/error/forbidden/forbidden.component';
+import {HttpErrorInterceptor} from './api/interceptor/http-error-interceptor.service';
+import {AuthService} from './shared/service/auth/auth.service';
+import {AngularMaterialModule} from './modules/angular-material/angular-material.module';
+import {AuthModule} from './modules/auth/auth.module';
+import {AuthStore} from './shared/store/auth.store';
+import {tap} from 'rxjs/operators';
+import {HomeModule} from './modules/home/home.module';
 
 @NgModule({
     declarations: [
         AppComponent,
 
-        AuthComponent,
-        LoginComponent,
-        RegisterComponent,
-
-        HomeComponent,
-        LicensesComponent,
-        NewKeyComponent,
-
         ErrorModalComponent,
-
-        ForbiddenComponent,
     ],
     imports: [
         NgbModule,
@@ -46,6 +33,8 @@ import { ForbiddenComponent } from './components/error/forbidden/forbidden.compo
         ReactiveFormsModule,
         BrowserAnimationsModule,
 
+        HomeModule,
+        AuthModule,
         AngularMaterialModule,
 
         MaterialFileInputModule,
@@ -58,8 +47,14 @@ import { ForbiddenComponent } from './components/error/forbidden/forbidden.compo
         },
         {
             provide: APP_INITIALIZER,
-            useFactory: (authService: AuthService) => () => authService.initService(),
-            deps: [AuthService],
+            useFactory: (authService: AuthService, authStore: AuthStore) => () => {
+                return authService.updateUserStatus().pipe(
+                    tap((user) => {
+                        authStore.setCurrentUser(user);
+                    })
+                ).toPromise();
+            },
+            deps: [AuthService, AuthStore],
             multi: true
         },
     ],

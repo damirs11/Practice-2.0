@@ -4,10 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.example</groupId>
-        <artifactId>demo</artifactId>
+        <groupId>ru.blogic</groupId>
+        <artifactId>license</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>angularClient</artifactId>
@@ -73,7 +72,7 @@
                         </goals>
                         <configuration>
                             <workingDirectory>${angular.project.location}</workingDirectory>
-                            <arguments>run build</arguments>
+                            <arguments>run ${angular.npm.buildCommand}</arguments>
                         </configuration>
                     </execution>
                 </executions>

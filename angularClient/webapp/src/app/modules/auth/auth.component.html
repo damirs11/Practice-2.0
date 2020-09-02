@@ -1,0 +1,5 @@
+<div class="loading-shade" *ngIf="isUpdating$ | async">
+    <mat-spinner *ngIf="isUpdating$ | async"></mat-spinner>
+</div>
+
+<router-outlet></router-outlet>
