@@ -10,6 +10,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.Constraint;
+import javax.validation.constraints.NotEmpty;
 import java.util.Collection;
 import java.util.Set;
 
@@ -32,17 +34,19 @@ public class User implements UserDetails {
     /**
      * Логин пользователя
      */
+    @NotEmpty
     private String username;
 
     /**
      * Пароль
      */
+    @NotEmpty
     private String password;
 
     /**
      * Права
      */
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     private Set<Role> authorities;
 
     public User() {

@@ -1,5 +1,6 @@
 package ru.blogic.service;
 
+import org.springframework.transaction.annotation.Transactional;
 import ru.blogic.entity.Key;
 import ru.blogic.entity.KeyFile;
 import ru.blogic.repository.KeyFileRepository;
@@ -42,6 +43,7 @@ public class KeyService {
      * @return ответ
      * @throws FileNotFoundException
      */
+    @Transactional(readOnly = true)
     public KeyFile getKeyFile(Long keyFileId) throws FileNotFoundException {
         return keyFileRepository.findById(keyFileId)
                 .orElseThrow(() -> new FileNotFoundException("Key not found with id " + keyFileId));
@@ -52,8 +54,8 @@ public class KeyService {
      *
      * @param key входные данные для создания
      */
+    @Transactional()
     public void createNewKey(Key key) {
-
         byte[] keyFile = fakeXMLSecurity(
                 key.getName(),
                 key.getExpiration(),

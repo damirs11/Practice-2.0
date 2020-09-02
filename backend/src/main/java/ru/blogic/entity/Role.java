@@ -4,6 +4,7 @@ import ru.blogic.converter.RoleConverter;
 import ru.blogic.enums.RoleNameImpl;
 import org.hibernate.annotations.NaturalId;
 import org.springframework.security.core.GrantedAuthority;
+import ru.blogic.interfaces.RoleName;
 
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -33,7 +34,7 @@ public class Role implements GrantedAuthority {
      */
     @Convert(converter = RoleConverter.class)
     @NaturalId
-    private RoleNameImpl role;
+    private RoleName role;
 
     public Role() {
     }
@@ -48,7 +49,7 @@ public class Role implements GrantedAuthority {
 
     @Override
     public String getAuthority() {
-        return role.name();
+        return role.getAuthority();
     }
 
     public void setId(Long id) {

@@ -1,6 +1,5 @@
 package ru.blogic.enums;
 
-import org.springframework.security.core.GrantedAuthority;
 import ru.blogic.interfaces.RoleName;
 
 /**
@@ -10,14 +9,18 @@ import ru.blogic.interfaces.RoleName;
  */
 public enum RoleNameImpl implements RoleName {
 
-    ROLE_USER("ROLE.USER", "Предоставляет базовые права доступа"), ROLE_ADMIN("ROLE.ADMIN", "Предоставляет расширенные права доступа");
+    ROLE_USER("ROLE.USER", "ROLE_USER", "Предоставляет базовые права доступа"),
+    ROLE_ADMIN("ROLE.ADMIN", "ROLE_ADMIN", "Предоставляет расширенные права доступа");
 
     private final String code;
 
     private final String description;
 
-    RoleNameImpl(String code, String desc) {
+    private final String authority;
+
+    RoleNameImpl(String code, String authority, String desc) {
         this.code = code;
+        this.authority = authority;
         this.description = desc;
     }
 
@@ -29,5 +32,10 @@ public enum RoleNameImpl implements RoleName {
     @Override
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public String getAuthority() {
+        return authority;
     }
 }

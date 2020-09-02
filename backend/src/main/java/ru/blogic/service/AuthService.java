@@ -1,5 +1,12 @@
 package ru.blogic.service;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import ru.blogic.dto.request.LoginRequest;
 import ru.blogic.dto.request.RegistrationRequest;
 import ru.blogic.dto.response.MessageResponse;
@@ -8,16 +15,9 @@ import ru.blogic.entity.User;
 import ru.blogic.enums.RoleNameImpl;
 import ru.blogic.repository.RoleRepository;
 import ru.blogic.repository.UserRepository;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
-import javax.validation.Valid;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,16 +29,13 @@ import java.util.Set;
 @Service
 public class AuthService {
 
-    private final AuthenticationManager authenticationManager;
-
     private final UserRepository userRepository;
 
     private final RoleRepository roleRepository;
 
     private final PasswordEncoder encoder;
 
-    public AuthService(AuthenticationManager authenticationManager, UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder) {
-        this.authenticationManager = authenticationManager;
+    public AuthService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.encoder = encoder;
@@ -50,14 +47,15 @@ public class AuthService {
      * @param loginRequest сущность с данными для логина
      * @return ответ
      */
-    public MessageResponse authenticateUser(LoginRequest loginRequest) {
-        if (!userRepository.existsByUsername(loginRequest.getUsername())) {
+    public MessageResponse authenticateUser(LoginRequest loginRequest, HttpServletRequest request) {
+        if (!userRepository.findByUsername(loginRequest.getUsername()).isPresent()) {
             return new MessageResponse("Логин или пароль введины не правильно");
         }
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword())
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            request.login(loginRequest.getUsername(), loginRequest.getPassword());
+        } catch (ServletException e) {
+            return new MessageResponse("Вы уже вошли");
+        }
 
         return new MessageResponse("Вход прошел успешно");
     }
@@ -68,8 +66,8 @@ public class AuthService {
      * @param registrationRequest сущность с данными для регистации
      * @return ответ
      */
-    public MessageResponse registerUser(@Valid @RequestBody RegistrationRequest registrationRequest) {
-        if (userRepository.existsByUsername(registrationRequest.getUsername())) {
+    public MessageResponse registerUser(RegistrationRequest registrationRequest) {
+        if (userRepository.findByUsername(registrationRequest.getUsername()).isPresent()) {
             return new MessageResponse("Имя уже занято");
         }
 

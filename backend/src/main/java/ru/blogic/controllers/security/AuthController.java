@@ -1,15 +1,16 @@
 package ru.blogic.controllers.security;
 
-import ru.blogic.dto.request.LoginRequest;
-import ru.blogic.dto.request.RegistrationRequest;
-import ru.blogic.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import ru.blogic.dto.request.LoginRequest;
+import ru.blogic.dto.request.RegistrationRequest;
+import ru.blogic.service.AuthService;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 /**
@@ -34,8 +35,8 @@ public class AuthController {
      * @return ответ
      */
     @PostMapping("/login")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(authService.authenticateUser(loginRequest));
+    public ResponseEntity<?> authenticateUser(HttpServletRequest request, @Valid @RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(authService.authenticateUser(loginRequest, request));
     }
 
     /**

@@ -1,6 +1,7 @@
 package ru.blogic.dto.request;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 
 /**
  * DTO для отправки запроса на регистрацию
@@ -12,13 +13,13 @@ public class RegistrationRequest {
     /**
      * Логин пользователя
      */
-    @NotBlank
+    @NotEmpty
     private String username;
 
     /**
      * Пароль
      */
-    @NotBlank
+    @NotEmpty
     private String password;
 
     public String getUsername() {
