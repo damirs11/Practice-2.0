@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {LoggerService} from '../../../../shared/logger/logger.service';
+import {LoggerService} from '../../../../shared/service/logger/logger.service';
 import {HomeFacade} from '../../facade/home.facade';
 
 /**

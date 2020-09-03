@@ -9,8 +9,8 @@ import {MaterialFileInputModule} from 'ngx-material-file-input';
 
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
-import {ErrorModalComponent} from './shared/modals/error-modal/error-modal.component';
-import {HttpErrorInterceptor} from './api/interceptor/http-error-interceptor.service';
+import {ErrorModalComponent} from './shared/components/modals/error-modal/error-modal.component';
+import {HttpErrorInterceptor} from './shared/interceptor/http-error-interceptor.service';
 import {AuthService} from './shared/service/auth/auth.service';
 import {AngularMaterialModule} from './modules/angular-material/angular-material.module';
 import {AuthModule} from './modules/auth/auth.module';

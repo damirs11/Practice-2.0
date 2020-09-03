@@ -2,8 +2,8 @@ import {Injectable} from '@angular/core';
 import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {EMPTY, Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
-import {AuthService} from '../../shared/service/auth/auth.service';
-import {LoggerService} from '../../shared/logger/logger.service';
+import {AuthService} from '../service/auth/auth.service';
+import {LoggerService} from '../service/logger/logger.service';
 import {StatusCodes} from 'http-status-codes/build/es';
 import {Router} from '@angular/router';
 

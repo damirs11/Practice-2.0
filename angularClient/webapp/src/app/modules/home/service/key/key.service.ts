@@ -3,7 +3,7 @@ import {HttpClient, HttpResponse} from '@angular/common/http';
 import {tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {KeyParamsInput} from '../../../../api/entity/keyParamsInput';
-import {LoggerService} from '../../../../shared/logger/logger.service';
+import {LoggerService} from '../../../../shared/service/logger/logger.service';
 import {MessageResponse} from '../../../../api/entity/dto/response/messageResponse.model';
 
 const apiUrl = 'api/key';

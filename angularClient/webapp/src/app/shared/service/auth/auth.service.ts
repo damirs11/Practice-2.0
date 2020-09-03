@@ -3,7 +3,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
 import {User} from '../../../api/entity/user';
-import {LoggerService} from '../../logger/logger.service';
+import {LoggerService} from '../logger/logger.service';
 import {RegisterRequest} from '../../../api/entity/dto/request/registerRequest.model';
 import {MessageResponse} from '../../../api/entity/dto/response/messageResponse.model';
 import {LoginRequest} from '../../../api/entity/dto/request/loginRequest.model';

@@ -23,7 +23,6 @@
             "polyfills": "src/polyfills.ts",
             "aot": true,
             "assets": [
-              "src/favicon.ico",
               "src/images"
             ],
             "styles": [
@@ -91,8 +90,7 @@
             "tsConfig": "configuration/tsconfig.spec.json",
             "karmaConfig": "configuration/karma.conf.js",
             "assets": [
-              "src/favicon.ico",
-              "src/assets"
+              "src/images"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
