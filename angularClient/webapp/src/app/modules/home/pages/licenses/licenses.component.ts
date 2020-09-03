@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {LoggerService} from '../../../../shared/service/logger/logger.service';
-import {HomeFacade} from '../../facade/home.facade';
+import {HomeFacade} from '../../shared/facade/home.facade';
 
 /**
  * Компонент для логина

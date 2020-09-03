@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {HomeFacade} from './facade/home.facade';
+import {HomeFacade} from './shared/facade/home.facade';
 import {Observable} from 'rxjs';
 
 /**

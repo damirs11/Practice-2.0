@@ -3,7 +3,7 @@ import {FormBuilder, FormGroup, NgForm, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {FormStateMatcher} from '../../../../shared/state-matchers/form.state-matcher';
 import {MatDialog} from '@angular/material/dialog';
-import {HomeFacade} from '../../facade/home.facade';
+import {HomeFacade} from '../../shared/facade/home.facade';
 
 /**
  * Компонент для создания нового ключа

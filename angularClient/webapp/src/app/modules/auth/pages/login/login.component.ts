@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {FormStateMatcher} from '../../../../shared/state-matchers/form.state-matcher';
-import {AuthFacade} from '../../facade/auth.facade';
+import {AuthFacade} from '../../shared/facade/auth.facade';
 
 /**
  * Компонент логина

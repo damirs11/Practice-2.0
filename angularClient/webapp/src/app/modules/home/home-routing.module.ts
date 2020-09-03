@@ -1,8 +1,8 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {LoggedInGuard} from '../../shared/guard/logged-in.guard';
-import {LicensesComponent} from './components/licenses/licenses.component';
-import {NewKeyComponent} from './components/new-key/new-key.component';
+import {LicensesComponent} from './pages/licenses/licenses.component';
+import {NewKeyComponent} from './pages/new-key/new-key.component';
 import {HomeComponent} from './home.component';
 
 const routes: Routes = [

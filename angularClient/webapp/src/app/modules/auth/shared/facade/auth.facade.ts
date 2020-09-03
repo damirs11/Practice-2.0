@@ -1,12 +1,12 @@
 import {Injectable} from '@angular/core';
-import {AuthService} from '../../../shared/service/auth/auth.service';
+import {AuthService} from '../../../../shared/service/auth/auth.service';
 import {Observable} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
-import {LoginRequest} from '../../../api/entity/dto/request/loginRequest.model';
+import {LoginRequest} from '../../../../api/entity/dto/request/loginRequest.model';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
-import {ErrorModalComponent} from '../../../shared/components/modals/error-modal/error-modal.component';
-import {RegisterRequest} from '../../../api/entity/dto/request/registerRequest.model';
-import {AuthStore} from '../../../shared/store/auth.store';
+import {ErrorModalComponent} from '../../../../shared/components/modals/error-modal/error-modal.component';
+import {RegisterRequest} from '../../../../api/entity/dto/request/registerRequest.model';
+import {AuthStore} from '../../../../shared/store/auth.store';
 
 @Injectable({
     providedIn: 'root'

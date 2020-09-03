@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
-import {AuthFacade} from './facade/auth.facade';
+import {AuthFacade} from './shared/facade/auth.facade';
 
 /**
  * Корневой компонент для безопасности

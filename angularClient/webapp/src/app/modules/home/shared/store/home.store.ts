@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
-import {KeyParamsInput} from '../../../api/entity/keyParamsInput';
+import {KeyParamsInput} from '../../../../api/entity/keyParamsInput';
 
 @Injectable({
     providedIn: 'any'
