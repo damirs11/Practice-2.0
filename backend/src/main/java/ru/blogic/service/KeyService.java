@@ -1,14 +1,17 @@
 package ru.blogic.service;
 
 import org.springframework.transaction.annotation.Transactional;
-import ru.blogic.entity.Key;
+import ru.blogic.dto.KeyFileDTO;
 import ru.blogic.entity.KeyFile;
+import ru.blogic.entity.KeyMetaDTO;
+import ru.blogic.interfaces.KeyGenerator;
 import ru.blogic.repository.KeyFileRepository;
 import ru.blogic.repository.KeyRepository;
 import org.springframework.stereotype.Service;
 
 import java.io.FileNotFoundException;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 /**
  * Сервис для работы с ключами
@@ -16,7 +19,7 @@ import java.util.Date;
  * @author DSalikhov
  */
 @Service
-public class KeyService {
+public class KeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
 
     final KeyFileRepository keyFileRepository;
 
@@ -32,7 +35,7 @@ public class KeyService {
      *
      * @return ключи
      */
-    public Iterable<Key> findAll() {
+    public Iterable<KeyMetaDTO> findAll() {
         return keyRepository.findAll();
     }
 
@@ -44,32 +47,32 @@ public class KeyService {
      * @throws FileNotFoundException
      */
     @Transactional(readOnly = true)
-    public KeyFile getKeyFile(Long keyFileId) throws FileNotFoundException {
+    public KeyFileDTO getKeyFile(Long keyFileId) throws FileNotFoundException {
         return keyFileRepository.findById(keyFileId)
-                .orElseThrow(() -> new FileNotFoundException("Key not found with id " + keyFileId));
+                .orElseThrow(() -> new FileNotFoundException("Ключ с id " + keyFileId + "не найден"));
     }
 
     /**
      * Создать новый ключ
      *
-     * @param key входные данные для создания
+     * @param keyMetaDTO входные данные для создания
      */
     @Transactional()
-    public void createNewKey(Key key) {
+    public void generate(KeyMetaDTO keyMetaDTO) {
         byte[] keyFile = fakeXMLSecurity(
-                key.getName(),
-                key.getExpiration(),
-                key.getCoresCount(),
-                key.getUsersCount(),
-                key.getModuleFlags(),
-                key.getKeyFileName()
+                keyMetaDTO.getName(),
+                keyMetaDTO.getExpiration(),
+                keyMetaDTO.getCoresCount(),
+                keyMetaDTO.getUsersCount(),
+                keyMetaDTO.getModuleFlags(),
+                keyMetaDTO.getKeyFileName()
         );
 
-        KeyFile temp = new KeyFile();
+        KeyFileDTO temp = new KeyFileDTO();
         temp.setData(keyFile);
-        temp.setFileName(key.getKeyFileName());
+        temp.setFileName(keyMetaDTO.getKeyFileName());
         temp.setFileType("text/plain"); //TODO: Изменить тип, как будет известен он
-        temp.setKey(key);
+        temp.setKeyMetaDTO(keyMetaDTO);
 
         this.keyFileRepository.save(temp);
     }

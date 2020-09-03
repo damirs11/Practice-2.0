@@ -25,15 +25,6 @@ public class LicenceSpringApplication {
      * @param args
      */
     public static void main(String[] args) {
-        ConfigurableApplicationContext context = SpringApplication.run(LicenceSpringApplication.class, args);
-        RoleRepository roleRepository = context.getBean(RoleRepository.class);
-
-        Arrays.stream(RoleNameImpl.values()).forEach(roles -> {
-            if (!roleRepository.findByRole(roles).isPresent()) {
-                Role role = new Role(roles);
-
-                roleRepository.save(role);
-            }
-        });
+        SpringApplication.run(LicenceSpringApplication.class, args);
     }
 }

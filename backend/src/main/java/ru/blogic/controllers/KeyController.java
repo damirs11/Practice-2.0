@@ -1,9 +1,9 @@
 package ru.blogic.controllers;
 
+import ru.blogic.dto.KeyFileDTO;
 import ru.blogic.dto.response.MessageResponse;
-import ru.blogic.entity.Key;
-import ru.blogic.entity.KeyFile;
-import ru.blogic.service.KeyService;
+import ru.blogic.entity.KeyMetaDTO;
+import ru.blogic.interfaces.KeyGenerator;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -27,10 +27,10 @@ import java.io.FileNotFoundException;
 @RequestMapping("/api/key")
 public class KeyController {
 
-    private final KeyService keyService;
+    private final KeyGenerator<KeyMetaDTO, KeyFileDTO> keyGenerator;
 
-    public KeyController(KeyService keyService) {
-        this.keyService = keyService;
+    public KeyController(KeyGenerator<KeyMetaDTO, KeyFileDTO> keyGenerator) {
+        this.keyGenerator = keyGenerator;
     }
 
     /**
@@ -39,8 +39,8 @@ public class KeyController {
      * @return ключи
      */
     @GetMapping("")
-    public Iterable<Key> getAllKeys() {
-        return keyService.findAll();
+    public Iterable<KeyMetaDTO> getAllKeys() {
+        return keyGenerator.findAll();
     }
 
     /**
@@ -52,7 +52,7 @@ public class KeyController {
      */
     @GetMapping("/download/{keyFileId:.+}")
     public ResponseEntity<Resource> downloadKeyFile(@PathVariable Long keyFileId) throws FileNotFoundException {
-        KeyFile keyFile = keyService.getKeyFile(keyFileId);
+        KeyFileDTO keyFile = keyGenerator.getKeyFile(keyFileId);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(keyFile.getFileType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=\"%s\"", keyFile.getFileName()))
@@ -67,8 +67,8 @@ public class KeyController {
      * @return ответ
      */
     @PostMapping("/create")
-    public MessageResponse createNewKey(@RequestBody Key key) {
-        keyService.createNewKey(key);
+    public MessageResponse createNewKey(@RequestBody KeyMetaDTO key) {
+        keyGenerator.generate(key);
         return new MessageResponse("Новый ключ создан");
     }
 }
