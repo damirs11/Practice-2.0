@@ -1,5 +1,7 @@
 package ru.blogic.entity;
 
+import ru.blogic.dto.KeyMetaDTO;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,7 +18,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "t_keys")
-public class Key {
+public class KeyMeta {
 
     /**
      * ID
@@ -58,7 +60,7 @@ public class Key {
      * 2-СЭД <br>
      * 3-фичи (доп.возможности) <br>
      * 4-архив (2017), но его уже нет. <br>
-     *
+     * <p>
      * Типичная лицензия 11110000
      */
     @Column(name = "module_flags")
@@ -75,7 +77,18 @@ public class Key {
      */
     private String comment;
 
-    public Key() {
+    public KeyMeta() {
+    }
+
+    public KeyMeta(KeyMetaDTO keyMetaDTO) {
+        this.id = keyMetaDTO.getId();
+        this.name = keyMetaDTO.getName();
+        this.expiration = keyMetaDTO.getExpiration();
+        this.coresCount = keyMetaDTO.getCoresCount();
+        this.usersCount = keyMetaDTO.getUsersCount();
+        this.moduleFlags = keyMetaDTO.getModuleFlags();
+        this.keyFileName = keyMetaDTO.getKeyFileName();
+        this.comment = keyMetaDTO.getComment();
     }
 
     public Long getId() {

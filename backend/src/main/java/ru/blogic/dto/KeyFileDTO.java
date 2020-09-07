@@ -1,6 +1,6 @@
 package ru.blogic.dto;
 
-import ru.blogic.entity.KeyMetaDTO;
+import ru.blogic.entity.KeyFile;
 
 /**
  * Файловое представление ключа
@@ -41,6 +41,12 @@ public class KeyFileDTO {
         this.fileName = fileName;
         this.fileType = fileType;
         this.data = data;
+    }
+
+    public KeyFileDTO(KeyFile keyFile) {
+        this.fileName = keyFile.getFileName();
+        this.fileType = keyFile.getFileType();
+        this.data = keyFile.getData();
     }
 
     public Long getId() {

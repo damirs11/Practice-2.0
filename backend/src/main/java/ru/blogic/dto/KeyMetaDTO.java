@@ -1,11 +1,7 @@
-package ru.blogic.entity;
+package ru.blogic.dto;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import ru.blogic.entity.KeyMeta;
+
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.Objects;
@@ -75,18 +71,23 @@ public class KeyMetaDTO {
      */
     private String comment;
 
+    /**
+     * Файл активации
+     */
+    private String activationFileName;
+
     public KeyMetaDTO() {
     }
 
-    public KeyMetaDTO(Key key) {
-        this.id = key.getId();
-        this.name = key.getName();
-        this.expiration = key.getExpiration();
-        this.coresCount = key.getCoresCount();
-        this.usersCount = key.getUsersCount();
-        this.moduleFlags = key.getModuleFlags();
-        this.keyFileName = key.getKeyFileName();
-        this.comment = key.getComment();
+    public KeyMetaDTO(KeyMeta keyMeta) {
+        this.id = keyMeta.getId();
+        this.name = keyMeta.getName();
+        this.expiration = keyMeta.getExpiration();
+        this.coresCount = keyMeta.getCoresCount();
+        this.usersCount = keyMeta.getUsersCount();
+        this.moduleFlags = keyMeta.getModuleFlags();
+        this.keyFileName = keyMeta.getKeyFileName();
+        this.comment = keyMeta.getComment();
     }
 
     public Long getId() {
@@ -151,6 +152,14 @@ public class KeyMetaDTO {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public String getActivationFileName() {
+        return activationFileName;
+    }
+
+    public void setActivationFileName(String activationFileName) {
+        this.activationFileName = activationFileName;
     }
 
     @Override

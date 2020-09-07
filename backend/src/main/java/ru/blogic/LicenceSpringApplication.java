@@ -20,8 +20,6 @@ public class LicenceSpringApplication {
     /**
      * Входная точка приложения
      *
-     * Здесь создаются роли в базе данных
-     *
      * @param args
      */
     public static void main(String[] args) {

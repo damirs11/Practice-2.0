@@ -1,5 +1,7 @@
 package ru.blogic.entity;
 
+import ru.blogic.dto.KeyMetaDTO;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -45,7 +47,7 @@ public class KeyFile {
      */
     @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     @MapsId
-    private Key key;
+    private KeyMeta keyMeta;
 
     /**
      * Сам файл
@@ -53,12 +55,10 @@ public class KeyFile {
     @Lob
     private byte[] data;
 
-    public KeyFile() {
-    }
-
-    public KeyFile(String fileName, String fileType, byte[] data) {
+    public KeyFile(String fileName, String fileType, KeyMeta keyMeta, byte[] data) {
         this.fileName = fileName;
         this.fileType = fileType;
+        this.keyMeta = keyMeta;
         this.data = data;
     }
 
@@ -94,11 +94,11 @@ public class KeyFile {
         this.data = data;
     }
 
-    public Key getKey() {
-        return key;
+    public KeyMeta getKeyMeta() {
+        return keyMeta;
     }
 
-    public void setKey(Key key) {
-        this.key = key;
+    public void setKeyMeta(KeyMeta keyMeta) {
+        this.keyMeta = keyMeta;
     }
 }

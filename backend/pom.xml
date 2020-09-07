@@ -17,6 +17,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>8</java.version>
         <frontend-bundle-dir>${project.parent.basedir}/angularClient/webapp/build/dev/</frontend-bundle-dir>
+        <commons-io.version>2.6</commons-io.version>
     </properties>
 
     <profiles>
@@ -50,6 +51,11 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
         </dependency>
     </dependencies>
 
