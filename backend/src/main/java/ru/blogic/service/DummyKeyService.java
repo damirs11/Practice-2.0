@@ -73,41 +73,39 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
      */
     @Override
     @Transactional()
-    public void generate(KeyMetaDTO keyMetaDTO) {
-        if (keyMetaDTO.getActivationFileName() == null) {
-            keyMetaDTO.setActivationFileName("nofile");
-        } else {
-            keyMetaDTO.setActivationFileName(System.getProperty("java.io.tmpdir") + keyMetaDTO.getActivationFileName());
+    public void generate(KeyMetaDTO keyMetaDTO) throws IOException {
+
+        String pathToActivationFile = "nofile";
+
+        if (keyMetaDTO.getFile() != null) {
+            fileStorageService.save(keyMetaDTO.getFile());
+            pathToActivationFile = FileStorageService.ROOT + File.separator + keyMetaDTO.getFile().getOriginalFilename();
         }
 
-        try {
-            Process processBuilder = new ProcessBuilder()
-                    .inheritIO()
-                    .command(
-                            "java", "-jar", env.getProperty(PROPERTY_LICENSES_PATH),
-                            keyMetaDTO.getName(),
-                            keyMetaDTO.getExpiration().toString(),
-                            String.valueOf(keyMetaDTO.getCoresCount()),
-                            String.valueOf(keyMetaDTO.getUsersCount()),
-                            String.valueOf(keyMetaDTO.getModuleFlags()),
-                            keyMetaDTO.getKeyFileName(),
-                            keyMetaDTO.getActivationFileName()
-                    )
-                    .start();
-            fileStorageService.deleteAll();
+        Process processBuilder = new ProcessBuilder()
+                .inheritIO()
+                .command(
+                        "java", "-jar", env.getProperty(PROPERTY_LICENSES_PATH),
+                        keyMetaDTO.getName(),
+                        keyMetaDTO.getExpiration().toString(),
+                        String.valueOf(keyMetaDTO.getCoresCount()),
+                        String.valueOf(keyMetaDTO.getUsersCount()),
+                        String.valueOf(keyMetaDTO.getModuleFlags()),
+                        keyMetaDTO.getKeyFileName(),
+                        pathToActivationFile
+                )
+                .start();
+        fileStorageService.deleteAll();
 
-            File keyFileTemp = new File(System.getProperty("java.io.tmpdir") + keyMetaDTO.getKeyFileName());
-            KeyMeta keyMeta = new KeyMeta(keyMetaDTO);
-            KeyFile keyFile = new KeyFile(
-                    keyMetaDTO.getKeyFileName(),
-                    MediaType.APPLICATION_OCTET_STREAM_VALUE,
-                    keyMeta,
-                    FileUtils.readFileToByteArray(keyFileTemp)
-            );
+        File keyFileTemp = new File(System.getProperty("java.io.tmpdir") + keyMetaDTO.getKeyFileName());
+        KeyMeta keyMeta = new KeyMeta(keyMetaDTO);
+        KeyFile keyFile = new KeyFile(
+                keyMetaDTO.getKeyFileName(),
+                MediaType.APPLICATION_OCTET_STREAM_VALUE,
+                keyMeta,
+                FileUtils.readFileToByteArray(keyFileTemp)
+        );
 
-            this.keyFileRepository.save(keyFile);
-        } catch (IOException e) {
-            logger.info("Что то пошло не так при генерации", e);
-        }
+        this.keyFileRepository.save(keyFile);
     }
 }

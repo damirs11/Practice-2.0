@@ -1,5 +1,8 @@
 package ru.blogic.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 import ru.blogic.entity.KeyMeta;
 
 import javax.validation.constraints.NotEmpty;
@@ -29,6 +32,7 @@ public class KeyMetaDTO {
      * Дата истечения
      */
     @NotEmpty
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date expiration;
 
     /**
@@ -74,7 +78,8 @@ public class KeyMetaDTO {
     /**
      * Файл активации
      */
-    private String activationFileName;
+    @JsonIgnore
+    private MultipartFile file;
 
     public KeyMetaDTO() {
     }
@@ -154,12 +159,12 @@ public class KeyMetaDTO {
         this.comment = comment;
     }
 
-    public String getActivationFileName() {
-        return activationFileName;
+    public MultipartFile getFile() {
+        return file;
     }
 
-    public void setActivationFileName(String activationFileName) {
-        this.activationFileName = activationFileName;
+    public void setFile(MultipartFile file) {
+        this.file = file;
     }
 
     @Override

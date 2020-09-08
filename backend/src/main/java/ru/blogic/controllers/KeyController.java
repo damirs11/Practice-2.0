@@ -7,13 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 import ru.blogic.dto.KeyFileDTO;
 import ru.blogic.dto.KeyMetaDTO;
 import ru.blogic.dto.response.MessageResponse;
@@ -32,11 +30,11 @@ import java.io.IOException;
 @RequestMapping("/api/key")
 public class KeyController {
 
-    private final KeyGenerator<KeyMetaDTO, KeyFileDTO> keyGenerator;
+    private final KeyGenerator<KeyMetaDTO, KeyFileDTO> dummyKeyService;
     private final FileStorageService fileStorageService;
 
-    public KeyController(KeyGenerator<KeyMetaDTO, KeyFileDTO> keyGenerator, FileStorageService fileStorageService) {
-        this.keyGenerator = keyGenerator;
+    public KeyController(KeyGenerator<KeyMetaDTO, KeyFileDTO> dummyKeyService, FileStorageService fileStorageService) {
+        this.dummyKeyService = dummyKeyService;
         this.fileStorageService = fileStorageService;
     }
 
@@ -47,7 +45,7 @@ public class KeyController {
      */
     @GetMapping("")
     public Iterable<KeyMetaDTO> getAllKeys() {
-        return keyGenerator.findAll();
+        return dummyKeyService.findAll();
     }
 
     /**
@@ -59,7 +57,7 @@ public class KeyController {
      */
     @GetMapping("/download/{keyFileId:.+}")
     public ResponseEntity<Resource> downloadKeyFile(@PathVariable Long keyFileId) throws FileNotFoundException {
-        KeyFileDTO keyFile = keyGenerator.getKeyFile(keyFileId);
+        KeyFileDTO keyFile = dummyKeyService.getKeyFile(keyFileId);
         return ResponseEntity.ok()
                 .contentType(MediaType.parseMediaType(keyFile.getFileType()))
                 .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=\"%s\"", keyFile.getFileName()))
@@ -73,20 +71,13 @@ public class KeyController {
      * @param key входные данные для создания
      * @return ответ
      */
-    @PostMapping("/create")
-    public MessageResponse createNewKey(@RequestBody KeyMetaDTO key) {
-        keyGenerator.generate(key);
-        return new MessageResponse("Новый ключ создан");
-    }
-
-    @PostMapping("/uploadActivationKey")
-    public ResponseEntity uploadActivationKey(@RequestParam("file") MultipartFile file) {
+    @PostMapping(value = "/create")
+    public ResponseEntity createNewKey(@ModelAttribute KeyMetaDTO key) {
         try {
-            fileStorageService.save(file);
-            return ResponseEntity.ok(new MessageResponse("Файл успешно сохранен: " + file.getOriginalFilename()));
+            dummyKeyService.generate(key);
+            return ResponseEntity.ok(new MessageResponse("Новый ключ создан"));
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new MessageResponse("Ошибка при сохранении файла: " + file.getOriginalFilename()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Ошибка при генерации ключа"));
         }
     }
 }

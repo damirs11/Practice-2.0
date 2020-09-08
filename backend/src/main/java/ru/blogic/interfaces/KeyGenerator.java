@@ -3,6 +3,7 @@ package ru.blogic.interfaces;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public interface KeyGenerator<KeyMeta, KeyFile> {
 
@@ -28,6 +29,6 @@ public interface KeyGenerator<KeyMeta, KeyFile> {
      * @param keyInputParams входные данные для создания
      */
     @Transactional()
-    public void generate(KeyMeta keyInputParams);
+    public void generate(KeyMeta keyInputParams) throws IOException;
 
 }
