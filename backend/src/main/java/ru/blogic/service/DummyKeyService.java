@@ -77,9 +77,9 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
 
         String pathToActivationFile = "nofile";
 
-        if (keyMetaDTO.getFile() != null) {
-            fileStorageService.save(keyMetaDTO.getFile());
-            pathToActivationFile = FileStorageService.ROOT + File.separator + keyMetaDTO.getFile().getOriginalFilename();
+        if (keyMetaDTO.getActivationKeyFile() != null) {
+            fileStorageService.save(keyMetaDTO.getActivationKeyFile());
+            pathToActivationFile = FileStorageService.ROOT + File.separator + keyMetaDTO.getActivationKeyFile().getOriginalFilename();
         }
 
         Process processBuilder = new ProcessBuilder()

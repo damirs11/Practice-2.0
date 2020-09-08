@@ -32,7 +32,6 @@ public class KeyMetaDTO {
      * Дата истечения
      */
     @NotEmpty
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date expiration;
 
     /**
@@ -79,7 +78,7 @@ public class KeyMetaDTO {
      * Файл активации
      */
     @JsonIgnore
-    private MultipartFile file;
+    private MultipartFile activationKeyFile;
 
     public KeyMetaDTO() {
     }
@@ -159,12 +158,12 @@ public class KeyMetaDTO {
         this.comment = comment;
     }
 
-    public MultipartFile getFile() {
-        return file;
+    public MultipartFile getActivationKeyFile() {
+        return activationKeyFile;
     }
 
-    public void setFile(MultipartFile file) {
-        this.file = file;
+    public void setActivationKeyFile(MultipartFile activationKeyFile) {
+        this.activationKeyFile = activationKeyFile;
     }
 
     @Override

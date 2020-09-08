@@ -2,11 +2,11 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
-import {User} from '../../../api/entity/user';
+import {User} from '../../../api/entity/auth/user';
 import {LoggerService} from '../logger/logger.service';
-import {RegisterRequest} from '../../../api/entity/dto/request/registerRequest.model';
-import {MessageResponse} from '../../../api/entity/dto/response/messageResponse.model';
-import {LoginRequest} from '../../../api/entity/dto/request/loginRequest.model';
+import {Register} from '../../../api/entity/auth/register';
+import {MessageResponse} from '../../../api/entity/response/messageResponse';
+import {Login} from '../../../api/entity/auth/login';
 
 const apiUrl = 'api/auth';
 
@@ -29,7 +29,7 @@ export class AuthService {
      *
      * @param data LoginRequest - сущность с данными для логина
      */
-    login(data: LoginRequest) {
+    login(data: Login) {
         return this.http.post<MessageResponse>(`${apiUrl}/login`, data).pipe(
             tap((message) => this.logger.log(`AuthService.login: ${message.message}`)),
         );
@@ -38,9 +38,9 @@ export class AuthService {
     /**
      * Регистрация
      *
-     * @param data RegisterRequest - сущность с данными для регистрации
+     * @param data Register - сущность с данными для регистрации
      */
-    registration(data: RegisterRequest): Observable<MessageResponse> {
+    registration(data: Register): Observable<MessageResponse> {
         return this.http.post<MessageResponse>(`${apiUrl}/registration`, data).pipe(
             tap((message) => this.logger.log(`AuthService.registration: ${message.message}`)),
         );

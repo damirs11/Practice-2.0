@@ -23,6 +23,9 @@ import javax.persistence.Table;
 @Table(name = "t_key_files")
 public class KeyFile {
 
+    public KeyFile() {
+    }
+
     /**
      * ID
      */
