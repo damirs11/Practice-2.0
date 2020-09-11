@@ -2,9 +2,9 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
 import {tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
-import {KeyParams} from '../../../../../api/entity/license/keyParams';
+import {KeyParams} from '../../../../../api/license/keyParams';
 import {LoggerService} from '../../../../../shared/service/logger/logger.service';
-import {MessageResponse} from '../../../../../api/entity/response/messageResponse';
+import {MessageResponse} from '../../../../../api/response/messageResponse';
 
 const apiUrl = 'api/key';
 

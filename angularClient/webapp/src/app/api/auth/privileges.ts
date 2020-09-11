@@ -4,7 +4,7 @@
  * @author DSalikhov
  * @export
  */
-export class Authority {
+export class Privileges {
     /**
      * ID
      */

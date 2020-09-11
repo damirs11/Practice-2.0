@@ -1,4 +1,4 @@
-import KeyUtils from '../../../pages/home/shared/utils/keyUtils';
+import KeyUtils from '../../pages/home/shared/utils/keyUtils';
 
 /**
  * Метаданные ключа, служит так и для генерации

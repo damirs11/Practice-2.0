@@ -8,8 +8,4 @@ describe('Home', () => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(HomeFacade);
     });
-
-    it('should be created', () => {
-        expect(service).toBeTruthy();
-    });
 });

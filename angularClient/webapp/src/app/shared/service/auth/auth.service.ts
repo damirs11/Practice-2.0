@@ -2,11 +2,10 @@ import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {tap} from 'rxjs/operators';
-import {User} from '../../../api/entity/auth/user';
+import {User} from '../../../api/auth/user';
 import {LoggerService} from '../logger/logger.service';
-import {Register} from '../../../api/entity/auth/register';
-import {MessageResponse} from '../../../api/entity/response/messageResponse';
-import {Login} from '../../../api/entity/auth/login';
+import {MessageResponse} from '../../../api/response/messageResponse';
+import {BaseAuth} from '../../../api/auth/base-auth';
 
 const apiUrl = 'api/auth';
 
@@ -29,7 +28,7 @@ export class AuthService {
      *
      * @param data LoginRequest - сущность с данными для логина
      */
-    login(data: Login) {
+    login(data: BaseAuth) {
         return this.http.post<MessageResponse>(`${apiUrl}/login`, data).pipe(
             tap((message) => this.logger.log(`AuthService.login: ${message.message}`)),
         );
@@ -40,7 +39,7 @@ export class AuthService {
      *
      * @param data Register - сущность с данными для регистрации
      */
-    registration(data: Register): Observable<MessageResponse> {
+    registration(data: BaseAuth): Observable<MessageResponse> {
         return this.http.post<MessageResponse>(`${apiUrl}/registration`, data).pipe(
             tap((message) => this.logger.log(`AuthService.registration: ${message.message}`)),
         );

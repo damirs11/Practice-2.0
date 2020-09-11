@@ -2,11 +2,10 @@ import {Injectable} from '@angular/core';
 import {AuthService} from '../../../shared/service/auth/auth.service';
 import {Observable} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Login} from '../../../api/entity/auth/login';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {ErrorModalComponent} from '../../../components/modals/error-modal/error-modal.component';
-import {Register} from '../../../api/entity/auth/register';
 import {AuthStore} from '../../../shared/store/auth.store';
+import {BaseAuth} from "../../../api/auth/base-auth";
 
 @Injectable({
     providedIn: 'root'
@@ -40,7 +39,7 @@ export class AuthFacade {
     login(username: string, password: string): void {
         this.authStore.setUpdating(true);
 
-        this.authService.login(new Login(username, password)).subscribe(
+        this.authService.login(new BaseAuth(username, password)).subscribe(
             (res) => {
                 this.authService.updateUserStatus().subscribe((user) => {
                     this.authStore.setCurrentUser(user);
@@ -68,7 +67,7 @@ export class AuthFacade {
     registration(username: string, password: string): void {
         this.authStore.setUpdating(true);
 
-        this.authService.registration(new Register(username, password)).subscribe(
+        this.authService.registration(new BaseAuth(username, password)).subscribe(
             (res) => this.router.navigate(['/auth/login']),
             (err) => {
                 this.authStore.setUpdating(false);

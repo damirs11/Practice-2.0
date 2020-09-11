@@ -4,7 +4,7 @@ import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {Observable} from 'rxjs';
 import {AuthService} from '../../../../shared/service/auth/auth.service';
 import {ErrorModalComponent} from '../../../../components/modals/error-modal/error-modal.component';
-import {KeyParams} from '../../../../api/entity/license/keyParams';
+import {KeyParams} from '../../../../api/license/keyParams';
 import {KeyService} from '../service/key/key.service';
 import {LoggerService} from '../../../../shared/service/logger/logger.service';
 import {HomeStore} from '../store/home.store';

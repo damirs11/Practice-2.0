@@ -8,27 +8,27 @@ import {environment} from '../../../../environments/environment';
  * @export
  */
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class LoggerService {
 
-  constructor(private errorHandler: ErrorHandler) {
-  }
-
-  /**
-   * Обычных лог, работает только при дебаге
-   */
-  log(value: any, ...rest: any[]): void {
-    if (!environment.production) {
-      console.log(value, ...rest);
+    constructor(private errorHandler: ErrorHandler) {
     }
-  }
 
-  error(error: Error): void {
-    this.errorHandler.handleError(error);
-  }
+    /**
+     * Обычных лог, работает только при дебаге
+     */
+    log(value: any, ...rest: any[]): void {
+        if (!environment.production) {
+            console.log(value, ...rest);
+        }
+    }
 
-  warn(value: any, ...rest: any[]): void {
-    console.warn(value, ...rest);
-  }
+    error(error: Error): void {
+        this.errorHandler.handleError(error);
+    }
+
+    warn(value: any, ...rest: any[]): void {
+        console.warn(value, ...rest);
+    }
 }
