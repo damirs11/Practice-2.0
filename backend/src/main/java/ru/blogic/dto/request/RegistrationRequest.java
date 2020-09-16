@@ -22,6 +22,11 @@ public class RegistrationRequest {
     @NotEmpty
     private String password;
 
+    public RegistrationRequest(@NotEmpty String username, @NotEmpty String password) {
+        this.username = username;
+        this.password = password;
+    }
+
     public String getUsername() {
         return username;
     }

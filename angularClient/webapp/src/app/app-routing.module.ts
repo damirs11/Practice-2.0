@@ -12,7 +12,7 @@ const routes: Routes = [
     },
     {
         path: '',
-        redirectTo: 'home/licenses',
+        redirectTo: 'test',
         pathMatch: 'full'
     },
     {

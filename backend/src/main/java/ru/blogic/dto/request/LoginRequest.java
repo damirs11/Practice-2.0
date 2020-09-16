@@ -22,6 +22,11 @@ public class LoginRequest {
     @NotEmpty
     private String password;
 
+    public LoginRequest(@NotEmpty String username, @NotEmpty String password) {
+        this.username = username;
+        this.password = password;
+    }
+
     public String getUsername() {
         return username;
     }

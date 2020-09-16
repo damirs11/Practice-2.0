@@ -1,12 +1,12 @@
-import { TestBed } from '@angular/core/testing';
+import {TestBed} from '@angular/core/testing';
 
-import { KeyService } from './key.service';
+import {KeyService} from './key.service';
 
 describe('KeyService', () => {
-  let service: KeyService;
+    let service: KeyService;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(KeyService);
-  });
+    beforeEach(() => {
+        TestBed.configureTestingModule({});
+        service = TestBed.inject(KeyService);
+    });
 });

@@ -1,5 +1,9 @@
 package ru.blogic.entity;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import ru.blogic.dto.KeyMetaDTO;
 
 import javax.persistence.Column;
@@ -81,7 +85,6 @@ public class KeyMeta {
     }
 
     public KeyMeta(KeyMetaDTO keyMetaDTO) {
-        this.id = keyMetaDTO.getId();
         this.name = keyMetaDTO.getName();
         this.expiration = keyMetaDTO.getExpiration();
         this.coresCount = keyMetaDTO.getCoresCount();
@@ -156,7 +159,42 @@ public class KeyMeta {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        KeyMeta keyMeta = (KeyMeta) o;
+
+        return new EqualsBuilder()
+                .append(coresCount, keyMeta.coresCount)
+                .append(usersCount, keyMeta.usersCount)
+                .append(moduleFlags, keyMeta.moduleFlags)
+                .append(id, keyMeta.id)
+                .append(name, keyMeta.name)
+                .append(expiration, keyMeta.expiration)
+                .append(keyFileName, keyMeta.keyFileName)
+                .append(comment, keyMeta.comment)
+                .isEquals();
+    }
+
+    @Override
     public int hashCode() {
-        return Objects.hash(getId(), getName(), getExpiration(), getCoresCount(), getUsersCount(), getModuleFlags(), getKeyFileName(), getComment());
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(name)
+                .append(expiration)
+                .append(coresCount)
+                .append(usersCount)
+                .append(moduleFlags)
+                .append(keyFileName)
+                .append(comment)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE,
+                true, true);
     }
 }

@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
-import {LoggerService} from '../../../shared/service/logger/logger.service';
-import {HomeFacade} from '../shared/facade/home.facade';
+import {Component} from '@angular/core';
+import {LoggerService} from '@shared/service/logger/logger.service';
+import {HomeFacade} from '../shared/service/facade/home.facade';
+import {LicenseType} from "@api/license/enums/license-type";
 
 /**
  * Компонент для логина
@@ -13,19 +14,26 @@ import {HomeFacade} from '../shared/facade/home.facade';
     templateUrl: './licenses.component.html',
     styleUrls: ['./licenses.component.less'],
 })
-export class LicensesComponent implements OnInit {
+export class LicensesComponent {
+    licenses = LicenseType;
+
     constructor(
         private logger: LoggerService,
         private homeFacade: HomeFacade
     ) {
     }
 
-    ngOnInit(): void {
-        this.refreshData();
-    }
-
     get keys() {
         return this.homeFacade.getKeys();
+    }
+
+    get selectedLicense() {
+        return this.homeFacade.getSelectedLicense();
+    }
+
+    onLicenseSelect(license: LicenseType) {
+        this.homeFacade.setSelectedLicense(license);
+        this.refreshData();
     }
 
     /**
@@ -41,8 +49,6 @@ export class LicensesComponent implements OnInit {
      * @param keyFileId - id ключа
      */
     downloadKey(keyFileId: number) {
-        this.homeFacade.downloadKey(keyFileId).subscribe((_) => {
-            this.logger.log('download' + keyFileId);
-        });
+        this.homeFacade.downloadKey(keyFileId);
     }
 }

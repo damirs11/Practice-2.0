@@ -5,5 +5,5 @@
  * @export
  */
 export class MessageResponse {
-  message: string;
+    message: string;
 }

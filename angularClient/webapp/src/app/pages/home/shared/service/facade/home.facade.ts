@@ -2,17 +2,18 @@ import {Router} from '@angular/router';
 import {Injectable} from '@angular/core';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {Observable} from 'rxjs';
-import {AuthService} from '../../../../shared/service/auth/auth.service';
-import {ErrorModalComponent} from '../../../../components/modals/error-modal/error-modal.component';
-import {KeyParams} from '../../../../api/license/keyParams';
-import {KeyService} from '../service/key/key.service';
-import {LoggerService} from '../../../../shared/service/logger/logger.service';
-import {HomeStore} from '../store/home.store';
+import {AuthService} from '@shared/service/auth/auth.service';
+import {ErrorModalComponent} from '@components/modals/error-modal/error-modal.component';
+import {KeyGenerationParams} from '@api/license/key-generation-params';
+import {KeyService} from '../key/key.service';
+import {LoggerService} from '@shared/service/logger/logger.service';
+import {HomeStore} from '../../store/home.store';
 import {tap} from 'rxjs/operators';
 import {HttpResponse} from '@angular/common/http';
 import {saveAs} from 'file-saver';
-import KeyUtils from '../utils/keyUtils';
-import {AuthStore} from '../../../../shared/store/auth.store';
+import KeyUtils from '../../utils/keyUtils';
+import {AuthStore} from '@shared/store/auth.store';
+import {LicenseType} from '@api/license/enums/license-type';
 
 @Injectable({
     providedIn: 'any'
@@ -34,16 +35,24 @@ export class HomeFacade {
         return this.homeStore.isUpdating$();
     }
 
-    getKeys(): Observable<KeyParams[]> {
+    getKeys(): Observable<KeyGenerationParams[]> {
         return this.homeStore.getKeys$();
+    }
+
+    getSelectedLicense(): LicenseType {
+        return this.homeStore.getSelectedLicenseValue$();
+    }
+
+    setSelectedLicense(license: LicenseType) {
+        this.homeStore.setSelectedLicense(license);
     }
 
     /**
      * Обновляет данные о ключах
      */
-    refreshData() {
+    refreshData(): void {
         this.homeStore.setUpdating(true);
-        this.keyService.getKeys().subscribe(
+        this.keyService.getKeys(this.homeStore.getSelectedLicenseValue$()).subscribe(
             res => this.homeStore.setKeys(res),
             () => this.homeStore.setUpdating(false),
             () => this.homeStore.setUpdating(false)
@@ -55,8 +64,8 @@ export class HomeFacade {
      *
      * @param keyFileId - id ключа
      */
-    downloadKey(keyFileId: number) {
-        return this.keyService.downloadKey(keyFileId).pipe(
+    downloadKey(keyFileId: number): void {
+        this.keyService.downloadKey(keyFileId, this.homeStore.getSelectedLicenseValue$()).pipe(
             tap((res: HttpResponse<Blob>) => {
                 const fileName = KeyUtils.getFileNameFromResponse(res);
                 this.logger.log(fileName);
@@ -68,21 +77,18 @@ export class HomeFacade {
     /**
      * Производит создание нового ключа основывая на данных из формы
      *
+     * @param licenseType - тип ключа
      * @param data - форма с данными
+     * @param activationFile - файл активации
      */
-    createKey(data: any) {
+    createKey(data: any, activationFile: File): void {
         this.homeStore.setUpdating(true);
 
-        data.moduleFlags = KeyUtils.convertBooleanModuleFlagToByte(data.moduleFlags);
-        data.activationKeyFile = data?.activationKeyFile?._files[0] ?? null;
-
         const formData = new FormData();
-        for (const key in data) {
-            if (data.hasOwnProperty(key) && data[key] !== null) {
-                formData.append(key, data[key]);
-            }
-        }
-
+        formData.append('type', new Blob([JSON.stringify(this.homeStore.getSelectedLicenseValue$())], {type: 'application/json'}));
+        formData.append('keyMeta', new Blob([JSON.stringify(data)], {type: 'application/json'}));
+        console.log(JSON.stringify(data));
+        formData.append('activationFile', activationFile);
 
         this.keyService.createNewKey(formData).subscribe(
             (message) => {
@@ -103,8 +109,6 @@ export class HomeFacade {
                 this.homeStore.setUpdating(false);
             }
         );
-
-
     }
 
     /**

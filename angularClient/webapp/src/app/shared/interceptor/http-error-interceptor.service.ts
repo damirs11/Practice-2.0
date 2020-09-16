@@ -4,8 +4,8 @@ import {EMPTY, Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {AuthService} from '../service/auth/auth.service';
 import {LoggerService} from '../service/logger/logger.service';
-import {StatusCodes} from 'http-status-codes/build/es';
 import {Router} from '@angular/router';
+import {StatusCodes} from 'http-status-codes/build/es';
 
 /**
  * HttpErrorInterceptor служит для обработки ошибок, логгирования в дебаге
@@ -33,12 +33,10 @@ export class HttpErrorInterceptor implements HttpInterceptor {
                 if (error.error instanceof Error) {
                     this.logger.error(error);
                 }
-                //
-                // if (error.status === StatusCodes.UNAUTHORIZED) {
-                //     this.router.navigate(['/auth/login']);
-                // } else if (error.status === StatusCodes.FORBIDDEN) {
-                //     this.router.navigate(['/error/403']);
-                // }
+
+                if (error.status === StatusCodes.UNAUTHORIZED) {
+                    this.router.navigate(['/auth/login']);
+                }
 
                 return EMPTY;
             })

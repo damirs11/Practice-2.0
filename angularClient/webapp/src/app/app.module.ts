@@ -9,14 +9,14 @@ import {MaterialFileInputModule} from 'ngx-material-file-input';
 
 import {AppComponent} from './app.component';
 import {AppRoutingModule} from './app-routing.module';
-import {ErrorModalComponent} from './components/modals/error-modal/error-modal.component';
-import {HttpErrorInterceptor} from './shared/interceptor/http-error-interceptor.service';
-import {AuthService} from './shared/service/auth/auth.service';
+import {ErrorModalComponent} from '@components/modals/error-modal/error-modal.component';
+import {HttpErrorInterceptor} from '@shared/interceptor/http-error-interceptor.service';
+import {AuthService} from '@shared/service/auth/auth.service';
 import {AngularMaterialModule} from './angular-material/angular-material.module';
-import {AuthModule} from './pages/auth/auth.module';
-import {AuthStore} from './shared/store/auth.store';
+import {AuthModule} from '@pages/auth/auth.module';
+import {AuthStore} from '@shared/store/auth.store';
 import {tap} from 'rxjs/operators';
-import {HomeModule} from './pages/home/home.module';
+import {HomeModule} from '@pages/home/home.module';
 
 @NgModule({
     declarations: [

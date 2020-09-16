@@ -1,9 +1,9 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {LoggedInGuard} from '../../shared/guard/logged-in.guard';
+import {LoggedInGuard} from '@shared/guard/logged-in.guard';
 import {LicensesComponent} from './licenses/licenses.component';
-import {NewKeyComponent} from './new-key/new-key.component';
 import {HomeComponent} from './home.component';
+import {GenerateComponent} from '@pages/home/generate/generate.component';
 
 const routes: Routes = [
     {
@@ -17,8 +17,8 @@ const routes: Routes = [
                 component: LicensesComponent,
             },
             {
-                path: 'newKey',
-                component: NewKeyComponent,
+                path: 'generate',
+                component: GenerateComponent,
             },
         ]
     },

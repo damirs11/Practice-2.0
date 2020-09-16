@@ -30,9 +30,9 @@
               "src/css/app.less"
             ],
             "scripts": [],
-            "tsConfig": "configuration/tsconfig.app.json"
+            "tsConfig": "./tsconfig.app.json"
           },
-          "configurations": {
+          ".s": {
             "production": {
               "fileReplacements": [
                 {
@@ -70,7 +70,7 @@
             "browserTarget": "angularClient:build",
             "proxyConfig": "src/proxy.conf.json"
           },
-          "configurations": {
+          ".s": {
             "production": {
               "browserTarget": "angularClient:build:production"
             }
@@ -87,8 +87,8 @@
           "options": {
             "main": "src/test.ts",
             "polyfills": "src/polyfills.ts",
-            "tsConfig": "configuration/tsconfig.spec.json",
-            "karmaConfig": "configuration/karma.conf.js",
+            "tsConfig": "./tsconfig.spec.json",
+            "karmaConfig": "./karma.conf.js",
             "assets": [
               "src/images"
             ],
@@ -103,8 +103,9 @@
           "builder": "@angular-devkit/build-angular:tslint",
           "options": {
             "tsConfig": [
-              "configuration/tsconfig.app.json",
-              "configuration/tsconfig.spec.json"
+              "./tsconfig.json",
+              "./tsconfig.app.json",
+              "./tsconfig.spec.json"
             ],
             "exclude": [
               "**/node_modules/**"

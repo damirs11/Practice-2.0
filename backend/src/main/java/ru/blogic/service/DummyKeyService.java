@@ -7,10 +7,12 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 import ru.blogic.dto.KeyFileDTO;
 import ru.blogic.dto.KeyMetaDTO;
 import ru.blogic.entity.KeyFile;
 import ru.blogic.entity.KeyMeta;
+import ru.blogic.enums.LicenseType;
 import ru.blogic.interfaces.KeyGenerator;
 import ru.blogic.repository.KeyFileRepository;
 import ru.blogic.repository.KeyRepository;
@@ -36,6 +38,11 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
         this.keyRepository = keyRepository;
         this.keyFileRepository = keyFileRepository;
         this.fileStorageService = fileStorageService;
+    }
+
+    @Override
+    public LicenseType getName() {
+        return LicenseType.DUMMY;
     }
 
     /**
@@ -73,16 +80,16 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
      */
     @Override
     @Transactional()
-    public void generate(KeyMetaDTO keyMetaDTO) throws IOException {
+    public void generate(KeyMetaDTO keyMetaDTO, MultipartFile activationFile) throws IOException {
 
         String pathToActivationFile = "nofile";
 
-        if (keyMetaDTO.getActivationKeyFile() != null) {
-            fileStorageService.save(keyMetaDTO.getActivationKeyFile());
-            pathToActivationFile = FileStorageService.ROOT + File.separator + keyMetaDTO.getActivationKeyFile().getOriginalFilename();
+        if (activationFile != null) {
+            fileStorageService.save(activationFile);
+            pathToActivationFile = FileStorageService.ROOT + File.separator + activationFile.getOriginalFilename();
         }
 
-        Process processBuilder = new ProcessBuilder()
+        new ProcessBuilder()
                 .inheritIO()
                 .command(
                         "java", "-jar", env.getProperty(PROPERTY_LICENSES_PATH),
@@ -90,7 +97,7 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
                         keyMetaDTO.getExpiration().toString(),
                         String.valueOf(keyMetaDTO.getCoresCount()),
                         String.valueOf(keyMetaDTO.getUsersCount()),
-                        String.valueOf(keyMetaDTO.getModuleFlags()),
+                        Integer.toBinaryString(keyMetaDTO.getModuleFlags()),
                         keyMetaDTO.getKeyFileName(),
                         pathToActivationFile
                 )

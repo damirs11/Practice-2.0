@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 
 /**
  * Корень приложения
@@ -11,11 +11,5 @@ import {Component, OnInit} from '@angular/core';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.less'],
 })
-export class AppComponent implements OnInit {
-
-    constructor() {
-    }
-
-    ngOnInit(): void {
-    }
+export class AppComponent {
 }

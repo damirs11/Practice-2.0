@@ -1,6 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {Observable} from 'rxjs';
-import {AuthFacade} from './services/auth.facade';
+import {AuthFacade} from './shared/services/auth.facade';
 
 /**
  * Корневой компонент для безопасности
@@ -13,7 +13,7 @@ import {AuthFacade} from './services/auth.facade';
     templateUrl: './auth.component.html',
     styleUrls: ['./auth.component.less']
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent {
 
     /**
      * boolean для спинера загрузки
@@ -22,8 +22,5 @@ export class AuthComponent implements OnInit {
 
     constructor(private authFacade: AuthFacade) {
         this.isUpdating$ = authFacade.isUpdating$();
-    }
-
-    ngOnInit(): void {
     }
 }

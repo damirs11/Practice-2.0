@@ -1,6 +1,10 @@
 package ru.blogic.entity;
 
-import ru.blogic.dto.KeyMetaDTO;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import ru.blogic.dto.KeyFileDTO;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -22,9 +26,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "t_key_files")
 public class KeyFile {
-
-    public KeyFile() {
-    }
 
     /**
      * ID
@@ -58,11 +59,22 @@ public class KeyFile {
     @Lob
     private byte[] data;
 
+    public KeyFile() {
+    }
+
     public KeyFile(String fileName, String fileType, KeyMeta keyMeta, byte[] data) {
         this.fileName = fileName;
         this.fileType = fileType;
         this.keyMeta = keyMeta;
         this.data = data;
+    }
+
+    public KeyFile(KeyFileDTO keyFileDTO) {
+        this.id = keyFileDTO.getId();
+        this.fileName = keyFileDTO.getFileName();
+        this.fileType = keyFileDTO.getFileType();
+        this.keyMeta = new KeyMeta(keyFileDTO.getKeyMetaDTO());
+        this.data = keyFileDTO.getData();
     }
 
     public Long getId() {
@@ -103,5 +115,39 @@ public class KeyFile {
 
     public void setKeyMeta(KeyMeta keyMeta) {
         this.keyMeta = keyMeta;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        KeyFile keyFile = (KeyFile) o;
+
+        return new EqualsBuilder()
+                .append(id, keyFile.id)
+                .append(fileName, keyFile.fileName)
+                .append(fileType, keyFile.fileType)
+                .append(keyMeta, keyFile.keyMeta)
+                .append(data, keyFile.data)
+                .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(fileName)
+                .append(fileType)
+                .append(keyMeta)
+                .append(data)
+                .toHashCode();
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE,
+                true, true);
     }
 }

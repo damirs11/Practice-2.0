@@ -1,17 +1,25 @@
 <mat-list>
-    <div mat-subheader>
-        <span>Ключи</span>
-        <span class="spacer"></span>
-        <button mat-raised-button color="primary" [routerLink]="['/home/newKey']">+</button>
-        <button mat-raised-button color="primary" (click)="refreshData()">
-            <mat-icon>refresh</mat-icon>
-        </button>
+    <app-license-selector [licenses]="licenses | keyvalue" (callback)="onLicenseSelect($event)"></app-license-selector>
+
+    <mat-divider></mat-divider>
+
+    <div *ngIf="selectedLicense">
+        <div mat-subheader>
+            <span>Ключи</span>
+            <span class="spacer"></span>
+            <button [routerLink]="['/home/generate']" color="primary" mat-raised-button>+</button>
+            <button (click)="refreshData()" color="primary" mat-raised-button>
+                <mat-icon>refresh</mat-icon>
+            </button>
+        </div>
+        <mat-card (click)='downloadKey(key.id)' *ngFor="let key of keys | async">
+            <mat-list-item>
+                <mat-icon mat-list-icon>vpn_key</mat-icon>
+                <div mat-line>{{key.name}}</div>
+                <div mat-line>{{key.expiration | date}}</div>
+            </mat-list-item>
+        </mat-card>
     </div>
-    <mat-card (click)='downloadKey(key.id)' *ngFor="let key of keys | async">
-        <mat-list-item>
-            <mat-icon mat-list-icon>vpn_key</mat-icon>
-            <div mat-line>{{key.name}}</div>
-            <div mat-line>{{key.expiration | date}}</div>
-        </mat-list-item>
-    </mat-card>
 </mat-list>
+
+

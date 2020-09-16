@@ -1,5 +1,5 @@
-import {Component, OnInit} from '@angular/core';
-import {HomeFacade} from './shared/facade/home.facade';
+import {Component} from '@angular/core';
+import {HomeFacade} from './shared/service/facade/home.facade';
 import {Observable} from 'rxjs';
 
 /**
@@ -13,14 +13,11 @@ import {Observable} from 'rxjs';
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.less']
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
     isUpdating$: Observable<boolean>;
 
     constructor(private homeFacade: HomeFacade) {
         this.isUpdating$ = this.homeFacade.isUpdating$();
-    }
-
-    ngOnInit(): void {
     }
 
     /**

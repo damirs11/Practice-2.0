@@ -1,12 +1,10 @@
-import KeyUtils from '../../pages/home/shared/utils/keyUtils';
-
 /**
  * Метаданные ключа, служит так и для генерации
  *
  * @author DSalikhov
  * @export
  */
-export class KeyParams {
+export class KeyGenerationParams {
 
     /**
      * ID
@@ -58,9 +56,4 @@ export class KeyParams {
      * Комментарий
      */
     comment: string;
-
-    /**
-     * Файл активации
-     */
-    activationKeyFile: string;
 }

@@ -1,25 +1,30 @@
 package ru.blogic.controllers;
 
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import ru.blogic.dto.KeyFileDTO;
 import ru.blogic.dto.KeyMetaDTO;
 import ru.blogic.dto.response.MessageResponse;
+import ru.blogic.enums.LicenseType;
 import ru.blogic.interfaces.KeyGenerator;
-import ru.blogic.service.FileStorageService;
 
+import javax.validation.Valid;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Котроллер для работы с ключами
@@ -30,12 +35,10 @@ import java.io.IOException;
 @RequestMapping("/api/key")
 public class KeyController {
 
-    private final KeyGenerator<KeyMetaDTO, KeyFileDTO> dummyKeyService;
-    private final FileStorageService fileStorageService;
+    final Collection<KeyGenerator<KeyMetaDTO, KeyFileDTO>> keyServices;
 
-    public KeyController(KeyGenerator<KeyMetaDTO, KeyFileDTO> dummyKeyService, FileStorageService fileStorageService) {
-        this.dummyKeyService = dummyKeyService;
-        this.fileStorageService = fileStorageService;
+    public KeyController(Collection<KeyGenerator<KeyMetaDTO, KeyFileDTO>> keyServices) {
+        this.keyServices = keyServices;
     }
 
     /**
@@ -44,8 +47,13 @@ public class KeyController {
      * @return ключи
      */
     @GetMapping("")
-    public Iterable<KeyMetaDTO> getAllKeys() {
-        return dummyKeyService.findAll();
+    public ResponseEntity getAllKeys(@RequestParam LicenseType type) {
+        for (KeyGenerator<KeyMetaDTO, KeyFileDTO> s : keyServices) {
+            if (type == s.getName()) {
+                return ResponseEntity.ok(s.findAll());
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("Такого сервиса не существует"));
     }
 
     /**
@@ -53,16 +61,25 @@ public class KeyController {
      *
      * @param keyFileId id ключа
      * @return ответ
-     * @throws FileNotFoundException
      */
     @GetMapping("/download/{keyFileId:.+}")
-    public ResponseEntity<Resource> downloadKeyFile(@PathVariable Long keyFileId) throws FileNotFoundException {
-        KeyFileDTO keyFile = dummyKeyService.getKeyFile(keyFileId);
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(keyFile.getFileType()))
-                .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=\"%s\"", keyFile.getFileName()))
-                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION)
-                .body(new ByteArrayResource(keyFile.getData()));
+    public ResponseEntity downloadKeyFile(@PathVariable Long keyFileId, @RequestParam LicenseType type) {
+        KeyFileDTO keyFile = null;
+        for (KeyGenerator<KeyMetaDTO, KeyFileDTO> s : keyServices) {
+            if (type == s.getName()) {
+                try {
+                    keyFile = s.getKeyFile(keyFileId);
+                    return ResponseEntity.ok()
+                            .contentType(MediaType.parseMediaType(keyFile.getFileType()))
+                            .header(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=\"%s\"", keyFile.getFileName()))
+                            .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, HttpHeaders.CONTENT_DISPOSITION)
+                            .body(new ByteArrayResource(keyFile.getData()));
+                } catch (FileNotFoundException e) {
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("Такого ключа нет"));
+                }
+            }
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("Такого сервиса не существует"));
     }
 
     /**
@@ -71,13 +88,19 @@ public class KeyController {
      * @param key входные данные для создания
      * @return ответ
      */
-    @PostMapping(value = "/create")
-    public ResponseEntity createNewKey(@ModelAttribute KeyMetaDTO key) {
-        try {
-            dummyKeyService.generate(key);
-            return ResponseEntity.ok(new MessageResponse("Новый ключ создан"));
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Ошибка при генерации ключа"));
+    @PostMapping(value = "/create", consumes = {"multipart/form-data"})
+    @ResponseBody
+    public ResponseEntity createNewKey(@RequestPart("type") LicenseType type, @RequestPart("keyMeta") @Valid KeyMetaDTO key, @RequestPart(value = "activationFile", required = false) MultipartFile activationFile) {
+        for (KeyGenerator<KeyMetaDTO, KeyFileDTO> s : keyServices) {
+            if (type == s.getName()) {
+                try {
+                    s.generate(key, activationFile);
+                    return ResponseEntity.ok(new MessageResponse("Новый ключ создан"));
+                } catch (IOException e) {
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Ошибка при генерации ключа"));
+                }
+            }
         }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("Такого сервиса не существует"));
     }
 }

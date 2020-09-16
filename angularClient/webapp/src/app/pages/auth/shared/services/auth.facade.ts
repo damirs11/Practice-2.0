@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
-import {AuthService} from '../../../shared/service/auth/auth.service';
+import {AuthService} from '@shared/service/auth/auth.service';
 import {Observable} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
-import {ErrorModalComponent} from '../../../components/modals/error-modal/error-modal.component';
-import {AuthStore} from '../../../shared/store/auth.store';
-import {BaseAuth} from "../../../api/auth/base-auth";
+import {ErrorModalComponent} from '@components/modals/error-modal/error-modal.component';
+import {AuthStore} from '@shared/store/auth.store';
+import {BaseAuth} from '@api/auth/base-auth';
 
 @Injectable({
     providedIn: 'root'

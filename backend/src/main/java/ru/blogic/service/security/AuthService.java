@@ -1,4 +1,4 @@
-package ru.blogic.service;
+package ru.blogic.service.security;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

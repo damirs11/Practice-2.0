@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.blogic.dto.request.LoginRequest;
 import ru.blogic.dto.request.RegistrationRequest;
-import ru.blogic.service.AuthService;
+import ru.blogic.service.security.AuthService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;

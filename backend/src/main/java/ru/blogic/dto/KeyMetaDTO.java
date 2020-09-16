@@ -1,11 +1,12 @@
 package ru.blogic.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.multipart.MultipartFile;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import ru.blogic.entity.KeyMeta;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Objects;
 
@@ -19,7 +20,6 @@ public class KeyMetaDTO {
     /**
      * ID
      */
-    @NotEmpty
     private Long id;
 
     /**
@@ -31,19 +31,19 @@ public class KeyMetaDTO {
     /**
      * Дата истечения
      */
-    @NotEmpty
+    @NotNull
     private Date expiration;
 
     /**
      * Количество ядер
      */
-    @NotEmpty
+    @NotNull
     private int coresCount;
 
     /**
      * Количество пользователь
      */
-    @NotEmpty
+    @NotNull
     private int usersCount;
 
     /**
@@ -60,7 +60,7 @@ public class KeyMetaDTO {
      * <p>
      * Типичная лицензия 11110000
      */
-    @NotEmpty
+    @NotNull
     private int moduleFlags;
 
     /**
@@ -73,12 +73,6 @@ public class KeyMetaDTO {
      * Комментарий
      */
     private String comment;
-
-    /**
-     * Файл активации
-     */
-    @JsonIgnore
-    private MultipartFile activationKeyFile;
 
     public KeyMetaDTO() {
     }
@@ -158,16 +152,34 @@ public class KeyMetaDTO {
         this.comment = comment;
     }
 
-    public MultipartFile getActivationKeyFile() {
-        return activationKeyFile;
-    }
-
-    public void setActivationKeyFile(MultipartFile activationKeyFile) {
-        this.activationKeyFile = activationKeyFile;
-    }
-
     @Override
     public int hashCode() {
         return Objects.hash(getId(), getName(), getExpiration(), getCoresCount(), getUsersCount(), getModuleFlags(), getKeyFileName(), getComment());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        KeyMetaDTO that = (KeyMetaDTO) o;
+
+        return new EqualsBuilder()
+                .append(coresCount, that.coresCount)
+                .append(usersCount, that.usersCount)
+                .append(moduleFlags, that.moduleFlags)
+                .append(id, that.id)
+                .append(name, that.name)
+                .append(expiration, that.expiration)
+                .append(keyFileName, that.keyFileName)
+                .append(comment, that.comment)
+                .isEquals();
+    }
+
+    @Override
+    public String toString() {
+        return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE,
+                true, true);
     }
 }

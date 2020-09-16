@@ -2,11 +2,11 @@ import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
 import {tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
-import {KeyParams} from '../../../../../api/license/keyParams';
-import {LoggerService} from '../../../../../shared/service/logger/logger.service';
-import {MessageResponse} from '../../../../../api/response/messageResponse';
-
-const apiUrl = 'api/key';
+import {KeyGenerationParams} from '@api/license/key-generation-params';
+import {LoggerService} from '@shared/service/logger/logger.service';
+import {MessageResponse} from '@api/response/messageResponse';
+import {GlobalConst} from '@shared/utils/global-const';
+import {LicenseType} from '@api/license/enums/license-type';
 
 /**
  * Сервис для работы с ключами
@@ -24,8 +24,12 @@ export class KeyService {
     /**
      * Возращает все ключи
      */
-    getKeys(): Observable<KeyParams[]> {
-        return this.http.get<KeyParams[]>(`${apiUrl}`).pipe(
+    getKeys(licenseType: LicenseType): Observable<KeyGenerationParams[]> {
+        return this.http.get<KeyGenerationParams[]>(`${GlobalConst.keyApi}`, {
+            params: {
+                type: licenseType
+            }
+        }).pipe(
             tap((_) => this.logger.log('Стягиваем ключи')),
         );
     }
@@ -35,8 +39,8 @@ export class KeyService {
      *
      * @param key - метаданные
      */
-    createNewKey(key: FormData | KeyParams): Observable<MessageResponse> {
-        return this.http.post<MessageResponse>(`${apiUrl}/create`, key).pipe(
+    createNewKey(key: FormData | KeyGenerationParams): Observable<MessageResponse> {
+        return this.http.post<MessageResponse>(`${GlobalConst.keyApi}/create`, key).pipe(
             tap((_) => this.logger.log('Создаем новый ключ')),
         );
     }
@@ -46,9 +50,12 @@ export class KeyService {
      *
      * @param keyFileId - id файла
      */
-    downloadKey(keyFileId: number): Observable<HttpResponse<Blob>> {
+    downloadKey(keyFileId: number, selectedLicense: LicenseType): Observable<HttpResponse<Blob>> {
         return this.http
-            .get(`${apiUrl}/download/${keyFileId}`, {
+            .get(`${GlobalConst.keyApi}/download/${keyFileId}`, {
+                params: {
+                    type: selectedLicense
+                },
                 responseType: 'blob',
                 observe: 'response',
             });
