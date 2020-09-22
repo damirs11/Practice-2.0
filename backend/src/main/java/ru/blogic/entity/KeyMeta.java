@@ -5,6 +5,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import ru.blogic.dto.KeyMetaDTO;
+import ru.blogic.enums.LicenseType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -32,9 +33,14 @@ public class KeyMeta {
     private Long id;
 
     /**
-     * Имя
+     * Тип лицензии
      */
-    private String name;
+    private LicenseType type;
+
+    /**
+     * Имя организации
+     */
+    private String organization;
 
     /**
      * Дата истечения
@@ -85,7 +91,9 @@ public class KeyMeta {
     }
 
     public KeyMeta(KeyMetaDTO keyMetaDTO) {
-        this.name = keyMetaDTO.getName();
+        this.id = keyMetaDTO.getId();
+        this.type = keyMetaDTO.getType();
+        this.organization = keyMetaDTO.getOrganization();
         this.expiration = keyMetaDTO.getExpiration();
         this.coresCount = keyMetaDTO.getCoresCount();
         this.usersCount = keyMetaDTO.getUsersCount();
@@ -102,12 +110,20 @@ public class KeyMeta {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public LicenseType getType() {
+        return type;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setType(LicenseType type) {
+        this.type = type;
+    }
+
+    public String getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(String organization) {
+        this.organization = organization;
     }
 
     public Date getExpiration() {
@@ -171,7 +187,8 @@ public class KeyMeta {
                 .append(usersCount, keyMeta.usersCount)
                 .append(moduleFlags, keyMeta.moduleFlags)
                 .append(id, keyMeta.id)
-                .append(name, keyMeta.name)
+                .append(type, keyMeta.type)
+                .append(organization, keyMeta.organization)
                 .append(expiration, keyMeta.expiration)
                 .append(keyFileName, keyMeta.keyFileName)
                 .append(comment, keyMeta.comment)
@@ -182,7 +199,8 @@ public class KeyMeta {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(id)
-                .append(name)
+                .append(type)
+                .append(organization)
                 .append(expiration)
                 .append(coresCount)
                 .append(usersCount)

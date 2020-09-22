@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import ru.blogic.interfaces.KeyGenerator;
 import ru.blogic.repository.KeyFileRepository;
 import ru.blogic.repository.KeyRepository;
 
+import org.springframework.data.domain.Pageable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -41,28 +43,25 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
     }
 
     @Override
-    public LicenseType getName() {
+    public LicenseType getLicenseType() {
         return LicenseType.DUMMY;
     }
 
-    /**
-     * Достать все мета данные ключей
-     *
-     * @return ключи
-     */
     @Override
-    public Iterable<KeyMetaDTO> findAll() {
-        return keyRepository.findAll().stream()
-                .map(KeyMetaDTO::new)
-                .collect(Collectors.toList());
+    public Page<KeyMetaDTO> findAll(Pageable pageable) {
+        return keyRepository.findAll(pageable).map(KeyMetaDTO::new);
     }
 
     /**
-     * Скачать ключ
-     *
-     * @param keyFileId id ключа
-     * @return ответ
-     * @throws FileNotFoundException
+     * {@inheritDoc}
+     */
+    @Override
+    public Page<KeyMetaDTO> findAllByType(Pageable pageable) {
+        return keyRepository.findAllByType(getLicenseType(), pageable).map(KeyMetaDTO::new);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     @Transactional(readOnly = true)
@@ -93,7 +92,7 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
                 .inheritIO()
                 .command(
                         "java", "-jar", env.getProperty(PROPERTY_LICENSES_PATH),
-                        keyMetaDTO.getName(),
+                        keyMetaDTO.getOrganization(),
                         keyMetaDTO.getExpiration().toString(),
                         String.valueOf(keyMetaDTO.getCoresCount()),
                         String.valueOf(keyMetaDTO.getUsersCount()),
@@ -106,6 +105,7 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
 
         File keyFileTemp = new File(System.getProperty("java.io.tmpdir") + keyMetaDTO.getKeyFileName());
         KeyMeta keyMeta = new KeyMeta(keyMetaDTO);
+        keyMeta.setType(getLicenseType());
         KeyFile keyFile = new KeyFile(
                 keyMetaDTO.getKeyFileName(),
                 MediaType.APPLICATION_OCTET_STREAM_VALUE,

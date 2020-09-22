@@ -1,5 +1,6 @@
-<div class="container mat-elevation-z8">
-    <mat-card class="card">
+<div class="registration-container">
+    <div class="container mat-elevation-z8 registration-content">
+        <h2>Регистрация</h2>
         <form (ngSubmit)="registration(registerForm.value)" [formGroup]="registerForm">
 
             <mat-form-field class="full-width">
@@ -24,18 +25,18 @@
                 </mat-error>
             </mat-form-field>
 
+            <mat-progress-bar *ngIf="authFacade.isUpdating$() | async" mode="indeterminate"></mat-progress-bar>
+
             <div class="button-row">
-                <button [disabled]="!registerForm.valid" color="primary" mat-flat-button type="submit">
-                    Регистрация
+                <button [disabled]="!registerForm.valid" color="primary" mat-flat-button class="app-button" type="submit">
+                    Зарегистрироваться
                 </button>
             </div>
 
-            <div class="button-row">
-                <button [routerLink]="['/auth/login']" color="primary" mat-flat-button type="button">
-                    Вход
-                </button>
+            <div class="login-link">
+                <a mat-button [routerLink]="['/auth/login']">Вход</a>
             </div>
-
         </form>
-    </mat-card>
+    </div>
 </div>
+

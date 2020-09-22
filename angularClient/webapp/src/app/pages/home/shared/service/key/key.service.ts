@@ -7,6 +7,8 @@ import {LoggerService} from '@shared/service/logger/logger.service';
 import {MessageResponse} from '@api/response/messageResponse';
 import {GlobalConst} from '@shared/utils/global-const';
 import {LicenseType} from '@api/license/enums/license-type';
+import {Page} from "@api/license/page";
+import {PageSettings} from "@api/license/pageSettings";
 
 /**
  * Сервис для работы с ключами
@@ -24,23 +26,40 @@ export class KeyService {
     /**
      * Возращает все ключи
      */
-    getKeys(licenseType: LicenseType): Observable<KeyGenerationParams[]> {
-        return this.http.get<KeyGenerationParams[]>(`${GlobalConst.keyApi}`, {
-            params: {
-                type: licenseType
-            }
-        }).pipe(
-            tap((_) => this.logger.log('Стягиваем ключи')),
-        );
+    getKeys(licenseType: LicenseType): Observable<Page<KeyGenerationParams>> {
+        if (licenseType === null) {
+            return this.http.get<Page<KeyGenerationParams>>(`${GlobalConst.keyApi}`, {
+                params: {
+                    page: PageSettings.page.toString(),
+                    size: PageSettings.size.toString()
+                }
+            }).pipe(
+                tap((_) => this.logger.log('Стягиваем ключи')),
+            );
+        } else {
+            return this.http.get<Page<KeyGenerationParams>>(`${GlobalConst.keyApi}`, {
+                params: {
+                    type: licenseType
+                }
+            }).pipe(
+                tap((_) => this.logger.log('Стягиваем ключи')),
+            );
+        }
+
     }
 
     /**
      * Создает ключ основывая на введенных метаданных
      *
-     * @param key - метаданные
+     * @param formData
+     * @param licenseType
      */
-    createNewKey(key: FormData | KeyGenerationParams): Observable<MessageResponse> {
-        return this.http.post<MessageResponse>(`${GlobalConst.keyApi}/create`, key).pipe(
+    createNewKey(formData: FormData, licenseType: LicenseType): Observable<MessageResponse> {
+        return this.http.post<MessageResponse>(`${GlobalConst.keyApi}/create`, formData, {
+            params: {
+                type: licenseType
+            },
+        }).pipe(
             tap((_) => this.logger.log('Создаем новый ключ')),
         );
     }
@@ -49,12 +68,13 @@ export class KeyService {
      * Скачивает файл ключа
      *
      * @param keyFileId - id файла
+     * @param licenseType - тип лицензии
      */
-    downloadKey(keyFileId: number, selectedLicense: LicenseType): Observable<HttpResponse<Blob>> {
+    downloadKey(keyFileId: number, licenseType: LicenseType): Observable<HttpResponse<Blob>> {
         return this.http
             .get(`${GlobalConst.keyApi}/download/${keyFileId}`, {
                 params: {
-                    type: selectedLicense
+                    type: licenseType
                 },
                 responseType: 'blob',
                 observe: 'response',

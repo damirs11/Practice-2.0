@@ -21,10 +21,14 @@ import ru.blogic.enums.LicenseType;
 import ru.blogic.interfaces.KeyGenerator;
 
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
+
+import org.springframework.data.domain.Pageable;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Optional;
+import java.util.List;
 
 /**
  * Котроллер для работы с ключами
@@ -35,9 +39,9 @@ import java.util.Optional;
 @RequestMapping("/api/key")
 public class KeyController {
 
-    final Collection<KeyGenerator<KeyMetaDTO, KeyFileDTO>> keyServices;
+    final List<KeyGenerator<KeyMetaDTO, KeyFileDTO>> keyServices;
 
-    public KeyController(Collection<KeyGenerator<KeyMetaDTO, KeyFileDTO>> keyServices) {
+    public KeyController(List<KeyGenerator<KeyMetaDTO, KeyFileDTO>> keyServices) {
         this.keyServices = keyServices;
     }
 
@@ -47,12 +51,18 @@ public class KeyController {
      * @return ключи
      */
     @GetMapping("")
-    public ResponseEntity getAllKeys(@RequestParam LicenseType type) {
+    public ResponseEntity getAllKeys(@RequestParam(required = false) LicenseType type, Pageable pageable) {
+
+        if (type == null) {
+            return ResponseEntity.ok(keyServices.get(0).findAll(pageable));
+        }
+
         for (KeyGenerator<KeyMetaDTO, KeyFileDTO> s : keyServices) {
-            if (type == s.getName()) {
-                return ResponseEntity.ok(s.findAll());
+            if (type == s.getLicenseType()) {
+                return ResponseEntity.ok(s.findAllByType(pageable));
             }
         }
+
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MessageResponse("Такого сервиса не существует"));
     }
 
@@ -66,7 +76,7 @@ public class KeyController {
     public ResponseEntity downloadKeyFile(@PathVariable Long keyFileId, @RequestParam LicenseType type) {
         KeyFileDTO keyFile = null;
         for (KeyGenerator<KeyMetaDTO, KeyFileDTO> s : keyServices) {
-            if (type == s.getName()) {
+            if (type == s.getLicenseType()) {
                 try {
                     keyFile = s.getKeyFile(keyFileId);
                     return ResponseEntity.ok()
@@ -90,9 +100,9 @@ public class KeyController {
      */
     @PostMapping(value = "/create", consumes = {"multipart/form-data"})
     @ResponseBody
-    public ResponseEntity createNewKey(@RequestPart("type") LicenseType type, @RequestPart("keyMeta") @Valid KeyMetaDTO key, @RequestPart(value = "activationFile", required = false) MultipartFile activationFile) {
+    public ResponseEntity createNewKey(@PathParam("type") LicenseType type, @RequestPart("keyMeta") @Valid KeyMetaDTO key, @RequestPart(value = "activationFile", required = false) MultipartFile activationFile) {
         for (KeyGenerator<KeyMetaDTO, KeyFileDTO> s : keyServices) {
-            if (type == s.getName()) {
+            if (type == s.getLicenseType()) {
                 try {
                     s.generate(key, activationFile);
                     return ResponseEntity.ok(new MessageResponse("Новый ключ создан"));

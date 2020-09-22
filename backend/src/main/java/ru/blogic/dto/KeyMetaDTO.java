@@ -1,9 +1,11 @@
 package ru.blogic.dto;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import ru.blogic.entity.KeyMeta;
+import ru.blogic.enums.LicenseType;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -23,10 +25,15 @@ public class KeyMetaDTO {
     private Long id;
 
     /**
+     * Тип лицензии
+     */
+    private LicenseType type;
+
+    /**
      * Имя
      */
     @NotEmpty
-    private String name;
+    private String organization;
 
     /**
      * Дата истечения
@@ -79,7 +86,8 @@ public class KeyMetaDTO {
 
     public KeyMetaDTO(KeyMeta keyMeta) {
         this.id = keyMeta.getId();
-        this.name = keyMeta.getName();
+        this.type = keyMeta.getType();
+        this.organization = keyMeta.getOrganization();
         this.expiration = keyMeta.getExpiration();
         this.coresCount = keyMeta.getCoresCount();
         this.usersCount = keyMeta.getUsersCount();
@@ -96,12 +104,20 @@ public class KeyMetaDTO {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public LicenseType getType() {
+        return type;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setType(LicenseType type) {
+        this.type = type;
+    }
+
+    public String getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(String organization) {
+        this.organization = organization;
     }
 
     public Date getExpiration() {
@@ -153,11 +169,6 @@ public class KeyMetaDTO {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getName(), getExpiration(), getCoresCount(), getUsersCount(), getModuleFlags(), getKeyFileName(), getComment());
-    }
-
-    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
 
@@ -170,11 +181,27 @@ public class KeyMetaDTO {
                 .append(usersCount, that.usersCount)
                 .append(moduleFlags, that.moduleFlags)
                 .append(id, that.id)
-                .append(name, that.name)
+                .append(type, that.type)
+                .append(organization, that.organization)
                 .append(expiration, that.expiration)
                 .append(keyFileName, that.keyFileName)
                 .append(comment, that.comment)
                 .isEquals();
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder(17, 37)
+                .append(id)
+                .append(type)
+                .append(organization)
+                .append(expiration)
+                .append(coresCount)
+                .append(usersCount)
+                .append(moduleFlags)
+                .append(keyFileName)
+                .append(comment)
+                .toHashCode();
     }
 
     @Override

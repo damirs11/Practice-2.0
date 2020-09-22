@@ -1,4 +1,4 @@
 export enum LicenseType {
-    DUMMY = 'Лицензия-заглушка',
-    DUMMY_NO_JAR = 'Лицензия-заглушка без jar'
+    DUMMY = 'DUMMY',
+    DUMMY_NO_JAR = 'DUMMY_NO_JAR'
 }

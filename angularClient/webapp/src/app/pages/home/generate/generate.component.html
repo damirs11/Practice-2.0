@@ -1,14 +1,31 @@
-<app-license-selector [licenses]="licenses | keyvalue" (callback)="onLicenseSelect($event)"></app-license-selector>
+<div class="newLicense-dialog">
+    <div mat-dialog-title>
+        <span>Создание ключа</span>
+        <button class="close-button" mat-icon-button mat-dialog-close>
+            <mat-icon aria-hidden="true">
+                close
+            </mat-icon>
+        </button>
+    </div>
+    <mat-dialog-content>
+        <mat-form-field class="generate-select">
+            <mat-label>Выберите лицензию</mat-label>
+            <mat-select [(value)]="selectedLicense">
+                <mat-option *ngFor="let license of licenses | keyvalue"
+                            [value]="license.key">{{license.value}}</mat-option>
+            </mat-select>
+        </mat-form-field>
 
-<mat-divider></mat-divider>
-
-<div [ngSwitch]="selectedLicense">
-    <ng-template [ngSwitchCase]="licenses.DUMMY">
-        <app-dummy-key (generate)="generate($event)"></app-dummy-key>
-    </ng-template>
-    <ng-template [ngSwitchCase]="licenses.DUMMY_NO_JAR">
-        <app-dummy-no-jar-key></app-dummy-no-jar-key>
-    </ng-template>
+        <div>
+            <div [ngSwitch]="selectedLicense">
+                <ng-template [ngSwitchCase]="licenses.DUMMY">
+                    <app-dummy-key (generate)="generate($event)"></app-dummy-key>
+                </ng-template>
+                <ng-template [ngSwitchCase]="licenses.DUMMY_NO_JAR">
+                    <app-dummy-no-jar-key (generate)="generate($event)"></app-dummy-no-jar-key>
+                </ng-template>
+            </div>
+        </div>
+    </mat-dialog-content>
 </div>
 
-<span>{{selectedLicense}}</span>

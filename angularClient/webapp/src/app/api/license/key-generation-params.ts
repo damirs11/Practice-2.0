@@ -4,6 +4,8 @@
  * @author DSalikhov
  * @export
  */
+import {LicenseType} from '@api/license/enums/license-type';
+
 export class KeyGenerationParams {
 
     /**
@@ -14,7 +16,7 @@ export class KeyGenerationParams {
     /**
      * Имя
      */
-    name: string;
+    organization: string;
 
     /**
      * Срок истечения

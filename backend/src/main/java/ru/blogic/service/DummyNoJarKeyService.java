@@ -1,5 +1,7 @@
 package ru.blogic.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,8 +36,13 @@ public class DummyNoJarKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO
     }
 
     @Override
-    public LicenseType getName() {
+    public LicenseType getLicenseType() {
         return LicenseType.DUMMY_NO_JAR;
+    }
+
+    @Override
+    public Page<KeyMetaDTO> findAll(Pageable pageable) {
+        return keyRepository.findAll(pageable).map(KeyMetaDTO::new);
     }
 
     /**
@@ -44,10 +51,8 @@ public class DummyNoJarKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO
      * @return ключи
      */
     @Override
-    public Iterable<KeyMetaDTO> findAll() {
-        return keyRepository.findAll().stream()
-                .map(KeyMetaDTO::new)
-                .collect(Collectors.toList());
+    public Page<KeyMetaDTO> findAllByType(Pageable pageable) {
+        return keyRepository.findAllByType(getLicenseType(), pageable).map(KeyMetaDTO::new);
     }
 
     /**
@@ -73,7 +78,7 @@ public class DummyNoJarKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO
     @Transactional()
     public void generate(KeyMetaDTO keyMetaDTO, MultipartFile activationFile) {
         byte[] keyFile = fakeXMLSecurity(
-                keyMetaDTO.getName(),
+                keyMetaDTO.getOrganization(),
                 keyMetaDTO.getExpiration(),
                 keyMetaDTO.getCoresCount(),
                 keyMetaDTO.getUsersCount(),
@@ -81,6 +86,7 @@ public class DummyNoJarKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO
                 keyMetaDTO.getKeyFileName()
         );
 
+        keyMetaDTO.setType(getLicenseType());
         KeyFileDTO temp = new KeyFileDTO();
         temp.setData(keyFile);
         temp.setFileName(keyMetaDTO.getKeyFileName());

@@ -1,13 +1,15 @@
 package ru.blogic.interfaces;
 
+import org.springframework.data.domain.Page;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import ru.blogic.enums.LicenseType;
 
+import org.springframework.data.domain.Pageable;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Optional;
 
 public interface KeyGenerator<KeyMeta, KeyFile> {
 
@@ -16,14 +18,21 @@ public interface KeyGenerator<KeyMeta, KeyFile> {
      *
      * @return имя
      */
-    LicenseType getName();
+    LicenseType getLicenseType();
 
     /**
      * Достать все мета данные ключей
      *
      * @return ключи
      */
-    public Iterable<KeyMeta> findAll();
+    Page<KeyMeta> findAll(Pageable pageable);
+
+    /**
+     * Достать все мета данные ключей по типу лицензии
+     *
+     * @return ключи
+     */
+    Page<KeyMeta> findAllByType(Pageable pageable);
 
     /**
      * Скачать ключ
@@ -32,7 +41,7 @@ public interface KeyGenerator<KeyMeta, KeyFile> {
      * @return ответ
      */
     @Transactional(readOnly = true)
-    public KeyFile getKeyFile(Long keyFileId) throws FileNotFoundException;
+    KeyFile getKeyFile(Long keyFileId) throws FileNotFoundException;
 
     /**
      * Создать новый ключ
@@ -40,6 +49,6 @@ public interface KeyGenerator<KeyMeta, KeyFile> {
      * @param keyInputParams входные данные для создания
      */
     @Transactional()
-    public void generate(KeyMeta keyInputParams, @Nullable MultipartFile activationFile) throws IOException;
+    void generate(KeyMeta keyInputParams, @Nullable MultipartFile activationFile) throws IOException;
 
 }

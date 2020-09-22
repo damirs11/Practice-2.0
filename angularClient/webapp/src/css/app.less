@@ -1,26 +1,44 @@
 /* You can add global styles to this file, and also import other style files */
+@import '~ag-grid-community/dist/styles/ag-grid.css';
+@import '~ag-grid-community/dist/styles/ag-theme-balham.css';
+
+//html, body {
+//    width: 100%;
+//    height: 100%;
+//    padding: 0;
+//    margin: 0;
+//    font-family: Roboto, "Helvetica Neue", sans-serif;
+//    overflow: hidden;
+//}
+@import "~ag-grid-community/dist/styles/ag-grid.css";
+@import "~ag-grid-community/dist/styles/ag-theme-material.css";
+
 html, body {
     height: 100%;
+    width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0;
+    overflow: auto;
 }
 
 body {
-    margin: 0;
-    font-family: Roboto, "Helvetica Neue", sans-serif;
-}
-
-.container {
-    position: relative;
-}
-
-.full-width {
-    width: 100%;
-}
-
-.button-row {
-    margin-top: 2%;
-    margin-bottom: 2%;
+    overflow: auto;
 }
 
 .spacer {
     flex: 1 1 auto;
+}
+
+.app-button {
+    &:hover {
+        background-color: #4A238E !important;
+        transition: all 0.05s 0.05s;
+    }
 }

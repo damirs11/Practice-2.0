@@ -5,6 +5,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import ru.blogic.dto.KeyFileDTO;
+import ru.blogic.enums.LicenseType;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;

@@ -1,9 +1,11 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
+import {LoggedInGuard} from '@shared/guard/logged-in.guard';
 
 const routes: Routes = [
     {
         path: 'home',
+        canActivate: [LoggedInGuard],
         loadChildren: () => import('./pages/home/home.module').then(m => m.HomeModule)
     },
     {
@@ -12,7 +14,7 @@ const routes: Routes = [
     },
     {
         path: '',
-        redirectTo: 'test',
+        redirectTo: 'home',
         pathMatch: 'full'
     },
     {

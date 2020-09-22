@@ -1,5 +1,5 @@
 import {Router} from '@angular/router';
-import {Injectable} from '@angular/core';
+import {EventEmitter, Injectable} from '@angular/core';
 import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {Observable} from 'rxjs';
 import {AuthService} from '@shared/service/auth/auth.service';
@@ -14,6 +14,9 @@ import {saveAs} from 'file-saver';
 import KeyUtils from '../../utils/keyUtils';
 import {AuthStore} from '@shared/store/auth.store';
 import {LicenseType} from '@api/license/enums/license-type';
+import {ModalService} from '@shared/service/modal/modal.service';
+import {FormDataType} from '@api/license/form-data-type';
+import {Page} from '@api/license/page';
 
 @Injectable({
     providedIn: 'any'
@@ -27,7 +30,7 @@ export class HomeFacade {
         private authStore: AuthStore,
         private logger: LoggerService,
         private router: Router,
-        private modal: MatDialog
+        private modalService: ModalService,
     ) {
     }
 
@@ -35,12 +38,12 @@ export class HomeFacade {
         return this.homeStore.isUpdating$();
     }
 
-    getKeys(): Observable<KeyGenerationParams[]> {
+    getKeys(): Observable<Page<KeyGenerationParams>> {
         return this.homeStore.getKeys$();
     }
 
-    getSelectedLicense(): LicenseType {
-        return this.homeStore.getSelectedLicenseValue$();
+    getSelectedLicense() {
+        return this.homeStore.getSelectedLicense$();
     }
 
     setSelectedLicense(license: LicenseType) {
@@ -48,11 +51,50 @@ export class HomeFacade {
     }
 
     /**
+     * Производит создание нового ключа основывая на данных из формы
+     *
+     * @param $event
+     */
+    generate($event: FormDataType) {
+        console.log('licenses createLicense');
+        console.log($event);
+
+        this.homeStore.setUpdating(true);
+
+        const formData = new FormData();
+        formData.append('keyMeta', new Blob([JSON.stringify($event.keyMeta)], {type: 'application/json'}));
+        formData.append('activationFile', $event.activationKeyFile);
+
+        this.keyService.createNewKey(formData, $event.type).subscribe(
+            (message) => {
+                this.logger.log(message);
+
+                this.homeStore.setUpdating(false);
+                this.refreshData();
+            },
+            (err) => {
+                this.homeStore.setUpdating(false);
+                const modalDialog = this.modalService.openErrorModal(err);
+            },
+            () => {
+                this.homeStore.setUpdating(false);
+            }
+        );
+    }
+
+    openNewLicenseModal() {
+        this.modalService.openNewLicenseModal(null, (data) => {
+            this.generate(data);
+        });
+    }
+
+    /**
      * Обновляет данные о ключах
      */
     refreshData(): void {
         this.homeStore.setUpdating(true);
-        this.keyService.getKeys(this.homeStore.getSelectedLicenseValue$()).subscribe(
+
+        this.keyService.getKeys(this.homeStore.selectedLicenseValue$).subscribe(
             res => this.homeStore.setKeys(res),
             () => this.homeStore.setUpdating(false),
             () => this.homeStore.setUpdating(false)
@@ -63,52 +105,16 @@ export class HomeFacade {
      * Скачивает ключ
      *
      * @param keyFileId - id ключа
+     * @param licenseType - тип лицензии
      */
-    downloadKey(keyFileId: number): void {
-        this.keyService.downloadKey(keyFileId, this.homeStore.getSelectedLicenseValue$()).pipe(
+    downloadKey(keyFileId: number, licenseType: LicenseType): void {
+        this.keyService.downloadKey(keyFileId, licenseType).pipe(
             tap((res: HttpResponse<Blob>) => {
                 const fileName = KeyUtils.getFileNameFromResponse(res);
                 this.logger.log(fileName);
                 saveAs(res.body, fileName);
             })
-        );
-    }
-
-    /**
-     * Производит создание нового ключа основывая на данных из формы
-     *
-     * @param licenseType - тип ключа
-     * @param data - форма с данными
-     * @param activationFile - файл активации
-     */
-    createKey(data: any, activationFile: File): void {
-        this.homeStore.setUpdating(true);
-
-        const formData = new FormData();
-        formData.append('type', new Blob([JSON.stringify(this.homeStore.getSelectedLicenseValue$())], {type: 'application/json'}));
-        formData.append('keyMeta', new Blob([JSON.stringify(data)], {type: 'application/json'}));
-        console.log(JSON.stringify(data));
-        formData.append('activationFile', activationFile);
-
-        this.keyService.createNewKey(formData).subscribe(
-            (message) => {
-                this.logger.log(message);
-
-                this.homeStore.setUpdating(false);
-                this.router.navigate(['licenses']);
-            },
-            (err) => {
-                this.homeStore.setUpdating(false);
-
-                const modalConfig = new MatDialogConfig();
-                modalConfig.data = err;
-
-                const modalDialog = this.modal.open(ErrorModalComponent, modalConfig);
-            },
-            () => {
-                this.homeStore.setUpdating(false);
-            }
-        );
+        ).subscribe();
     }
 
     /**
@@ -122,10 +128,7 @@ export class HomeFacade {
                 this.router.navigate(['/auth/login']);
             },
             (err) => {
-                const modalConfig = new MatDialogConfig();
-                modalConfig.data = err;
-
-                const modalDialog = this.modal.open(ErrorModalComponent, modalConfig);
+                const modalDialog = this.modalService.openErrorModal(err);
             }
         );
     }

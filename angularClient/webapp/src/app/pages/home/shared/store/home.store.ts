@@ -2,14 +2,19 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable} from 'rxjs';
 import {KeyGenerationParams} from '@api/license/key-generation-params';
 import {LicenseType} from '@api/license/enums/license-type';
+import {Page} from '@api/license/page';
 
 @Injectable({
     providedIn: 'any'
 })
 export class HomeStore {
     private updating$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    private keys$: BehaviorSubject<KeyGenerationParams[]> = new BehaviorSubject(null);
+    private keys$: BehaviorSubject<Page<KeyGenerationParams>> = new BehaviorSubject(null);
     private selectedLicense$: BehaviorSubject<LicenseType> = new BehaviorSubject<LicenseType>(null);
+
+    get selectedLicenseValue$() {
+        return this.selectedLicense$.value;
+    }
 
     isUpdating$(): Observable<boolean> {
         return this.updating$.asObservable();
@@ -19,21 +24,16 @@ export class HomeStore {
         this.updating$.next(isUpdating);
     }
 
-    getKeys$(): Observable<KeyGenerationParams[]> {
+    getKeys$(): Observable<Page<KeyGenerationParams>> {
         return this.keys$.asObservable();
     }
 
-    setKeys(keys: KeyGenerationParams[]): void {
+    setKeys(keys: Page<KeyGenerationParams>): void {
         this.keys$.next(keys);
     }
 
-    addKey(key: KeyGenerationParams): void {
-        const currentValue = this.keys$.getValue();
-        this.keys$.next([...currentValue, key]);
-    }
-
-    getSelectedLicenseValue$(): LicenseType {
-        return this.selectedLicense$.value;
+    getSelectedLicense$() {
+        return this.selectedLicense$.asObservable();
     }
 
     setSelectedLicense(license: LicenseType): void {

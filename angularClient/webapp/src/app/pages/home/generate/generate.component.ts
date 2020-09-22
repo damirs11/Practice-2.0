@@ -1,6 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit} from '@angular/core';
 import {LicenseType} from '@api/license/enums/license-type';
-import {HomeFacade} from '@pages/home/shared/service/facade/home.facade';
+import {KeyGenerationParams} from '@api/license/key-generation-params';
+import {FormDataType} from '@api/license/form-data-type';
+import {MatDialogRef} from '@angular/material/dialog';
 
 @Component({
     selector: 'app-generate',
@@ -10,22 +12,21 @@ import {HomeFacade} from '@pages/home/shared/service/facade/home.facade';
 export class GenerateComponent implements OnInit {
 
     licenses = LicenseType;
+    onGenerate: EventEmitter<any> = new EventEmitter<any>();
+    selectedLicense: LicenseType;
 
-    constructor(private homeFacade: HomeFacade) {
-    }
-
-    get selectedLicense() {
-        return this.homeFacade.getSelectedLicense();
+    constructor(private dialogRef: MatDialogRef<GenerateComponent>) {
     }
 
     ngOnInit(): void {
     }
 
-    onLicenseSelect(license: LicenseType) {
-        this.homeFacade.setSelectedLicense(license);
-    }
+    generate($event: FormDataType): void {
+        console.log('GenerateComponent generate');
 
-    generate(data: any) {
-        this.homeFacade.createKey(data.keyMeta, data.activationKeyFile);
+        $event.type = this.selectedLicense;
+
+        this.onGenerate.emit($event);
+        this.dialogRef.close();
     }
 }

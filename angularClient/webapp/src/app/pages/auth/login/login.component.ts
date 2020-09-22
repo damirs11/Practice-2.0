@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit {
      */
     matcher = new FormStateMatcher();
 
-    constructor(private formBuilder: FormBuilder, private authFacade: AuthFacade) {
+    constructor(private formBuilder: FormBuilder, public authFacade: AuthFacade) {
     }
 
     ngOnInit(): void {
