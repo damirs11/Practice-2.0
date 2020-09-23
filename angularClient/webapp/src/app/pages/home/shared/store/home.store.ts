@@ -9,7 +9,7 @@ import {Page} from '@api/license/page';
 })
 export class HomeStore {
     private updating$: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    private keys$: BehaviorSubject<Page<KeyGenerationParams>> = new BehaviorSubject(null);
+    private keys$: BehaviorSubject<Page<KeyGenerationParams>> = new BehaviorSubject(new Page());
     private selectedLicense$: BehaviorSubject<LicenseType> = new BehaviorSubject<LicenseType>(null);
 
     get selectedLicenseValue$() {

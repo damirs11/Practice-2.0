@@ -10,7 +10,7 @@ import {GenerateComponent} from './generate/generate.component';
 import {DummyKeyComponent} from '@pages/home/generate/components/dummy-key/dummy-key.component';
 import {DummyNoJarKeyComponent} from '@pages/home/generate/components/dummy-no-jar-key/dummy-no-jar-key.component';
 import {AgGridModule} from 'ag-grid-angular';
-import { CustomLoadingOverlayComponent } from './licenses/components/custom-loading-overlay/custom-loading-overlay.component';
+import { PaginationToolbarComponent } from './licenses/components/pagination-toolbar/pagination-toolbar.component';
 
 @NgModule({
     declarations: [
@@ -19,7 +19,7 @@ import { CustomLoadingOverlayComponent } from './licenses/components/custom-load
         GenerateComponent,
         DummyKeyComponent,
         DummyNoJarKeyComponent,
-        CustomLoadingOverlayComponent,
+        PaginationToolbarComponent,
     ],
     imports: [
         CommonModule,

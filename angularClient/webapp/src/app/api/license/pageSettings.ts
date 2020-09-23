@@ -1,4 +1,4 @@
 export class PageSettings {
     static page = 0;
-    static size = 2;
+    static size = 4;
 }

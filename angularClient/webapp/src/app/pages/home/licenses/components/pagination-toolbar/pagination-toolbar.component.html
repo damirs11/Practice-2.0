@@ -1,0 +1,49 @@
+<div *ngIf="page || page?.empty" class="ag-paging-panel ag-unselectable" id="ag-5" aria-live="polite"
+     aria-describedby="ag-5-start-page ag-5-start-page-number ag-5-of-page ag-5-of-page-number ag-5-first-row ag-5-to ag-5-last-row ag-5-of ag-5-row-count">
+                <span class="ag-paging-row-summary-panel" aria-hidden="true">
+                    <span id="ag-5-first-row" ref="lbFirstRowOnPage"
+                          class="ag-paging-row-summary-panel-number">{{page?.pageable?.offset + 1}}</span>
+                    <span id="ag-5-to">to</span>
+                    <span id="ag-5-last-row" ref="lbLastRowOnPage"
+                          class="ag-paging-row-summary-panel-number">{{page?.pageable?.offset + page?.pageable?.pageSize}}</span>
+                    <span id="ag-5-of">of</span>
+                    <span id="ag-5-row-count" ref="lbRecordCount"
+                          class="ag-paging-row-summary-panel-number">{{page?.totalElements}}</span>
+                </span>
+    <span class="ag-paging-page-summary-panel" role="presentation">
+                    <div ref="btFirst" class="ag-paging-button" [ngClass]="page?.first ? 'ag-disabled' : ''"
+                         role="button" aria-label="First Page"
+                         tabindex="0" aria-disabled="true"><span (click)="firstPage()" class="ag-icon ag-icon-first"
+                                                                 unselectable="on"
+                                                                 role="presentation"></span>
+                    </div>
+                    <div ref="btPrevious" class="ag-paging-button" [ngClass]="page?.first ? 'ag-disabled' : ''"
+                         role="button" aria-label="Previous Page"
+                         tabindex="0" aria-disabled="true"><span (click)="back()" class="ag-icon ag-icon-previous"
+                                                                 unselectable="on"
+                                                                 role="presentation"></span>
+                    </div>
+
+                    <span class="ag-paging-description" aria-hidden="true">
+                        <span id="ag-5-start-page">Page</span>
+                        <span id="ag-5-start-page-number" ref="lbCurrent"
+                              class="ag-paging-number">{{page?.pageable?.pageNumber + 1}}</span>
+                        <span id="ag-5-of-page">of</span>
+                        <span id="ag-5-of-page-number" ref="lbTotal"
+                              class="ag-paging-number">{{page?.totalPages}}</span>
+                    </span>
+
+                    <div ref="btNext" class="ag-paging-button" [ngClass]="page?.last ? 'ag-disabled' : ''"
+                         role="button" aria-label="Next Page"
+                         tabindex="0" aria-disabled="true">
+                        <span (click)="next()" class="ag-icon ag-icon-next" unselectable="on"
+                              role="presentation"></span>
+                    </div>
+                    <div ref="btLast" class="ag-paging-button" [ngClass]="page?.last ? 'ag-disabled' : ''" role="button"
+                         aria-label="Last Page"
+                         tabindex="0" aria-disabled="true">
+                        <span (click)="lastPage()" class="ag-icon ag-icon-last" unselectable="on"
+                              role="presentation"></span>
+                    </div>
+                </span>
+</div>

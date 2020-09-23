@@ -75,9 +75,11 @@ export class LicensesComponent {
             },
         ];
 
+        PageSettings.size = 2;
+
         this.gridOptions = {
             suppressRowDeselection: true,
-            pagination: true,
+            pagination: false,
             paginationPageSize: PageSettings.size,
             onGridReady: (params) => {
                 this.gridApi = params.api;
@@ -88,7 +90,9 @@ export class LicensesComponent {
                     }
                 );
 
-                this.gridApi.sizeColumnsToFit();
+                window.addEventListener('onresize', () => {
+                    this.gridApi.sizeColumnsToFit();
+                });
             },
             getRowNodeId(data) {
                 return data.id;

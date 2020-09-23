@@ -1,7 +1,7 @@
 <mat-toolbar class="toolbar">
     <button color="primary" mat-flat-button (click)="createLicense()" class="app-button">Создать</button>
     <span class="spacer"></span>
-    <button color="primary" class="app-button" mat-flat-button (click)="this.homeFacade.refreshData()">
+    <button color="primary" class="app-button" mat-flat-button (click)="this.refreshData()">
         <mat-icon>refresh</mat-icon>
     </button>
 </mat-toolbar>
@@ -11,5 +11,8 @@
     [defaultColDef]="defaultColDef"
     [gridOptions]="gridOptions">
 </ag-grid-angular>
+<app-pagination-toolbar class="ag-theme-material ag-grid" (refresh)="this.refreshData()"
+                        [page]="keys | async"></app-pagination-toolbar>
+
 
 
