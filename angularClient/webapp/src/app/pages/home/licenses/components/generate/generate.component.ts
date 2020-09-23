@@ -1,6 +1,5 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
 import {LicenseType} from '@api/license/enums/license-type';
-import {KeyGenerationParams} from '@api/license/key-generation-params';
 import {FormDataType} from '@api/license/form-data-type';
 import {MatDialogRef} from '@angular/material/dialog';
 

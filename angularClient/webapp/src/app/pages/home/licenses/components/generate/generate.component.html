@@ -21,9 +21,6 @@
                 <ng-template [ngSwitchCase]="licenses.DUMMY">
                     <app-dummy-key (generate)="generate($event)"></app-dummy-key>
                 </ng-template>
-                <ng-template [ngSwitchCase]="licenses.DUMMY_NO_JAR">
-                    <app-dummy-no-jar-key (generate)="generate($event)"></app-dummy-no-jar-key>
-                </ng-template>
             </div>
         </div>
     </mat-dialog-content>

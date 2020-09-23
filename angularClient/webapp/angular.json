@@ -32,7 +32,7 @@
             "scripts": [],
             "tsConfig": "./tsconfig.app.json"
           },
-          ".s": {
+          "configurations": {
             "production": {
               "fileReplacements": [
                 {

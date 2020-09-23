@@ -27,10 +27,6 @@ const TREE_DATA: LicenseNode[] = [
             {
                 name: 'Лицензия заглушка',
                 value: LicenseType.DUMMY
-            },
-            {
-                name: 'Лицензия заглушка (no jar)',
-                value: LicenseType.DUMMY_NO_JAR
             }
         ]
     }
