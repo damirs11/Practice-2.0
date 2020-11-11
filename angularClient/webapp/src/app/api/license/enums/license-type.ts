@@ -1,3 +1,4 @@
 export enum LicenseType {
-    DUMMY = 'DUMMY'
+    DUMMY = 'DUMMY',
+    UZEDO = 'UZEDO'
 }

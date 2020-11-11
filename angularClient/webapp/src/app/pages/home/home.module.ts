@@ -1,14 +1,16 @@
+import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {MaterialFileInputModule} from 'ngx-material-file-input';
+import {AgGridModule} from 'ag-grid-angular';
+import {NgxMaskModule} from 'ngx-mask';
 import {HomeComponent} from './home.component';
-import {LicensesComponent} from './licenses/licenses.component';
 import {HomeRoutingModule} from './home-routing.module';
 import {AngularMaterialModule} from '../../angular-material/angular-material.module';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {NgModule} from '@angular/core';
-import {MaterialFileInputModule} from 'ngx-material-file-input';
-import {GenerateComponent} from './licenses/components/generate/generate.component';
 import {DummyKeyComponent} from '@pages/home/licenses/components/generate/components/dummy-key/dummy-key.component';
-import {AgGridModule} from 'ag-grid-angular';
+import {UzedoKeyComponent} from '@pages/home/licenses/components/generate/components/uzedo-key/uzedo-key.component';
+import {LicensesComponent} from './licenses/licenses.component';
+import {GenerateComponent} from './licenses/components/generate/generate.component';
 import { PaginationToolbarComponent } from './licenses/components/pagination-toolbar/pagination-toolbar.component';
 
 @NgModule({
@@ -17,6 +19,7 @@ import { PaginationToolbarComponent } from './licenses/components/pagination-too
         LicensesComponent,
         GenerateComponent,
         DummyKeyComponent,
+        UzedoKeyComponent,
         PaginationToolbarComponent,
     ],
     imports: [
@@ -27,6 +30,7 @@ import { PaginationToolbarComponent } from './licenses/components/pagination-too
         MaterialFileInputModule,
         FormsModule,
         AgGridModule.forRoot(),
+        NgxMaskModule.forRoot(),
     ]
 })
 export class HomeModule {

@@ -3,6 +3,7 @@ package ru.blogic.service;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
@@ -19,24 +20,23 @@ import ru.blogic.repository.KeyFileRepository;
 import ru.blogic.repository.KeyRepository;
 
 import org.springframework.data.domain.Pageable;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 @Service
 public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
 
     private static final Logger logger = LoggerFactory.getLogger(DummyKeyService.class);
-    private static final String PROPERTY_LICENSES_PATH = "LICENSES_PATH";
-
-    private final Environment env;
     private final KeyRepository keyRepository;
     private final KeyFileRepository keyFileRepository;
     private final FileStorageService fileStorageService;
 
-    public DummyKeyService(Environment env, KeyRepository keyRepository, KeyFileRepository keyFileRepository, FileStorageService fileStorageService) {
-        this.env = env;
+    @Value("${LICENSE_PATH}")
+    private String LICENSE_PATH;
+
+    public DummyKeyService(KeyRepository keyRepository, KeyFileRepository keyFileRepository, FileStorageService fileStorageService) {
         this.keyRepository = keyRepository;
         this.keyFileRepository = keyFileRepository;
         this.fileStorageService = fileStorageService;
@@ -79,9 +79,12 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
      */
     @Override
     @Transactional()
-    public void generate(KeyMetaDTO keyMetaDTO, MultipartFile activationFile) throws IOException {
+    public void generate(KeyMetaDTO keyMetaDTO, MultipartFile activationFile) throws IOException, InterruptedException {
 
         String pathToActivationFile = "nofile";
+        logger.info(System.getProperty("java.io.tmpdir"));
+        logger.info(System.getenv("JAVA_HOME"));
+        logger.info(LICENSE_PATH);
 
         if (activationFile != null) {
             fileStorageService.save(activationFile);
@@ -91,19 +94,18 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
         new ProcessBuilder()
                 .inheritIO()
                 .command(
-                        "java", "-jar", env.getProperty(PROPERTY_LICENSES_PATH),
+                        "java", "-jar", LICENSE_PATH,
                         keyMetaDTO.getOrganization(),
                         keyMetaDTO.getExpiration().toString(),
                         String.valueOf(keyMetaDTO.getCoresCount()),
                         String.valueOf(keyMetaDTO.getUsersCount()),
                         Integer.toBinaryString(keyMetaDTO.getModuleFlags()),
-                        keyMetaDTO.getKeyFileName(),
+                        FileStorageService.ROOT + File.separator + keyMetaDTO.getKeyFileName(),
                         pathToActivationFile
                 )
-                .start();
-        fileStorageService.deleteAll();
+                .start().waitFor();
 
-        File keyFileTemp = new File(System.getProperty("java.io.tmpdir") + keyMetaDTO.getKeyFileName());
+        File keyFileTemp = new File(FileStorageService.ROOT + File.separator + keyMetaDTO.getKeyFileName());
         KeyMeta keyMeta = new KeyMeta(keyMetaDTO);
         keyMeta.setType(getLicenseType());
         KeyFile keyFile = new KeyFile(
@@ -112,7 +114,6 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
                 keyMeta,
                 FileUtils.readFileToByteArray(keyFileTemp)
         );
-
         this.keyFileRepository.save(keyFile);
     }
 }

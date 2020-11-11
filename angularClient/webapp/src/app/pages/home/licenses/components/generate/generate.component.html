@@ -18,8 +18,11 @@
 
         <div>
             <div [ngSwitch]="selectedLicense">
-                <ng-template [ngSwitchCase]="licenses.DUMMY">
-                    <app-dummy-key (generate)="generate($event)"></app-dummy-key>
+<!--                <ng-template [ngSwitchCase]="licenses.DUMMY">-->
+<!--                    <app-dummy-key (generate)="generate($event)"></app-dummy-key>-->
+<!--                </ng-template>-->
+                <ng-template [ngSwitchCase]="licenses.UZEDO">
+                    <app-uzedo-key (generate)="generate($event)"></app-uzedo-key>
                 </ng-template>
             </div>
         </div>

@@ -1,0 +1,97 @@
+<div>
+    <mat-card class="card-form">
+        <form (ngSubmit)="createKey(newKeyForm.value)" [formGroup]="newKeyForm">
+
+            <div formGroupName="keyMeta">
+                <mat-form-field class="full-width">
+                    <input [errorStateMatcher]="matcher" formControlName="organization" matInput placeholder="Организация" type="text">
+
+                    <mat-error>
+                      <span *ngIf="!newKeyForm.get('keyMeta.organization').valid && newKeyForm.get('keyMeta.organization').touched">
+                        Пожалуйста введите имя
+                      </span>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="full-width">
+                    <input [errorStateMatcher]="matcher" [matDatepicker]="expiration" formControlName="expiration"
+                           matInput
+                           placeholder="Дата окончания">
+                    <mat-datepicker-toggle [for]="expiration" matSuffix></mat-datepicker-toggle>
+                    <mat-datepicker #expiration></mat-datepicker>
+
+                    <mat-error>
+                      <span
+                          *ngIf="!newKeyForm.get('keyMeta.expiration').valid && newKeyForm.get('keyMeta.expiration').touched">
+                        Пожалуйста введите дату
+                      </span>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="full-width">
+                    <input [errorStateMatcher]="matcher" formControlName="coresCount" matInput min="1"
+                           placeholder="Число ядер"
+                           type="number">
+
+                    <mat-error>
+                      <span
+                          *ngIf="!newKeyForm.get('keyMeta.coresCount').valid && newKeyForm.get('keyMeta.coresCount').touched">
+                        Пожалуйста введите количество ядер
+                      </span>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="full-width">
+                    <input [errorStateMatcher]="matcher" formControlName="usersCount" matInput min="1"
+                           placeholder="Число пользователей"
+                           type="number">
+
+                    <mat-error>
+                      <span
+                          *ngIf="!newKeyForm.get('keyMeta.usersCount').valid && newKeyForm.get('keyMeta.usersCount').touched">
+                        Пожалуйста введите количество пользователей
+                      </span>
+                    </mat-error>
+                </mat-form-field>
+
+                <div class="checkbox-group full-width" formGroupName="moduleFlags">
+                    <mat-checkbox class="child" formControlName="platformOk">ПлатформаОк</mat-checkbox>
+                    <mat-checkbox class="child" formControlName="EDS">СЭД</mat-checkbox>
+                    <mat-checkbox class="child" formControlName="features">Фичи</mat-checkbox>
+                    <mat-checkbox class="child" formControlName="archive">Архив (2017)</mat-checkbox>
+                </div>
+
+                <mat-form-field class="full-width">
+                    <input [errorStateMatcher]="matcher" formControlName="keyFileName" matInput
+                           placeholder="Название файла ключа"
+                           type="text">
+
+                    <mat-error>
+                      <span
+                          *ngIf="!newKeyForm.get('keyMeta.keyFileName').valid && newKeyForm.get('keyMeta.keyFileName').touched">
+                        Пожалуйста введите имя файла ключа
+                      </span>
+                    </mat-error>
+                </mat-form-field>
+
+                <mat-form-field class="full-width">
+                    <input [errorStateMatcher]="matcher" formControlName="comment" matInput placeholder="Комментарий"
+                           type="text">
+                </mat-form-field>
+            </div>
+
+            <mat-form-field class="full-width">
+                <ngx-mat-file-input #fileInput formControlName="activationKeyFile"
+                                    placeholder="Файл активации"></ngx-mat-file-input>
+                <button (click)="fileInput.clear($event)" *ngIf="!fileInput.empty" mat-icon-button matSuffix>
+                    <mat-icon matSuffix>clear</mat-icon>
+                </button>
+            </mat-form-field>
+
+            <button class="generate-button app-button" [disabled]="!newKeyForm.valid" color="primary" mat-flat-button
+                    type="submit">
+                Создать
+            </button>
+        </form>
+    </mat-card>
+</div>

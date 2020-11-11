@@ -49,6 +49,6 @@ public interface KeyGenerator<KeyMeta, KeyFile> {
      * @param keyInputParams входные данные для создания
      */
     @Transactional()
-    void generate(KeyMeta keyInputParams, @Nullable MultipartFile activationFile) throws IOException;
+    void generate(KeyMeta keyInputParams, @Nullable MultipartFile activationFile) throws IOException, InterruptedException;
 
 }

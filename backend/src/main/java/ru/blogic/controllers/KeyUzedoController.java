@@ -1,33 +1,25 @@
 package ru.blogic.controllers;
 
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import ru.blogic.dto.KeyFileDTO;
-import ru.blogic.dto.KeyMetaDTO;
+import ru.blogic.dto.KeyFileUzedoDTO;
+import ru.blogic.dto.KeyFileUzedoDTO;
+import ru.blogic.dto.KeyMetaUzedoDTO;
+import ru.blogic.dto.KeyMetaUzedoDTO;
 import ru.blogic.dto.response.MessageResponse;
 import ru.blogic.enums.LicenseType;
 import ru.blogic.interfaces.KeyGenerator;
 
 import javax.validation.Valid;
 import javax.websocket.server.PathParam;
-
-import org.springframework.data.domain.Pageable;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -35,13 +27,13 @@ import java.util.List;
  *
  * @author DSalikhov
  */
-//@RestController
-//@RequestMapping("/api/key")
-public class KeyController {
+@RestController
+@RequestMapping("/api/key")
+public class KeyUzedoController {
 
-    final List<KeyGenerator<KeyMetaDTO, KeyFileDTO>> keyServices;
+    final List<KeyGenerator<KeyMetaUzedoDTO, KeyFileUzedoDTO>> keyServices;
 
-    public KeyController(List<KeyGenerator<KeyMetaDTO, KeyFileDTO>> keyServices) {
+    public KeyUzedoController(List<KeyGenerator<KeyMetaUzedoDTO, KeyFileUzedoDTO>> keyServices) {
         this.keyServices = keyServices;
     }
 
@@ -57,7 +49,7 @@ public class KeyController {
             return ResponseEntity.ok(keyServices.get(0).findAll(pageable));
         }
 
-        for (KeyGenerator<KeyMetaDTO, KeyFileDTO> s : keyServices) {
+        for (KeyGenerator<KeyMetaUzedoDTO, KeyFileUzedoDTO> s : keyServices) {
             if (type == s.getLicenseType()) {
                 return ResponseEntity.ok(s.findAllByType(pageable));
             }
@@ -74,8 +66,8 @@ public class KeyController {
      */
     @GetMapping("/download/{keyFileId:.+}")
     public ResponseEntity downloadKeyFile(@PathVariable Long keyFileId, @RequestParam LicenseType type) {
-        KeyFileDTO keyFile = null;
-        for (KeyGenerator<KeyMetaDTO, KeyFileDTO> s : keyServices) {
+        KeyFileUzedoDTO keyFile = null;
+        for (KeyGenerator<KeyMetaUzedoDTO, KeyFileUzedoDTO> s : keyServices) {
             if (type == s.getLicenseType()) {
                 try {
                     keyFile = s.getKeyFile(keyFileId);
@@ -100,11 +92,11 @@ public class KeyController {
      */
     @PostMapping(value = "/create", consumes = {"multipart/form-data"})
     @ResponseBody
-    public ResponseEntity createNewKey(@PathParam("type") LicenseType type, @RequestPart("keyMeta") @Valid KeyMetaDTO key, @RequestPart(value = "activationFile", required = false) MultipartFile activationFile) {
-        for (KeyGenerator<KeyMetaDTO, KeyFileDTO> s : keyServices) {
+    public ResponseEntity createNewKey(@PathParam("type") LicenseType type, @RequestPart("keyMeta") @Valid KeyMetaUzedoDTO key, @RequestPart(value = "publicKey", required = false) MultipartFile publicKey) {
+        for (KeyGenerator<KeyMetaUzedoDTO, KeyFileUzedoDTO> s : keyServices) {
             if (type == s.getLicenseType()) {
                 try {
-                    s.generate(key, activationFile);
+                    s.generate(key, publicKey);
                     return ResponseEntity.ok(new MessageResponse("Новый ключ создан"));
                 } catch (IOException | InterruptedException e) {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Ошибка при генерации ключа"));

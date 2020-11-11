@@ -19,6 +19,7 @@ import ru.blogic.interfaces.KeyGenerator;
 import java.io.FileNotFoundException;
 import java.util.Collections;
 import java.util.Date;
+import java.util.UUID;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;

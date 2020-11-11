@@ -1,9 +1,6 @@
 import {Router} from '@angular/router';
-import {EventEmitter, Injectable} from '@angular/core';
-import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {Observable} from 'rxjs';
 import {AuthService} from '@shared/service/auth/auth.service';
-import {ErrorModalComponent} from '@components/modals/error-modal/error-modal.component';
 import {KeyGenerationParams} from '@api/license/key-generation-params';
 import {KeyService} from '../key/key.service';
 import {LoggerService} from '@shared/service/logger/logger.service';
@@ -17,6 +14,7 @@ import {LicenseType} from '@api/license/enums/license-type';
 import {ModalService} from '@shared/service/modal/modal.service';
 import {FormDataType} from '@api/license/form-data-type';
 import {Page} from '@api/license/page';
+import {Injectable} from '@angular/core';
 
 @Injectable({
     providedIn: 'any'

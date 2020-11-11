@@ -4,8 +4,8 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
-    "build-prod": "ng build --prod",
+    "build": "ng build --base-href .",
+    "build-prod": "ng build --prod --base-href .",
     "test": "ng test",
     "lint": "ng lint"
   },
@@ -29,6 +29,7 @@
     "file-saver": "~2.0.2",
     "http-status-codes": "~2.1.2",
     "ngx-material-file-input": "~2.1.1",
+    "ngx-mask": "~9.1.4",
     "rxjs": "~6.5.4",
     "tslib": "~1.13.0",
     "zone.js": "~0.10.2"
