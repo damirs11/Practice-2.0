@@ -1,171 +1,109 @@
 package ru.blogic.dto;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import ru.blogic.entity.KeyMeta;
+import ru.blogic.entity.Properties;
 import ru.blogic.enums.LicenseType;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.Date;
-import java.util.Objects;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
-/**
- * Мета данные ключа
- *
- * @author DSalikhov
- */
 public class KeyMetaDTO {
 
     /**
-     * ID
+     * Идентификатор
      */
-    private Long id;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private UUID id;
 
     /**
      * Тип лицензии
      */
-    private LicenseType type;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private LicenseType licenseType;
 
     /**
-     * Имя
+     * Предыдущий Идентификатор лицензии
      */
-    @NotEmpty
-    private String organization;
+    private UUID previousLicense;
 
     /**
-     * Дата истечения
+     * Дата выпуска(формат дат yyyy-MM-dd)
      */
-    @NotNull
-    private Date expiration;
+    private Date dateOfIssue;
 
     /**
-     * Количество ядер
+     * Срок действия
      */
-    @NotNull
-    private int coresCount;
+    private Date dateOfExpiry;
 
-    /**
-     * Количество пользователь
-     */
-    @NotNull
-    private int usersCount;
-
-    /**
-     * Флаги
-     * <br>
-     * 00000000
-     * <br>
-     * Значение битов по порядку:
-     * <br>
-     * 1-платформа <br>
-     * 2-СЭД <br>
-     * 3-фичи (доп.возможности) <br>
-     * 4-архив (2017), но его уже нет. <br>
-     * <p>
-     * Типичная лицензия 11110000
-     */
-    @NotNull
-    private int moduleFlags;
-
-    /**
-     * Имя файла ключа
-     */
-    @NotEmpty
-    private String keyFileName;
-
-    /**
-     * Комментарий
-     */
-    private String comment;
+    @JsonProperty("properties")
+    private Map<String, String> properties;
 
     public KeyMetaDTO() {
     }
 
     public KeyMetaDTO(KeyMeta keyMeta) {
         this.id = keyMeta.getId();
-        this.type = keyMeta.getType();
-        this.organization = keyMeta.getOrganization();
-        this.expiration = keyMeta.getExpiration();
-        this.coresCount = keyMeta.getCoresCount();
-        this.usersCount = keyMeta.getUsersCount();
-        this.moduleFlags = keyMeta.getModuleFlags();
-        this.keyFileName = keyMeta.getKeyFileName();
-        this.comment = keyMeta.getComment();
+        this.licenseType = keyMeta.getLicenseType();
+        this.previousLicense = keyMeta.getPreviousLicense();
+        this.dateOfIssue = keyMeta.getDateOfIssue();
+        this.dateOfExpiry = keyMeta.getDateOfExpiry();
+        this.properties = keyMeta.getProperties().stream().collect(Collectors.toMap(Properties::getKey, Properties::getValue));
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public LicenseType getType() {
-        return type;
+    public LicenseType getLicenseType() {
+        return licenseType;
     }
 
-    public void setType(LicenseType type) {
-        this.type = type;
+    public void setLicenseType(LicenseType licenseType) {
+        this.licenseType = licenseType;
     }
 
-    public String getOrganization() {
-        return organization;
+    public UUID getPreviousLicense() {
+        return previousLicense;
     }
 
-    public void setOrganization(String organization) {
-        this.organization = organization;
+    public void setPreviousLicense(UUID previousLicense) {
+        this.previousLicense = previousLicense;
     }
 
-    public Date getExpiration() {
-        return expiration;
+    public Date getDateOfIssue() {
+        return dateOfIssue;
     }
 
-    public void setExpiration(Date expiration) {
-        this.expiration = expiration;
+    public void setDateOfIssue(Date dateOfIssue) {
+        this.dateOfIssue = dateOfIssue;
     }
 
-    public int getCoresCount() {
-        return coresCount;
+    public Date getDateOfExpiry() {
+        return dateOfExpiry;
     }
 
-    public void setCoresCount(int coresCount) {
-        this.coresCount = coresCount;
+    public void setDateOfExpiry(Date dateOfExpiry) {
+        this.dateOfExpiry = dateOfExpiry;
     }
 
-    public int getUsersCount() {
-        return usersCount;
+    public Map<String, String> getProperties() {
+        return properties;
     }
 
-    public void setUsersCount(int usersCount) {
-        this.usersCount = usersCount;
-    }
-
-    public int getModuleFlags() {
-        return moduleFlags;
-    }
-
-    public void setModuleFlags(int moduleFlags) {
-        this.moduleFlags = moduleFlags;
-    }
-
-    public String getKeyFileName() {
-        return keyFileName;
-    }
-
-    public void setKeyFileName(String keyFileName) {
-        this.keyFileName = keyFileName;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
     }
 
     @Override
@@ -177,15 +115,12 @@ public class KeyMetaDTO {
         KeyMetaDTO that = (KeyMetaDTO) o;
 
         return new EqualsBuilder()
-                .append(coresCount, that.coresCount)
-                .append(usersCount, that.usersCount)
-                .append(moduleFlags, that.moduleFlags)
                 .append(id, that.id)
-                .append(type, that.type)
-                .append(organization, that.organization)
-                .append(expiration, that.expiration)
-                .append(keyFileName, that.keyFileName)
-                .append(comment, that.comment)
+                .append(licenseType, that.licenseType)
+                .append(previousLicense, that.previousLicense)
+                .append(dateOfIssue, that.dateOfIssue)
+                .append(dateOfExpiry, that.dateOfExpiry)
+                .append(properties, that.properties)
                 .isEquals();
     }
 
@@ -193,20 +128,11 @@ public class KeyMetaDTO {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(id)
-                .append(type)
-                .append(organization)
-                .append(expiration)
-                .append(coresCount)
-                .append(usersCount)
-                .append(moduleFlags)
-                .append(keyFileName)
-                .append(comment)
+                .append(licenseType)
+                .append(previousLicense)
+                .append(dateOfIssue)
+                .append(dateOfExpiry)
+                .append(properties)
                 .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return ReflectionToStringBuilder.toString(this, ToStringStyle.MULTI_LINE_STYLE,
-                true, true);
     }
 }

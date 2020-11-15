@@ -7,170 +7,113 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import ru.blogic.dto.KeyMetaDTO;
 import ru.blogic.enums.LicenseType;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
-/**
- * Мета данные ключа
- *
- * @author DSalikhov
- */
 @Entity
-@Table(name = "t_keys")
+@Table(name = "t_keys_meta")
 public class KeyMeta {
 
     /**
-     * ID
+     * Идентификатор
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private UUID id;
 
     /**
      * Тип лицензии
      */
-    private LicenseType type;
+    @Column(name = "license_type")
+    @NotNull
+    private LicenseType licenseType;
 
     /**
-     * Имя организации
+     * Предыдущий Идентификатор лицензии
      */
-    private String organization;
+    @Column(name = "previous_license")
+    private UUID previousLicense;
 
     /**
-     * Дата истечения
+     * Дата выпуска(формат дат yyyy-MM-dd)
      */
-    private Date expiration;
+    @Column(name = "date_of_issue")
+    @NotNull
+    private Date dateOfIssue;
 
     /**
-     * Количество ядер
+     * Срок действия
      */
-    @Column(name = "cores_count")
-    private int coresCount;
+    @Column(name = "date_of_expiry")
+    private Date dateOfExpiry;
 
-    /**
-     * Количество пользователь
-     */
-    @Column(name = "users_count")
-    private int usersCount;
-
-    /**
-     * Флаги
-     * <br>
-     * 00000000
-     * <br>
-     * Значение битов по порядку:
-     * <br>
-     * 1-платформа <br>
-     * 2-СЭД <br>
-     * 3-фичи (доп.возможности) <br>
-     * 4-архив (2017), но его уже нет. <br>
-     * <p>
-     * Типичная лицензия 11110000
-     */
-    @Column(name = "module_flags")
-    private int moduleFlags;
-
-    /**
-     * Имя файла ключа
-     */
-    @Column(name = "key_file_name")
-    private String keyFileName;
-
-    /**
-     * Комментарий
-     */
-    private String comment;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "key_meta_id")
+    private List<Properties> properties;
 
     public KeyMeta() {
     }
 
     public KeyMeta(KeyMetaDTO keyMetaDTO) {
         this.id = keyMetaDTO.getId();
-        this.type = keyMetaDTO.getType();
-        this.organization = keyMetaDTO.getOrganization();
-        this.expiration = keyMetaDTO.getExpiration();
-        this.coresCount = keyMetaDTO.getCoresCount();
-        this.usersCount = keyMetaDTO.getUsersCount();
-        this.moduleFlags = keyMetaDTO.getModuleFlags();
-        this.keyFileName = keyMetaDTO.getKeyFileName();
-        this.comment = keyMetaDTO.getComment();
+        this.licenseType = keyMetaDTO.getLicenseType();
+        this.previousLicense = keyMetaDTO.getPreviousLicense();
+        this.dateOfIssue = keyMetaDTO.getDateOfIssue();
+        this.dateOfExpiry = keyMetaDTO.getDateOfExpiry();
+        this.properties = keyMetaDTO.getProperties().entrySet().stream()
+                .map(entry -> new Properties(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
-    public LicenseType getType() {
-        return type;
+    public LicenseType getLicenseType() {
+        return licenseType;
     }
 
-    public void setType(LicenseType type) {
-        this.type = type;
+    public void setLicenseType(LicenseType licenseType) {
+        this.licenseType = licenseType;
     }
 
-    public String getOrganization() {
-        return organization;
+    public UUID getPreviousLicense() {
+        return previousLicense;
     }
 
-    public void setOrganization(String organization) {
-        this.organization = organization;
+    public void setPreviousLicense(UUID previousLicense) {
+        this.previousLicense = previousLicense;
     }
 
-    public Date getExpiration() {
-        return expiration;
+    public Date getDateOfIssue() {
+        return dateOfIssue;
     }
 
-    public void setExpiration(Date expiration) {
-        this.expiration = expiration;
+    public void setDateOfIssue(Date dateOfIssue) {
+        this.dateOfIssue = dateOfIssue;
     }
 
-    public int getCoresCount() {
-        return coresCount;
+    public Date getDateOfExpiry() {
+        return dateOfExpiry;
     }
 
-    public void setCoresCount(int coresCount) {
-        this.coresCount = coresCount;
+    public void setDateOfExpiry(Date dateOfExpiry) {
+        this.dateOfExpiry = dateOfExpiry;
     }
 
-    public int getUsersCount() {
-        return usersCount;
+    public List<Properties> getProperties() {
+        return properties;
     }
 
-    public void setUsersCount(int usersCount) {
-        this.usersCount = usersCount;
-    }
-
-    public int getModuleFlags() {
-        return moduleFlags;
-    }
-
-    public void setModuleFlags(int moduleFlags) {
-        this.moduleFlags = moduleFlags;
-    }
-
-    public String getKeyFileName() {
-        return keyFileName;
-    }
-
-    public void setKeyFileName(String keyFileName) {
-        this.keyFileName = keyFileName;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setProperties(List<Properties> properties) {
+        this.properties = properties;
     }
 
     @Override
@@ -179,18 +122,15 @@ public class KeyMeta {
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        KeyMeta keyMeta = (KeyMeta) o;
+        KeyMeta license = (KeyMeta) o;
 
         return new EqualsBuilder()
-                .append(coresCount, keyMeta.coresCount)
-                .append(usersCount, keyMeta.usersCount)
-                .append(moduleFlags, keyMeta.moduleFlags)
-                .append(id, keyMeta.id)
-                .append(type, keyMeta.type)
-                .append(organization, keyMeta.organization)
-                .append(expiration, keyMeta.expiration)
-                .append(keyFileName, keyMeta.keyFileName)
-                .append(comment, keyMeta.comment)
+                .append(id, license.id)
+                .append(licenseType, license.licenseType)
+                .append(previousLicense, license.previousLicense)
+                .append(dateOfIssue, license.dateOfIssue)
+                .append(dateOfExpiry, license.dateOfExpiry)
+                .append(properties, license.properties)
                 .isEquals();
     }
 
@@ -198,14 +138,11 @@ public class KeyMeta {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(id)
-                .append(type)
-                .append(organization)
-                .append(expiration)
-                .append(coresCount)
-                .append(usersCount)
-                .append(moduleFlags)
-                .append(keyFileName)
-                .append(comment)
+                .append(licenseType)
+                .append(previousLicense)
+                .append(dateOfIssue)
+                .append(dateOfExpiry)
+                .append(properties)
                 .toHashCode();
     }
 

@@ -12,9 +12,9 @@ import KeyUtils from '../../utils/keyUtils';
 import {AuthStore} from '@shared/store/auth.store';
 import {LicenseType} from '@api/license/enums/license-type';
 import {ModalService} from '@shared/service/modal/modal.service';
-import {FormDataType} from '@api/license/form-data-type';
 import {Page} from '@api/license/page';
 import {Injectable} from '@angular/core';
+import {FormDataType} from '@api/license/form-data-type';
 
 @Injectable({
     providedIn: 'any'
@@ -40,11 +40,11 @@ export class HomeFacade {
         return this.homeStore.getKeys$();
     }
 
-    getSelectedLicense() {
+    getSelectedLicense(): Observable<LicenseType>  {
         return this.homeStore.getSelectedLicense$();
     }
 
-    setSelectedLicense(license: LicenseType) {
+    setSelectedLicense(license: LicenseType): void {
         this.homeStore.setSelectedLicense(license);
     }
 
@@ -52,8 +52,9 @@ export class HomeFacade {
      * Производит создание нового ключа основывая на данных из формы
      *
      * @param $event
+     * @param licenseType
      */
-    generate($event: FormDataType) {
+    generate($event: FormDataType): void {
         console.log('licenses createLicense');
         console.log($event);
 
@@ -61,9 +62,16 @@ export class HomeFacade {
 
         const formData = new FormData();
         formData.append('keyMeta', new Blob([JSON.stringify($event.keyMeta)], {type: 'application/json'}));
-        formData.append('activationFile', $event.activationKeyFile);
+        for (const [key, value] of Object.entries($event.files)) {
+            console.log(key, value);
+            if (value !== null) {
+                formData.append('files', value, key);
+            }
+        }
 
-        this.keyService.createNewKey(formData, $event.type).subscribe(
+        // formData.append('files[]', $event.files[0]);
+
+        this.keyService.createNewKey(formData, $event.licenseType).subscribe(
             (message) => {
                 this.logger.log(message);
 
@@ -80,8 +88,9 @@ export class HomeFacade {
         );
     }
 
-    openNewLicenseModal() {
+    openNewLicenseModal(): void {
         this.modalService.openNewLicenseModal(null, (data) => {
+            console.log(data);
             this.generate(data);
         });
     }

@@ -27,6 +27,10 @@ const TREE_DATA: LicenseNode[] = [
             {
                 name: 'Лицензия заглушка',
                 value: LicenseType.DUMMY
+            },
+            {
+                name: 'Лицензия ЮЗЭДО',
+                value: LicenseType.UZEDO
             }
         ]
     }

@@ -4,12 +4,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.lang.Nullable;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.blogic.dto.FilesDTO;
 import ru.blogic.enums.LicenseType;
 
 import org.springframework.data.domain.Pageable;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 
 public interface KeyGenerator<KeyMeta, KeyFile> {
 
@@ -32,7 +35,7 @@ public interface KeyGenerator<KeyMeta, KeyFile> {
      *
      * @return ключи
      */
-    Page<KeyMeta> findAllByType(Pageable pageable);
+    Page<KeyMeta> findAllByLicenseType(Pageable pageable);
 
     /**
      * Скачать ключ
@@ -41,7 +44,7 @@ public interface KeyGenerator<KeyMeta, KeyFile> {
      * @return ответ
      */
     @Transactional(readOnly = true)
-    KeyFile getKeyFile(Long keyFileId) throws FileNotFoundException;
+    KeyFile getKeyFile(UUID keyFileId) throws FileNotFoundException;
 
     /**
      * Создать новый ключ
@@ -49,6 +52,6 @@ public interface KeyGenerator<KeyMeta, KeyFile> {
      * @param keyInputParams входные данные для создания
      */
     @Transactional()
-    void generate(KeyMeta keyInputParams, @Nullable MultipartFile activationFile) throws IOException, InterruptedException;
+    void generate(KeyMeta keyInputParams, @Nullable List<MultipartFile> files) throws IOException, InterruptedException;
 
 }

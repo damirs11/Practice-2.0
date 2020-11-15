@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {LoggerService} from '@shared/service/logger/logger.service';
 import {HomeFacade} from '../shared/service/facade/home.facade';
 import {LicenseType} from '@api/license/enums/license-type';
-import {GridOptions, ColDef, GridApi, RowClickedEvent, IGetRowsParams} from 'ag-grid-community';
+import {ColDef, GridApi, GridOptions, RowClickedEvent} from 'ag-grid-community';
 import {DatePipe} from '@angular/common';
 import {PageSettings} from '@api/license/pageSettings';
 
@@ -41,39 +41,70 @@ export class LicensesComponent {
             lockVisible: true,
         };
 
-        this.columnDefs = [
-            {
-                headerName: 'Тип',
-                field: 'type',
-            },
-            {
-                headerName: 'Организация',
-                field: 'organization'
-            },
-            {
-                headerName: 'Дата окончания',
-                field: 'expiration',
-                valueFormatter: (params) => this.date.transform(params.value, 'dd.MM.yyyy'),
-                initialSort: 'desc'
-            },
-            {
-                headerName: 'Комментарий',
-                field: 'comment'
-            },
-            {
-                headerName: 'Кол-во пользователей',
-                field: 'usersCount'
-            },
-            {
-                headerName: 'Кол-во ядер',
-                field: 'coresCount'
-            },
-            {
-                headerName: 'Привелегии',
-                field: 'moduleFlags',
-                valueFormatter: (params) => this.moduleFlagsToLabel(params.value)
-            },
-        ];
+        this.homeFacade.getSelectedLicense().subscribe((license) => {
+            switch (license) {
+                case LicenseType.DUMMY: {
+                    this.columnDefs = [];
+                    break;
+                }
+                case LicenseType.UZEDO: {
+                    this.columnDefs = [
+                        {
+                            headerName: 'UUID',
+                            field: 'id',
+                        },
+                        {
+                            headerName: 'Версия',
+                            field: 'properties.version',
+                        },
+                        {
+                            headerName: 'Выдан кому',
+                            field: 'properties.issuedTo',
+                        },
+                        {
+                            headerName: 'Выдан кем',
+                            field: 'properties.issuedBy',
+                        },
+                        {
+                            headerName: 'Номер лицензии',
+                            field: 'properties.licenseNumber',
+                        },
+                        {
+                            headerName: 'Организации',
+                            field: 'properties.organizationsList',
+                        },
+                        {
+                            headerName: 'Комментарий',
+                            field: 'properties.comment',
+                        },
+                    ];
+                    break;
+                }
+                default: {
+                    this.columnDefs = [
+                        {
+                            headerName: 'UUID',
+                            field: 'id',
+                        },
+                        {
+                            headerName: 'Тип',
+                            field: 'licenseType',
+                        },
+                        {
+                            headerName: 'Дата создания',
+                            field: 'dateOfIssue',
+                            valueFormatter: (params) => this.date.transform(params.value, 'dd.MM.yyyy'),
+                        },
+                        {
+                            headerName: 'Дата окончания',
+                            field: 'dateOfExpiry',
+                            valueFormatter: (params) => this.date.transform(params.value, 'dd.MM.yyyy'),
+                            initialSort: 'desc'
+                        },
+                    ];
+                }
+            }
+        });
 
         PageSettings.size = 2;
 
@@ -84,8 +115,7 @@ export class LicensesComponent {
             onGridReady: (params) => {
                 this.gridApi = params.api;
 
-                this.keys.subscribe(
-                    rowData => {
+                this.keys.subscribe(rowData => {
                         this.gridApi.setRowData(rowData.content);
                     }
                 );
@@ -98,7 +128,7 @@ export class LicensesComponent {
                 return data.id;
             },
             onRowClicked: (event: RowClickedEvent) =>
-                this.downloadKey(event.data.id, event.data.type)
+                this.downloadKey(event.data.id, event.data.licenseType)
         };
 
         this.refreshData();

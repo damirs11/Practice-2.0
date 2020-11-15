@@ -1,8 +1,9 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {FormStateMatcher} from '@shared/state-matchers/form.state-matcher';
 import KeyUtils from '@pages/home/shared/utils/keyUtils';
 import {FormDataType} from '@api/license/form-data-type';
+import {LicenseType} from '@api/license/enums/license-type';
 
 
 @Component({
@@ -16,6 +17,10 @@ export class DummyKeyComponent implements OnInit {
      */
     @Output() generate: EventEmitter<FormDataType> = new EventEmitter<FormDataType>();
     /**
+     * Это Перевыпуск лицензии?
+     */
+    @Input() republish = false;
+    /**
      * Форма создания ключа
      */
     newKeyForm: FormGroup;
@@ -23,6 +28,8 @@ export class DummyKeyComponent implements OnInit {
      * Валидатор
      */
     matcher = new FormStateMatcher();
+
+    minDate: Date = new Date();
 
     constructor(
         private formBuilder: FormBuilder,
@@ -32,25 +39,33 @@ export class DummyKeyComponent implements OnInit {
     ngOnInit(): void {
         this.newKeyForm = this.formBuilder.group({
             keyMeta: this.formBuilder.group({
-                organization: ['organization', Validators.required],
-                expiration: [new Date(), Validators.required],
-                coresCount: [4, Validators.min(1)],
-                usersCount: [4, Validators.min(1)],
-                moduleFlags: this.formBuilder.group(
-                    {
-                        platformOk: true,
-                        EDS: true,
-                        features: false,
-                        archive: false,
-                    },
-                    Validators.required
-                ),
-                keyFileName: ['keyFileName', Validators.required],
-                comment: ['comment']
+                id: [null],
+                previousLicense: [null],
+                dateOfIssue: [new Date(), Validators.required],
+                dateOfExpiry: [null, Validators.required],
+                properties: this.formBuilder.group({
+                    organizationName: ['organizationName', Validators.required],
+                    coresCount: [4, Validators.min(1)],
+                    usersCount: [4, Validators.min(1)],
+                    moduleFlags: this.formBuilder.group(
+                        {
+                            platformOk: true,
+                            EDS: true,
+                            features: false,
+                            archive: false,
+                        },
+                        Validators.required
+                    ),
+                    keyFileName: ['keyFileName', Validators.required],
+                    comment: ['comment'],
+                }),
             }),
-            activationKeyFile: [null]
+            files: this.formBuilder.group({
+                activationKeyFile: [null]
+            })
         });
-        // this.keyMeta = this.newKeyForm.get('keyMeta').;
+
+        this.minDate.setDate(this.minDate.getDate() + 1);
     }
 
     /**
@@ -59,11 +74,14 @@ export class DummyKeyComponent implements OnInit {
      * @param formData - форма с данными
      */
     createKey(formData: any) {
-        formData.keyMeta.moduleFlags = KeyUtils.convertBooleanModuleFlagToByte(formData.keyMeta.moduleFlags);
-        formData.activationKeyFile = formData?.activationKeyFile?._files[0] ?? null;
+        formData.keyMeta.properties.moduleFlags = KeyUtils.convertBooleanModuleFlagToByte(formData.keyMeta.properties.moduleFlags);
+        formData.files.activationKeyFile = formData?.files?.activationKeyFile?._files[0] ?? null;
+        formData.licenseType = LicenseType.DUMMY;
+        console.log(formData);
 
-        console.log('Form generate');
 
-        this.generate.emit(formData);
+        const formDataType = new FormDataType(formData);
+
+        this.generate.emit(formDataType);
     }
 }

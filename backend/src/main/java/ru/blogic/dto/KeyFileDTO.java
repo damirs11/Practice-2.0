@@ -1,10 +1,13 @@
 package ru.blogic.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import ru.blogic.entity.KeyFile;
+
+import java.util.UUID;
 
 /**
  * Файловое представление ключа
@@ -16,7 +19,8 @@ public class KeyFileDTO {
     /**
      * ID
      */
-    private Long id;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private UUID id;
 
     /**
      * Имя
@@ -56,11 +60,11 @@ public class KeyFileDTO {
         this.data = keyFile.getData();
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -80,20 +84,20 @@ public class KeyFileDTO {
         this.fileType = fileType;
     }
 
-    public byte[] getData() {
-        return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
-    }
-
     public KeyMetaDTO getKeyMetaDTO() {
         return keyMetaDTO;
     }
 
     public void setKeyMetaDTO(KeyMetaDTO keyMetaDTO) {
         this.keyMetaDTO = keyMetaDTO;
+    }
+
+    public byte[] getData() {
+        return data;
+    }
+
+    public void setData(byte[] data) {
+        this.data = data;
     }
 
     @Override

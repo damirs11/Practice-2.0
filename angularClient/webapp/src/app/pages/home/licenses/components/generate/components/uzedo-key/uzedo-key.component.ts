@@ -1,11 +1,9 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {FormStateMatcher} from '@shared/state-matchers/form.state-matcher';
-import KeyUtils from '@pages/home/shared/utils/keyUtils';
 import {FormDataType} from '@api/license/form-data-type';
-import {FormDataUzedoType} from "@api/license/form-data-uzedo-type";
-import {MatChipInputEvent} from "@angular/material/chips";
-import {COMMA, ENTER} from "@angular/cdk/keycodes";
+import {MatChipInputEvent} from '@angular/material/chips';
+import {LicenseType} from '@api/license/enums/license-type';
 
 
 @Component({
@@ -17,7 +15,7 @@ export class UzedoKeyComponent implements OnInit {
     /**
      * Определяет, что делать при submit-е формы
      */
-    @Output() generate: EventEmitter<FormDataUzedoType> = new EventEmitter<FormDataUzedoType>();
+    @Output() generate: EventEmitter<FormDataType> = new EventEmitter<FormDataType>();
     /**
      * Это Перевыпуск лицензии?
      */
@@ -25,16 +23,14 @@ export class UzedoKeyComponent implements OnInit {
     /**
      * Форма создания ключа
      */
-    uzedoKeyForm: FormGroup;
+    form: FormGroup;
     /**
      * Валидатор
      */
     matcher = new FormStateMatcher();
 
-    visible = true;
     removable = true;
     addOnBlur = true;
-    isChipInputVisible = false;
 
     minDate: Date = new Date();
 
@@ -44,28 +40,33 @@ export class UzedoKeyComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.uzedoKeyForm = this.formBuilder.group({
+        this.form = this.formBuilder.group({
             keyMeta: this.formBuilder.group({
                 id: [null],
                 previousLicense: [null],
-                version: ['v1'],
                 dateOfIssue: [new Date(), Validators.required],
-                dateOfExpiry: [null],
-                issuedTo: ['Яндекс', Validators.required],
-                issuedBy: ['Логика Бизнеса', Validators.required],
-                licenseNumber: ['12'],
-                organizationsList: [[], Validators.required],
-                comment: ['комментарии']
+                dateOfExpiry: [],
+                properties: this.formBuilder.group({
+                    version: ['v1'],
+                    issuedTo: ['Яндекс', Validators.required],
+                    issuedBy: ['Логика Бизнеса', Validators.required],
+                    licenseNumber: ['12', Validators.required],
+                    organizationsList: [['1111111111:111111111'], Validators.required],
+                    comment: ['комментарии'],
+                }),
             }),
-            publicKey: [null, Validators.required]
+            files: this.formBuilder.group({
+                publicKey: [null]
+            })
         });
 
         this.minDate.setDate(this.minDate.getDate() + 1);
     }
 
-    get organizationsList() {
-        return this.uzedoKeyForm.get('keyMeta.organizationsList');
+    get organizationsList(): AbstractControl {
+        return this.form.get('keyMeta.properties.organizationsList');
     }
+
     /**
      * Добавляет чипс в спискок
      */
@@ -106,12 +107,13 @@ export class UzedoKeyComponent implements OnInit {
      *
      * @param formData - форма с данными
      */
-    createKey(formData: any) {
-        formData.keyMeta.organizationsList = formData.keyMeta.organizationsList.join(';');
-        formData.publicKey = formData.publicKey._files[0] ?? null;
+    createKey(formData: any): void {
+        formData.keyMeta.properties.organizationsList = [...formData.keyMeta.properties.organizationsList].join(';');
+        formData.files.publicKey = formData?.files?.publicKey?._files[0] ?? null;
+        formData.licenseType = LicenseType.UZEDO;
 
-        console.log('Form generate');
+        const formDataType = new FormDataType(formData);
 
-        this.generate.emit(formData);
+        this.generate.emit(formDataType);
     }
 }

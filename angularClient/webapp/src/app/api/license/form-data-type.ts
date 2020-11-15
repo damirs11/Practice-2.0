@@ -3,6 +3,12 @@ import {LicenseType} from '@api/license/enums/license-type';
 
 export class FormDataType {
     keyMeta: KeyGenerationParams;
-    activationKeyFile: File;
-    type: LicenseType;
+    files: File[];
+    licenseType: LicenseType;
+
+    constructor(formData: any) {
+        this.keyMeta = new KeyGenerationParams(formData.keyMeta);
+        this.files = formData.files;
+        this.licenseType = formData.licenseType;
+    }
 }

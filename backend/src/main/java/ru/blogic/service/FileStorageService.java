@@ -25,16 +25,20 @@ public class FileStorageService {
         }
     }
 
-//    @PreDestroy
-//    public static void destroy() throws IOException {
-//        if (Files.exists(ROOT)) {
-//            FileUtils.deleteDirectory(ROOT.toFile());
-//        }
-//    }
+    @PreDestroy
+    public static void destroy() throws IOException {
+        if (Files.exists(ROOT)) {
+            FileUtils.deleteDirectory(ROOT.toFile());
+        }
+    }
 
     @Transactional
     public void save(MultipartFile file) throws IOException {
-        Files.copy(file.getInputStream(), ROOT.resolve(file.getOriginalFilename()));
+        Path filePath = ROOT.resolve(file.getOriginalFilename());
+        if(Files.exists(filePath)) {
+            Files.delete(filePath);
+        }
+        Files.copy(file.getInputStream(), filePath);
     }
 
 //    @Transactional

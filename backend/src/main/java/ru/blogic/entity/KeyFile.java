@@ -5,19 +5,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import ru.blogic.dto.KeyFileDTO;
-import ru.blogic.enums.LicenseType;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.MapsId;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 /**
  * Файловое представление ключа
@@ -32,19 +23,21 @@ public class KeyFile {
      * ID
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @NotNull
+    private UUID id;
 
     /**
      * Имя
      */
     @Column(name = "file_name")
+    @NotNull
     private String fileName;
 
     /**
      * Тип файла
      */
     @Column(name = "file_type")
+    @NotNull
     private String fileType;
 
     /**
@@ -52,12 +45,14 @@ public class KeyFile {
      */
     @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     @MapsId
+    @NotNull
     private KeyMeta keyMeta;
 
     /**
      * Сам файл
      */
     @Lob
+    @NotNull
     private byte[] data;
 
     public KeyFile() {
@@ -78,11 +73,11 @@ public class KeyFile {
         this.data = keyFileDTO.getData();
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -102,20 +97,20 @@ public class KeyFile {
         this.fileType = fileType;
     }
 
+    public KeyMeta getKeyMeta() {
+        return keyMeta;
+    }
+
+    public void setKeyMeta(KeyMeta license) {
+        this.keyMeta = license;
+    }
+
     public byte[] getData() {
         return data;
     }
 
     public void setData(byte[] data) {
         this.data = data;
-    }
-
-    public KeyMeta getKeyMeta() {
-        return keyMeta;
-    }
-
-    public void setKeyMeta(KeyMeta keyMeta) {
-        this.keyMeta = keyMeta;
     }
 
     @Override

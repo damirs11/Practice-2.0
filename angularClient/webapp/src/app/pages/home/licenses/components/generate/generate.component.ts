@@ -1,7 +1,7 @@
 import {Component, EventEmitter, OnInit} from '@angular/core';
 import {LicenseType} from '@api/license/enums/license-type';
 import {MatDialogRef} from '@angular/material/dialog';
-import {FormDataUzedoType} from "@api/license/form-data-uzedo-type";
+import {FormDataType} from '@api/license/form-data-type';
 
 @Component({
     selector: 'app-generate',
@@ -11,7 +11,7 @@ import {FormDataUzedoType} from "@api/license/form-data-uzedo-type";
 export class GenerateComponent implements OnInit {
 
     licenses = LicenseType;
-    onGenerate: EventEmitter<any> = new EventEmitter<any>();
+    onGenerate: EventEmitter<FormDataType> = new EventEmitter<FormDataType>();
     selectedLicense: LicenseType;
 
     constructor(private dialogRef: MatDialogRef<GenerateComponent>) {
@@ -20,11 +20,7 @@ export class GenerateComponent implements OnInit {
     ngOnInit(): void {
     }
 
-    generate($event: FormDataUzedoType): void {
-        console.log('GenerateComponent generate');
-
-        $event.type = this.selectedLicense;
-
+    generate($event: FormDataType): void {
         this.onGenerate.emit($event);
         this.dialogRef.close();
     }

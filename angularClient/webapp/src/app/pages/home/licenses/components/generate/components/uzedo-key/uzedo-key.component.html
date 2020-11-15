@@ -1,6 +1,6 @@
 <div>
     <mat-card class="card-form">
-        <form (ngSubmit)="createKey(uzedoKeyForm.value)" [formGroup]="uzedoKeyForm">
+        <form (ngSubmit)="createKey(form.value)" [formGroup]="form">
 
             <div formGroupName="keyMeta">
                 <mat-form-field class="full-width">
@@ -9,10 +9,6 @@
 
                 <mat-form-field class="full-width" *ngIf="republish">
                     <input formControlName="previousLicense" matInput placeholder="Предыдущий Идентификатор лицензии" type="text" readonly>
-                </mat-form-field>
-
-                <mat-form-field class="full-width">
-                    <input formControlName="version" matInput placeholder="Версия лицензии" type="text" readonly>
                 </mat-form-field>
 
                 <mat-form-field class="full-width">
@@ -30,83 +26,93 @@
                     <mat-datepicker #dateOfExpiry></mat-datepicker>
                 </mat-form-field>
 
-                <mat-form-field class="full-width">
-                    <input [errorStateMatcher]="matcher" formControlName="issuedTo" matInput
-                           placeholder="Кому выдана"
-                           type="text">
+                <div formGroupName="properties">
+                    <mat-form-field class="full-width">
+                        <input formControlName="version" matInput placeholder="Версия лицензии" type="text" readonly>
+                    </mat-form-field>
 
-                    <mat-error>
-                      <span
-                          *ngIf="!uzedoKeyForm.get('keyMeta.issuedTo').valid && uzedoKeyForm.get('keyMeta.issuedTo').touched">
-                        Пожалуйста введите кому выдана
-                      </span>
-                    </mat-error>
-                </mat-form-field>
+                    <mat-form-field class="full-width">
+                        <input [errorStateMatcher]="matcher" formControlName="issuedTo" matInput
+                               placeholder="Кому выдана"
+                               type="text">
 
-                <mat-form-field class="full-width">
-                    <input [errorStateMatcher]="matcher" formControlName="issuedBy" matInput
-                           placeholder="Кем выдана"
-                           type="text">
-
-                    <mat-error>
-                      <span
-                          *ngIf="!uzedoKeyForm.get('keyMeta.issuedBy').valid && uzedoKeyForm.get('keyMeta.issuedBy').touched">
-                        Пожалуйста введите кем выдана
-                      </span>
-                    </mat-error>
-                </mat-form-field>
-
-                <mat-form-field class="full-width">
-                    <mat-chip-list [errorStateMatcher]="matcher" placeholder="Организации" #chipList formControlName="organizationsList" >
-                        <mat-chip *ngFor="let innkpp of organizationsList.value" [selectable]="false"
-                                  [removable]="removable" (removed)="remove(innkpp)">
-                            {{innkpp}}
-                            <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-                        </mat-chip>
-                        <input
-                               [matChipInputFor]="chipList"
-                               [matChipInputAddOnBlur]="addOnBlur"
-                               (matChipInputTokenEnd)="add($event)"
-                               [specialCharacters]="[':']"
-                               mask="0{10}:0{9}"
-                               [showMaskTyped]="true">
-                    </mat-chip-list>
-
-                    <mat-error>
-                          <span *ngIf="!uzedoKeyForm.get('keyMeta.organizationsList').valid && uzedoKeyForm.get('keyMeta.organizationsList').touched">
-                            Пожалуйста введите ИНН:КПП организации(ий)
+                        <mat-error>
+                          <span
+                              *ngIf="!form.get('keyMeta.properties.issuedTo').valid && form.get('keyMeta.properties.issuedTo').touched">
+                            Пожалуйста введите кому выдана
                           </span>
-                    </mat-error>
-                </mat-form-field>
+                        </mat-error>
+                    </mat-form-field>
 
+                    <mat-form-field class="full-width">
+                        <input [errorStateMatcher]="matcher" formControlName="issuedBy" matInput
+                               placeholder="Кем выдана"
+                               type="text">
+
+                        <mat-error>
+                          <span
+                              *ngIf="!form.get('keyMeta.properties.issuedBy').valid && form.get('keyMeta.properties.issuedBy').touched">
+                            Пожалуйста введите кем выдана
+                          </span>
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field class="full-width">
+                        <mat-chip-list [errorStateMatcher]="matcher" placeholder="Организации" #chipList formControlName="organizationsList" >
+                            <mat-chip *ngFor="let innkpp of organizationsList.value" [selectable]="false"
+                                      [removable]="removable" (removed)="remove(innkpp)">
+                                {{innkpp}}
+                                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                            </mat-chip>
+                            <input  placeholder="Организации"
+                                   [matChipInputFor]="chipList"
+                                   [matChipInputAddOnBlur]="addOnBlur"
+                                   (matChipInputTokenEnd)="add($event)"
+                                   [specialCharacters]="[':']"
+                                   mask="0{10}:0{9}"
+                                   [showMaskTyped]="true">
+                        </mat-chip-list>
+
+                        <mat-error>
+                              <span *ngIf="!form.get('keyMeta.properties.organizationsList').valid && form.get('keyMeta.properties.organizationsList').touched">
+                                Пожалуйста введите ИНН:КПП организации(ий)
+                              </span>
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field class="full-width">
+                        <input [errorStateMatcher]="matcher" formControlName="licenseNumber" matInput
+                               placeholder="Номер лицензии"
+                               type="text">
+
+                        <mat-error>
+                          <span
+                              *ngIf="!form.get('keyMeta.properties.licenseNumber').valid && form.get('keyMeta.properties.licenseNumber').touched">
+                            Пожалуйста введите номер лицензии
+                          </span>
+                        </mat-error>
+                    </mat-form-field>
+
+                    <mat-form-field class="full-width">
+                        <input [errorStateMatcher]="matcher" formControlName="comment" matInput placeholder="Комментарий"
+                               type="text">
+                    </mat-form-field>
+                </div>
+            </div>
+
+
+            <div formGroupName="files">
                 <mat-form-field class="full-width">
-                    <input [errorStateMatcher]="matcher" formControlName="licenseNumber" matInput
-                           placeholder="Номер лицензии"
-                           type="text">
-
-                    <mat-error>
-                      <span
-                          *ngIf="!uzedoKeyForm.get('keyMeta.licenseNumber').valid && uzedoKeyForm.get('keyMeta.licenseNumber').touched">
-                        Пожалуйста введите номер лицензии
-                      </span>
-                    </mat-error>
-                </mat-form-field>
-
-                <mat-form-field class="full-width">
-                    <input [errorStateMatcher]="matcher" formControlName="comment" matInput placeholder="Комментарий"
-                           type="text">
+                    <ngx-mat-file-input #fileInput formControlName="publicKey"
+                                        placeholder="Открытый ключ"></ngx-mat-file-input>
+                    <button (click)="fileInput.clear($event)" *ngIf="!fileInput.empty" mat-icon-button matSuffix>
+                        <mat-icon matSuffix>clear</mat-icon>
+                    </button>
                 </mat-form-field>
             </div>
 
-            <mat-form-field class="full-width">
-                <ngx-mat-file-input #fileInput formControlName="publicKey"
-                                    placeholder="Открытый ключ"></ngx-mat-file-input>
-                <button (click)="fileInput.clear($event)" *ngIf="!fileInput.empty" mat-icon-button matSuffix>
-                    <mat-icon matSuffix>clear</mat-icon>
-                </button>
-            </mat-form-field>
 
-            <button class="generate-button app-button" [disabled]="!uzedoKeyForm.valid" color="primary" mat-flat-button
+            <button class="generate-button app-button" [disabled]="!form.valid" color="primary" mat-flat-button
                     type="submit">
                 Создать
             </button>

@@ -1,6 +1,9 @@
 package ru.blogic.service;
 
-import org.apache.commons.io.FileUtils;
+import javax0.license3j.Feature;
+import javax0.license3j.License;
+import javax0.license3j.crypto.LicenseKeyPair;
+import javax0.license3j.io.KeyPairReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,34 +13,35 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.blogic.dto.FilesDTO;
 import ru.blogic.dto.KeyFileDTO;
-import ru.blogic.dto.KeyFileUzedoDTO;
 import ru.blogic.dto.KeyMetaDTO;
-import ru.blogic.dto.KeyMetaUzedoDTO;
 import ru.blogic.entity.KeyFile;
-import ru.blogic.entity.KeyFileUzedo;
 import ru.blogic.entity.KeyMeta;
-import ru.blogic.entity.KeyMetaUzedo;
 import ru.blogic.enums.LicenseType;
 import ru.blogic.interfaces.KeyGenerator;
-import ru.blogic.repository.KeyFileUzedoRepository;
-import ru.blogic.repository.KeyUzedoRepository;
+import ru.blogic.repository.KeyFileRepository;
+import ru.blogic.repository.KeyRepository;
 
-import javax.validation.Valid;
-import java.io.File;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 @Service
-public class UzedoKeyService implements KeyGenerator<KeyMetaUzedoDTO, KeyFileUzedoDTO> {
+public class UzedoKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
 
     private static final Logger logger = LoggerFactory.getLogger(UzedoKeyService.class);
-    private final KeyUzedoRepository keyUzedoRepository;
-    private final KeyFileUzedoRepository keyFileUzedoRepository;
+    private final KeyRepository keyRepository;
+    private final KeyFileRepository keyFileRepository;
     private final FileStorageService fileStorageService;
-
-    @Value("${LICENSE3JREPL_PATH}")
-    private String LICENSE3JREPL_PATH;
 
     @Value("${JAVA_14_PATH}")
     private String JAVA_14_PATH;
@@ -45,12 +49,13 @@ public class UzedoKeyService implements KeyGenerator<KeyMetaUzedoDTO, KeyFileUze
     @Value("${PRIVATE_KEY_PATH}")
     private String PRIVATE_KEY_PATH;
 
-    public UzedoKeyService(KeyUzedoRepository keyUzedoRepository, KeyFileUzedoRepository keyFileUzedoRepository, FileStorageService fileStorageService) {
-        this.keyUzedoRepository = keyUzedoRepository;
-        this.keyFileUzedoRepository = keyFileUzedoRepository;
+    private final String DIGEST = "SHA-512";
+
+    public UzedoKeyService(KeyRepository keyRepository, KeyFileRepository keyFileRepository, FileStorageService fileStorageService) {
+        this.keyRepository = keyRepository;
+        this.keyFileRepository = keyFileRepository;
         this.fileStorageService = fileStorageService;
     }
-
 
     @Override
     public LicenseType getLicenseType() {
@@ -58,16 +63,16 @@ public class UzedoKeyService implements KeyGenerator<KeyMetaUzedoDTO, KeyFileUze
     }
 
     @Override
-    public Page<KeyMetaUzedoDTO> findAll(Pageable pageable) {
-        return keyUzedoRepository.findAll(pageable).map(KeyMetaUzedoDTO::new);
+    public Page<KeyMetaDTO> findAll(Pageable pageable) {
+        return keyRepository.findAll(pageable).map(KeyMetaDTO::new);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Page<KeyMetaUzedoDTO> findAllByType(Pageable pageable) {
-        return keyUzedoRepository.findAllByType(getLicenseType(), pageable).map(KeyMetaUzedoDTO::new);
+    public Page<KeyMetaDTO> findAllByLicenseType(Pageable pageable) {
+        return keyRepository.findAllByLicenseType(getLicenseType(), pageable).map(KeyMetaDTO::new);
     }
 
     /**
@@ -75,9 +80,9 @@ public class UzedoKeyService implements KeyGenerator<KeyMetaUzedoDTO, KeyFileUze
      */
     @Override
     @Transactional(readOnly = true)
-    public KeyFileUzedoDTO getKeyFile(Long keyFileId) throws FileNotFoundException {
-        return keyFileUzedoRepository.findById(keyFileId)
-                .map(KeyFileUzedoDTO::new)
+    public KeyFileDTO getKeyFile(UUID keyFileId) throws FileNotFoundException {
+        return keyFileRepository.findById(keyFileId)
+                .map(KeyFileDTO::new)
                 .orElseThrow(() -> new FileNotFoundException("Ключ с id " + keyFileId + "не найден"));
     }
 
@@ -89,14 +94,44 @@ public class UzedoKeyService implements KeyGenerator<KeyMetaUzedoDTO, KeyFileUze
      */
     @Override
     @Transactional()
-    public void generate(KeyMetaUzedoDTO keyMetaDTO, MultipartFile publicKey) throws IOException, InterruptedException {
-        String pathToActivationFile = "nofile";
+    public void generate(KeyMetaDTO keyMetaDTO, List<MultipartFile> files) throws IOException, InterruptedException {
         logger.info(System.getProperty("java.io.tmpdir"));
-        logger.info(System.getenv("JAVA_HOME"));
-        logger.info(LICENSE3JREPL_PATH);
+        logger.info(JAVA_14_PATH);
+        logger.info(PRIVATE_KEY_PATH);
 
-        logger.info("ГЕНЕРАЦИЯ ТЕСТ");
-        logger.info("ГЕНЕРАЦИЯ ТЕСТ");
-        logger.info("ГЕНЕРАЦИЯ ТЕСТ");
+//        assert files != null;
+//        fileStorageService.save(files.get(0));
+
+        keyMetaDTO.setId(UUID.randomUUID());
+        keyMetaDTO.setLicenseType(getLicenseType());
+
+        License license = new License();
+        license.add(Feature.Create.from("id:UUID=" + keyMetaDTO.getId()));
+        if(keyMetaDTO.getPreviousLicense() != null) {
+            license.add(Feature.Create.from("previousLicense:UUID=" + keyMetaDTO.getPreviousLicense()));
+        }
+        license.add(Feature.Create.dateFeature("dateOfIssue", keyMetaDTO.getDateOfIssue()));
+        if(keyMetaDTO.getDateOfExpiry() != null) {
+            license.add(Feature.Create.dateFeature("dateOfExpiry", keyMetaDTO.getDateOfExpiry()));
+        }
+
+        keyMetaDTO.getProperties().entrySet().forEach((property -> {
+            license.add(Feature.Create.stringFeature(property.getKey(), property.getValue()));
+        }));
+
+        try (final KeyPairReader privateKeyReader = new KeyPairReader(PRIVATE_KEY_PATH)) {
+            LicenseKeyPair privateKeyPair = privateKeyReader.readPrivate();
+            license.sign(privateKeyPair.getPair().getPrivate(), DIGEST);
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | NoSuchPaddingException e) {
+            e.printStackTrace(); //TODO: Сделать нормальную обработку
+        }
+
+        keyMetaDTO.setLicenseType(getLicenseType());
+        KeyFile keyFile = new KeyFile();
+        keyFile.setData(license.serialized());
+        keyFile.setFileName("UZEDO_LICENSE_" + new Date().toString()); //TODO: Добавить переменную с именем
+        keyFile.setFileType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        keyFile.setKeyMeta(new KeyMeta(keyMetaDTO));
+        this.keyFileRepository.save(keyFile);
     }
 }

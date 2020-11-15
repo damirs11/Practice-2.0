@@ -10,8 +10,10 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.blogic.dto.FilesDTO;
 import ru.blogic.dto.KeyFileDTO;
 import ru.blogic.dto.KeyMetaDTO;
+import ru.blogic.dto.PropertiesDTO;
 import ru.blogic.entity.KeyFile;
 import ru.blogic.entity.KeyMeta;
 import ru.blogic.enums.LicenseType;
@@ -24,6 +26,10 @@ import org.springframework.data.domain.Pageable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
@@ -56,8 +62,8 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
      * {@inheritDoc}
      */
     @Override
-    public Page<KeyMetaDTO> findAllByType(Pageable pageable) {
-        return keyRepository.findAllByType(getLicenseType(), pageable).map(KeyMetaDTO::new);
+    public Page<KeyMetaDTO> findAllByLicenseType(Pageable pageable) {
+        return keyRepository.findAllByLicenseType(getLicenseType(), pageable).map(KeyMetaDTO::new);
     }
 
     /**
@@ -65,7 +71,7 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
      */
     @Override
     @Transactional(readOnly = true)
-    public KeyFileDTO getKeyFile(Long keyFileId) throws FileNotFoundException {
+    public KeyFileDTO getKeyFile(UUID keyFileId) throws FileNotFoundException {
         return keyFileRepository.findById(keyFileId)
                 .map(KeyFileDTO::new)
                 .orElseThrow(() -> new FileNotFoundException("Ключ с id " + keyFileId + "не найден"));
@@ -79,37 +85,37 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
      */
     @Override
     @Transactional()
-    public void generate(KeyMetaDTO keyMetaDTO, MultipartFile activationFile) throws IOException, InterruptedException {
+    public void generate(KeyMetaDTO keyMetaDTO, List<MultipartFile> files) throws IOException, InterruptedException {
 
         String pathToActivationFile = "nofile";
         logger.info(System.getProperty("java.io.tmpdir"));
         logger.info(System.getenv("JAVA_HOME"));
         logger.info(LICENSE_PATH);
 
-        if (activationFile != null) {
-            fileStorageService.save(activationFile);
-            pathToActivationFile = FileStorageService.ROOT + File.separator + activationFile.getOriginalFilename();
+        if (files != null) {
+            fileStorageService.save(files.get(0));
+            pathToActivationFile = FileStorageService.ROOT + File.separator + files.get(0).getOriginalFilename();
         }
 
         new ProcessBuilder()
                 .inheritIO()
                 .command(
                         "java", "-jar", LICENSE_PATH,
-                        keyMetaDTO.getOrganization(),
-                        keyMetaDTO.getExpiration().toString(),
-                        String.valueOf(keyMetaDTO.getCoresCount()),
-                        String.valueOf(keyMetaDTO.getUsersCount()),
-                        Integer.toBinaryString(keyMetaDTO.getModuleFlags()),
-                        FileStorageService.ROOT + File.separator + keyMetaDTO.getKeyFileName(),
+                        keyMetaDTO.getProperties().get("organizationName"),
+                        keyMetaDTO.getDateOfExpiry().toString(),
+                        keyMetaDTO.getProperties().get("coresCount"),
+                        keyMetaDTO.getProperties().get("usersCount"),
+                        keyMetaDTO.getProperties().get("moduleFlags"),
+                        FileStorageService.ROOT + File.separator + keyMetaDTO.getProperties().get("keyFileName"),
                         pathToActivationFile
                 )
                 .start().waitFor();
 
-        File keyFileTemp = new File(FileStorageService.ROOT + File.separator + keyMetaDTO.getKeyFileName());
+        File keyFileTemp = new File(FileStorageService.ROOT + File.separator + keyMetaDTO.getProperties().get("keyFileName"));
         KeyMeta keyMeta = new KeyMeta(keyMetaDTO);
-        keyMeta.setType(getLicenseType());
+        keyMeta.setLicenseType(getLicenseType());
         KeyFile keyFile = new KeyFile(
-                keyMetaDTO.getKeyFileName(),
+                keyMetaDTO.getProperties().get("keyFileName"),
                 MediaType.APPLICATION_OCTET_STREAM_VALUE,
                 keyMeta,
                 FileUtils.readFileToByteArray(keyFileTemp)

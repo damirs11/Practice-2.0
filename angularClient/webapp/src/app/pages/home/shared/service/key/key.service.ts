@@ -7,8 +7,8 @@ import {LoggerService} from '@shared/service/logger/logger.service';
 import {MessageResponse} from '@api/response/messageResponse';
 import {GlobalConst} from '@shared/utils/global-const';
 import {LicenseType} from '@api/license/enums/license-type';
-import {Page} from "@api/license/page";
-import {PageSettings} from "@api/license/pageSettings";
+import {Page} from '@api/license/page';
+import {PageSettings} from '@api/license/pageSettings';
 
 /**
  * Сервис для работы с ключами
@@ -39,7 +39,9 @@ export class KeyService {
         } else {
             return this.http.get<Page<KeyGenerationParams>>(`${GlobalConst.keyApi}`, {
                 params: {
-                    type: licenseType
+                    licenseType,
+                    page: PageSettings.page.toString(),
+                    size: PageSettings.size.toString()
                 }
             }).pipe(
                 tap((_) => this.logger.log('Стягиваем ключи')),
@@ -57,7 +59,7 @@ export class KeyService {
     createNewKey(formData: FormData, licenseType: LicenseType): Observable<MessageResponse> {
         return this.http.post<MessageResponse>(`${GlobalConst.keyApi}/create`, formData, {
             params: {
-                type: licenseType
+                licenseType
             },
         }).pipe(
             tap((_) => this.logger.log('Создаем новый ключ')),
@@ -74,7 +76,7 @@ export class KeyService {
         return this.http
             .get(`${GlobalConst.keyApi}/download/${keyFileId}`, {
                 params: {
-                    type: licenseType
+                    licenseType
                 },
                 responseType: 'blob',
                 observe: 'response',
