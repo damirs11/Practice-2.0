@@ -23,7 +23,7 @@ export class DummyKeyComponent implements OnInit {
     /**
      * Форма создания ключа
      */
-    newKeyForm: FormGroup;
+    form: FormGroup;
     /**
      * Валидатор
      */
@@ -37,7 +37,7 @@ export class DummyKeyComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.newKeyForm = this.formBuilder.group({
+        this.form = this.formBuilder.group({
             keyMeta: this.formBuilder.group({
                 id: [null],
                 previousLicense: [null],

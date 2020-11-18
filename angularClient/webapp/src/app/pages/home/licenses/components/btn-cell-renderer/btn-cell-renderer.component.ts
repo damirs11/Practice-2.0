@@ -7,7 +7,9 @@ import {Component, EventEmitter, Input, Output} from '@angular/core';
 })
 export class BtnCellRendererComponent {
 
-    //TODO: Доделать кнопку
+    // TODO: Доделать кнопку
+
+    content: string;
 
     @Input() cell: any;
     @Output() clicked = new EventEmitter();

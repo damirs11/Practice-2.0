@@ -56,7 +56,6 @@ export class HomeComponent {
         this.treeControl.expandAll();
     }
 
-
     changeLicense(license: LicenseType) {
         this.homeFacade.setSelectedLicense(license);
         this.homeFacade.refreshData();

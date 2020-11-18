@@ -1,6 +1,6 @@
 <div>
     <mat-card class="card-form">
-        <form (ngSubmit)="createKey(newKeyForm.value)" [formGroup]="newKeyForm">
+        <form (ngSubmit)="createKey(form.value)" [formGroup]="form">
             <div formGroupName="keyMeta">
 
                 <mat-form-field class="full-width">
@@ -26,7 +26,7 @@
                     <mat-datepicker #dateOfExpiry></mat-datepicker>
 
                     <mat-error>
-                          <span *ngIf="!newKeyForm.get('keyMeta.dateOfExpiry').valid && newKeyForm.get('keyMeta.dateOfExpiry').touched">
+                          <span *ngIf="!form.get('keyMeta.dateOfExpiry').valid && form.get('keyMeta.dateOfExpiry').touched">
                             Пожалуйста введите срок действия
                           </span>
                     </mat-error>
@@ -37,7 +37,7 @@
                         <input [errorStateMatcher]="matcher" formControlName="organizationName" matInput placeholder="Организация" type="text">
 
                         <mat-error>
-                          <span *ngIf="!newKeyForm.get('keyMeta.properties.organizationName').valid && newKeyForm.get('keyMeta.properties.organizationName').touched">
+                          <span *ngIf="!form.get('keyMeta.properties.organizationName').valid && form.get('keyMeta.properties.organizationName').touched">
                             Пожалуйста введите имя
                           </span>
                         </mat-error>
@@ -49,7 +49,7 @@
                                type="number">
 
                         <mat-error>
-                          <span *ngIf="!newKeyForm.get('keyMeta.properties.coresCount').valid && newKeyForm.get('keyMeta.properties.coresCount').touched">
+                          <span *ngIf="!form.get('keyMeta.properties.coresCount').valid && form.get('keyMeta.properties.coresCount').touched">
                             Пожалуйста введите количество ядер
                           </span>
                         </mat-error>
@@ -61,7 +61,7 @@
                                type="number">
 
                         <mat-error>
-                          <span *ngIf="!newKeyForm.get('keyMeta.properties.usersCount').valid && newKeyForm.get('keyMeta.properties.usersCount').touched">
+                          <span *ngIf="!form.get('keyMeta.properties.usersCount').valid && form.get('keyMeta.properties.usersCount').touched">
                             Пожалуйста введите количество пользователей
                           </span>
                         </mat-error>
@@ -80,7 +80,7 @@
                                type="text">
 
                         <mat-error>
-                          <span *ngIf="!newKeyForm.get('keyMeta.properties.keyFileName').valid && newKeyForm.get('keyMeta.properties.keyFileName').touched">
+                          <span *ngIf="!form.get('keyMeta.properties.keyFileName').valid && form.get('keyMeta.properties.keyFileName').touched">
                             Пожалуйста введите имя файла ключа
                           </span>
                         </mat-error>
@@ -103,7 +103,7 @@
                 </mat-form-field>
             </div>
 
-            <button class="generate-button app-button" [disabled]="!newKeyForm.valid" color="primary" mat-flat-button
+            <button class="generate-button app-button" [disabled]="!form.valid" color="primary" mat-flat-button
                     type="submit">
                 Создать
             </button>

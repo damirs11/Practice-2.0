@@ -57,46 +57,46 @@
                         </mat-error>
                     </mat-form-field>
 
-                    <mat-form-field class="full-width">
-                        <mat-chip-list [errorStateMatcher]="matcher" placeholder="Организации" #chipList formControlName="organizationsList" >
-                            <mat-chip *ngFor="let innkpp of organizationsList.value" [selectable]="false"
-                                      [removable]="removable" (removed)="remove(innkpp)">
-                                {{innkpp}}
-                                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
-                            </mat-chip>
-                            <input  placeholder="Организации"
-                                   [matChipInputFor]="chipList"
-                                   [matChipInputAddOnBlur]="addOnBlur"
-                                   (matChipInputTokenEnd)="add($event)"
-                                   [specialCharacters]="[':']"
-                                   mask="0{10}:0{9}"
-                                   [showMaskTyped]="true">
-                        </mat-chip-list>
+<!--                    <mat-form-field class="full-width">-->
+<!--                        <mat-chip-list [errorStateMatcher]="matcher" placeholder="Организации" #chipList formControlName="organizationsList" >-->
+<!--                            <mat-chip *ngFor="let innkpp of organizationsList.value" [selectable]="false"-->
+<!--                                      [removable]="removable" (removed)="remove(innkpp)">-->
+<!--                                {{innkpp}}-->
+<!--                                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>-->
+<!--                            </mat-chip>-->
+<!--                            <input  placeholder="Организации"-->
+<!--                                   [matChipInputFor]="chipList"-->
+<!--                                   [matChipInputAddOnBlur]="addOnBlur"-->
+<!--                                   (matChipInputTokenEnd)="add($event)"-->
+<!--                                   [specialCharacters]="[':']"-->
+<!--                                   mask="0{10}:0{9}"-->
+<!--                                   [showMaskTyped]="true">-->
+<!--                        </mat-chip-list>-->
 
-                        <mat-error>
-                              <span *ngIf="!form.get('keyMeta.properties.organizationsList').valid && form.get('keyMeta.properties.organizationsList').touched">
-                                Пожалуйста введите ИНН:КПП организации(ий)
-                              </span>
-                        </mat-error>
-                    </mat-form-field>
+<!--                        <mat-error>-->
+<!--                              <span *ngIf="!form.get('keyMeta.properties.organizationsList').valid && form.get('keyMeta.properties.organizationsList').touched">-->
+<!--                                Пожалуйста введите ИНН:КПП организации(ий)-->
+<!--                              </span>-->
+<!--                        </mat-error>-->
+<!--                    </mat-form-field>-->
 
-                    <mat-form-field class="full-width">
-                        <input [errorStateMatcher]="matcher" formControlName="licenseNumber" matInput
-                               placeholder="Номер лицензии"
-                               type="text">
+<!--                    <mat-form-field class="full-width">-->
+<!--                        <input [errorStateMatcher]="matcher" formControlName="licenseNumber" matInput-->
+<!--                               placeholder="Номер лицензии"-->
+<!--                               type="text">-->
 
-                        <mat-error>
-                          <span
-                              *ngIf="!form.get('keyMeta.properties.licenseNumber').valid && form.get('keyMeta.properties.licenseNumber').touched">
-                            Пожалуйста введите номер лицензии
-                          </span>
-                        </mat-error>
-                    </mat-form-field>
+<!--                        <mat-error>-->
+<!--                          <span-->
+<!--                              *ngIf="!form.get('keyMeta.properties.licenseNumber').valid && form.get('keyMeta.properties.licenseNumber').touched">-->
+<!--                            Пожалуйста введите номер лицензии-->
+<!--                          </span>-->
+<!--                        </mat-error>-->
+<!--                    </mat-form-field>-->
 
-                    <mat-form-field class="full-width">
-                        <input [errorStateMatcher]="matcher" formControlName="comment" matInput placeholder="Комментарий"
-                               type="text">
-                    </mat-form-field>
+<!--                    <mat-form-field class="full-width">-->
+<!--                        <input [errorStateMatcher]="matcher" formControlName="comment" matInput placeholder="Комментарий"-->
+<!--                               type="text">-->
+<!--                    </mat-form-field>-->
                 </div>
             </div>
 

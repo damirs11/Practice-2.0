@@ -44,6 +44,10 @@ export class HomeFacade {
         return this.homeStore.getSelectedLicense$();
     }
 
+    get selectedLicenseValue(): LicenseType  {
+        return this.homeStore.selectedLicenseValue$;
+    }
+
     setSelectedLicense(license: LicenseType): void {
         this.homeStore.setSelectedLicense(license);
     }
@@ -69,8 +73,6 @@ export class HomeFacade {
             }
         }
 
-        // formData.append('files[]', $event.files[0]);
-
         this.keyService.createNewKey(formData, $event.licenseType).subscribe(
             (message) => {
                 this.logger.log(message);
@@ -89,8 +91,7 @@ export class HomeFacade {
     }
 
     openNewLicenseModal(): void {
-        this.modalService.openNewLicenseModal(null, (data) => {
-            console.log(data);
+        this.modalService.openNewLicenseModal(this.selectedLicenseValue, (data) => {
             this.generate(data);
         });
     }

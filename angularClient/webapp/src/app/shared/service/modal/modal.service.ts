@@ -17,8 +17,12 @@ export class ModalService {
         const dialogRef = this.dialog.open(ErrorModalComponent, {data});
     }
 
-    openNewLicenseModal(data, generate) {
-        const dialogRef = this.dialog.open(GenerateComponent, {data});
+    openNewLicenseModal(licenseTypeByDefault, generate) {
+        const dialogRef = this.dialog.open(GenerateComponent, {
+            data: {
+                licenseTypeByDefault
+            }
+        });
         dialogRef.componentInstance.onGenerate.subscribe(($event) => generate($event));
     }
 }

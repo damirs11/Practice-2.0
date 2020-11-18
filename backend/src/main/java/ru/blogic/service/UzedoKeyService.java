@@ -13,7 +13,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import ru.blogic.dto.FilesDTO;
 import ru.blogic.dto.KeyFileDTO;
 import ru.blogic.dto.KeyMetaDTO;
 import ru.blogic.entity.KeyFile;
@@ -32,7 +31,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -91,17 +90,11 @@ public class UzedoKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
      * через переменную окружения спринга "LICENSE3JREPL_PATH"
      *
      * @param keyMetaDTO входные данные для создания
+     * @param files
      */
     @Override
     @Transactional()
-    public void generate(KeyMetaDTO keyMetaDTO, List<MultipartFile> files) throws IOException, InterruptedException {
-        logger.info(System.getProperty("java.io.tmpdir"));
-        logger.info(JAVA_14_PATH);
-        logger.info(PRIVATE_KEY_PATH);
-
-//        assert files != null;
-//        fileStorageService.save(files.get(0));
-
+    public void generate(KeyMetaDTO keyMetaDTO, Map<String, MultipartFile> files) throws IOException {
         keyMetaDTO.setId(UUID.randomUUID());
         keyMetaDTO.setLicenseType(getLicenseType());
 
@@ -129,7 +122,7 @@ public class UzedoKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
         keyMetaDTO.setLicenseType(getLicenseType());
         KeyFile keyFile = new KeyFile();
         keyFile.setData(license.serialized());
-        keyFile.setFileName("UZEDO_LICENSE_" + new Date().toString()); //TODO: Добавить переменную с именем
+        keyFile.setFileName("UZEDO_LICENSE_" + new Date().toString());
         keyFile.setFileType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
         keyFile.setKeyMeta(new KeyMeta(keyMetaDTO));
         this.keyFileRepository.save(keyFile);

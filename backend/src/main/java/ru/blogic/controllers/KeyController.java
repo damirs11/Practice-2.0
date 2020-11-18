@@ -29,8 +29,11 @@ import org.springframework.data.domain.Pageable;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Котроллер для работы с ключами
@@ -103,11 +106,15 @@ public class KeyController {
     @PostMapping(value = "/create", consumes = {"multipart/form-data", "application/octet-stream"})
     @ResponseBody
     public ResponseEntity createNewKey(@PathParam("licenseType") LicenseType licenseType,
-                                       @RequestPart("keyMeta") @Valid KeyMetaDTO keyMetaDTO, @RequestPart(value = "files", required = false) MultipartFile[] files) {
+                                       @RequestPart("keyMeta") @Valid KeyMetaDTO keyMetaDTO,
+                                       @RequestPart(value = "files", required = false) MultipartFile[] files) {
+
+        Map<String, MultipartFile> filesMap = Arrays.stream(files).collect(Collectors.toMap(MultipartFile::getName, file -> file));
+
         for (KeyGenerator<KeyMetaDTO, KeyFileDTO> s : keyServices) {
             if (licenseType == s.getLicenseType()) {
                 try {
-                    s.generate(keyMetaDTO, Arrays.asList(files));
+                    s.generate(keyMetaDTO, filesMap);
                     return ResponseEntity.ok(new MessageResponse("Новый ключ создан"));
                 } catch (IOException | InterruptedException e) {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Ошибка при генерации ключа"));
