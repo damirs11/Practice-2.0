@@ -114,8 +114,7 @@ public class KeyController {
         for (KeyGenerator<KeyMetaDTO, KeyFileDTO> s : keyServices) {
             if (licenseType == s.getLicenseType()) {
                 try {
-                    s.generate(keyMetaDTO, filesMap);
-                    return ResponseEntity.ok(new MessageResponse("Новый ключ создан"));
+                    return ResponseEntity.ok(s.generate(keyMetaDTO, filesMap));
                 } catch (IOException | InterruptedException e) {
                     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new MessageResponse("Ошибка при генерации ключа"));
                 }

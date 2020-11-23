@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient, HttpResponse} from '@angular/common/http';
-import {tap} from 'rxjs/operators';
+import {share, tap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {KeyGenerationParams} from '@api/license/key-generation-params';
 import {LoggerService} from '@shared/service/logger/logger.service';
@@ -56,12 +56,13 @@ export class KeyService {
      * @param formData
      * @param licenseType
      */
-    createNewKey(formData: FormData, licenseType: LicenseType): Observable<MessageResponse> {
-        return this.http.post<MessageResponse>(`${GlobalConst.keyApi}/create`, formData, {
+    createNewKey(formData: FormData, licenseType: LicenseType): Observable<KeyGenerationParams> {
+        return this.http.post<KeyGenerationParams>(`${GlobalConst.keyApi}/create`, formData, {
             params: {
                 licenseType
             },
         }).pipe(
+            share(),
             tap((_) => this.logger.log('Создаем новый ключ')),
         );
     }

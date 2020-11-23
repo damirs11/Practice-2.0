@@ -54,6 +54,10 @@ public class KeyMeta {
     @JoinColumn(name = "key_meta_id")
     private List<Properties> properties;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @JoinColumn(name = "key_meta_id")
+    private List<KeyFile> files;
+
     public KeyMeta() {
     }
 
@@ -66,6 +70,7 @@ public class KeyMeta {
         this.properties = keyMetaDTO.getProperties().entrySet().stream()
                 .map(entry -> new Properties(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
+        this.files = keyMetaDTO.getFiles();
     }
 
     public UUID getId() {
@@ -116,21 +121,30 @@ public class KeyMeta {
         this.properties = properties;
     }
 
+    public List<KeyFile> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<KeyFile> files) {
+        this.files = files;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
 
         if (o == null || getClass() != o.getClass()) return false;
 
-        KeyMeta license = (KeyMeta) o;
+        KeyMeta keyMeta = (KeyMeta) o;
 
         return new EqualsBuilder()
-                .append(id, license.id)
-                .append(licenseType, license.licenseType)
-                .append(previousLicense, license.previousLicense)
-                .append(dateOfIssue, license.dateOfIssue)
-                .append(dateOfExpiry, license.dateOfExpiry)
-                .append(properties, license.properties)
+                .append(id, keyMeta.id)
+                .append(licenseType, keyMeta.licenseType)
+                .append(previousLicense, keyMeta.previousLicense)
+                .append(dateOfIssue, keyMeta.dateOfIssue)
+                .append(dateOfExpiry, keyMeta.dateOfExpiry)
+                .append(properties, keyMeta.properties)
+                .append(files, keyMeta.files)
                 .isEquals();
     }
 
@@ -143,6 +157,7 @@ public class KeyMeta {
                 .append(dateOfIssue)
                 .append(dateOfExpiry)
                 .append(properties)
+                .append(files)
                 .toHashCode();
     }
 

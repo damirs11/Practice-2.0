@@ -5,7 +5,7 @@ import {KeyGenerationParams} from '@api/license/key-generation-params';
 import {KeyService} from '../key/key.service';
 import {LoggerService} from '@shared/service/logger/logger.service';
 import {HomeStore} from '../../store/home.store';
-import {tap} from 'rxjs/operators';
+import {share, tap} from 'rxjs/operators';
 import {HttpResponse} from '@angular/common/http';
 import {saveAs} from 'file-saver';
 import KeyUtils from '../../utils/keyUtils';
@@ -58,10 +58,7 @@ export class HomeFacade {
      * @param $event
      * @param licenseType
      */
-    generate($event: FormDataType): void {
-        console.log('licenses createLicense');
-        console.log($event);
-
+    generate($event: FormDataType): Observable<KeyGenerationParams> {
         this.homeStore.setUpdating(true);
 
         const formData = new FormData();
@@ -73,7 +70,8 @@ export class HomeFacade {
             }
         }
 
-        this.keyService.createNewKey(formData, $event.licenseType).subscribe(
+        const observable = this.keyService.createNewKey(formData, $event.licenseType);
+        observable.subscribe(
             (message) => {
                 this.logger.log(message);
 
@@ -88,12 +86,17 @@ export class HomeFacade {
                 this.homeStore.setUpdating(false);
             }
         );
+
+        return observable;
     }
 
-    openNewLicenseModal(): void {
-        this.modalService.openNewLicenseModal(this.selectedLicenseValue, (data) => {
-            this.generate(data);
-        });
+    openNewLicenseModal(keyGenerationParams?: KeyGenerationParams, licenseTypeByDefault?: LicenseType): void {
+        const dialogRef = this.modalService.openNewLicenseModal((data) => {
+            this.generate(data).subscribe(value => {
+                    console.log('generate', value);
+                    dialogRef.componentInstance.keyGenerationParams.next(value);
+                });
+        }, licenseTypeByDefault ?? null, keyGenerationParams ?? null);
     }
 
     /**

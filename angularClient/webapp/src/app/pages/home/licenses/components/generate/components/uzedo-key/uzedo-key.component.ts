@@ -4,6 +4,8 @@ import {FormStateMatcher} from '@shared/state-matchers/form.state-matcher';
 import {FormDataType} from '@api/license/form-data-type';
 import {MatChipInputEvent} from '@angular/material/chips';
 import {LicenseType} from '@api/license/enums/license-type';
+import {KeyGenerationParams} from '@api/license/key-generation-params';
+import {Observable} from 'rxjs';
 
 
 @Component({
@@ -17,9 +19,13 @@ export class UzedoKeyComponent implements OnInit {
      */
     @Output() generate: EventEmitter<FormDataType> = new EventEmitter<FormDataType>();
     /**
+    * Определяет, что делать при очистке формы
+    */
+    @Output() clear: EventEmitter<void> = new EventEmitter<void>();
+    /**
      * Это Перевыпуск лицензии?
      */
-    @Input() republish = false;
+    @Input() keyGenerationParams: Observable<KeyGenerationParams>;
     /**
      * Форма создания ключа
      */
@@ -45,14 +51,14 @@ export class UzedoKeyComponent implements OnInit {
                 id: [null],
                 previousLicense: [null],
                 dateOfIssue: [new Date(), Validators.required],
-                dateOfExpiry: [],
+                dateOfExpiry: [null],
                 properties: this.formBuilder.group({
-                    version: ['v1'],
-                    issuedTo: ['Яндекс', Validators.required],
-                    issuedBy: ['Логика Бизнеса', Validators.required],
-                    licenseNumber: ['12', Validators.required],
-                    organizationsList: [['1111111111:111111111'], Validators.required],
-                    comment: ['комментарии'],
+                    version: ['v1', Validators.required],
+                    issuedTo: [null, Validators.required],
+                    issuedBy: [null, Validators.required],
+                    licenseNumber: [null, Validators.required],
+                    organizationsList: [null, Validators.required],
+                    comment: [null],
                 }),
             }),
             files: this.formBuilder.group({
@@ -61,6 +67,20 @@ export class UzedoKeyComponent implements OnInit {
         });
 
         this.minDate.setDate(this.minDate.getDate() + 1);
+        this.keyGenerationParams.subscribe((keyGenerationParams) => {
+            if (keyGenerationParams !== null) {
+
+                keyGenerationParams.dateOfIssue = new Date(keyGenerationParams.dateOfIssue);
+                keyGenerationParams.dateOfExpiry = keyGenerationParams?.dateOfExpiry ? new Date(keyGenerationParams.dateOfExpiry) : null;
+                keyGenerationParams.properties['organizationsList'] = keyGenerationParams.properties['organizationsList'].split(';');
+
+                this.form.controls.keyMeta.patchValue(keyGenerationParams);
+                this.form.disable();
+            } else {
+                this.form.reset();
+                this.form.enable();
+            }
+        });
     }
 
     get organizationsList(): AbstractControl {
@@ -115,5 +135,9 @@ export class UzedoKeyComponent implements OnInit {
         const formDataType = new FormDataType(formData);
 
         this.generate.emit(formDataType);
+    }
+
+    clearForm(): void {
+        this.clear.emit();
     }
 }

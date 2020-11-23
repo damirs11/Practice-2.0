@@ -7,7 +7,7 @@
                     <input formControlName="id" matInput placeholder="Идентификатор" type="text" readonly>
                 </mat-form-field>
 
-                <mat-form-field class="full-width" *ngIf="republish">
+                <mat-form-field class="full-width" *ngIf="keyGenerationParams | async">
                     <input formControlName="previousLicense" matInput placeholder="Предыдущий Идентификатор лицензии" type="text" readonly>
                 </mat-form-field>
 
@@ -57,51 +57,51 @@
                         </mat-error>
                     </mat-form-field>
 
-<!--                    <mat-form-field class="full-width">-->
-<!--                        <mat-chip-list [errorStateMatcher]="matcher" placeholder="Организации" #chipList formControlName="organizationsList" >-->
-<!--                            <mat-chip *ngFor="let innkpp of organizationsList.value" [selectable]="false"-->
-<!--                                      [removable]="removable" (removed)="remove(innkpp)">-->
-<!--                                {{innkpp}}-->
-<!--                                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>-->
-<!--                            </mat-chip>-->
-<!--                            <input  placeholder="Организации"-->
-<!--                                   [matChipInputFor]="chipList"-->
-<!--                                   [matChipInputAddOnBlur]="addOnBlur"-->
-<!--                                   (matChipInputTokenEnd)="add($event)"-->
-<!--                                   [specialCharacters]="[':']"-->
-<!--                                   mask="0{10}:0{9}"-->
-<!--                                   [showMaskTyped]="true">-->
-<!--                        </mat-chip-list>-->
+                    <mat-form-field class="full-width">
+                        <mat-chip-list [errorStateMatcher]="matcher" placeholder="Организации" #chipList formControlName="organizationsList" >
+                            <mat-chip *ngFor="let innkpp of organizationsList.value" [selectable]="false"
+                                      [removable]="removable" (removed)="remove(innkpp)">
+                                {{innkpp}}
+                                <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+                            </mat-chip>
+                            <input  placeholder="Организации"
+                                   [matChipInputFor]="chipList"
+                                   [matChipInputAddOnBlur]="addOnBlur"
+                                   (matChipInputTokenEnd)="add($event)"
+                                   [specialCharacters]="[':']"
+                                   mask="0{10}:0{9}"
+                                   [showMaskTyped]="true">
+                        </mat-chip-list>
 
-<!--                        <mat-error>-->
-<!--                              <span *ngIf="!form.get('keyMeta.properties.organizationsList').valid && form.get('keyMeta.properties.organizationsList').touched">-->
-<!--                                Пожалуйста введите ИНН:КПП организации(ий)-->
-<!--                              </span>-->
-<!--                        </mat-error>-->
-<!--                    </mat-form-field>-->
+                        <mat-error>
+                              <span *ngIf="!form.get('keyMeta.properties.organizationsList').valid && form.get('keyMeta.properties.organizationsList').touched">
+                                Пожалуйста введите ИНН:КПП организации(ий)
+                              </span>
+                        </mat-error>
+                    </mat-form-field>
 
-<!--                    <mat-form-field class="full-width">-->
-<!--                        <input [errorStateMatcher]="matcher" formControlName="licenseNumber" matInput-->
-<!--                               placeholder="Номер лицензии"-->
-<!--                               type="text">-->
+                    <mat-form-field class="full-width">
+                        <input [errorStateMatcher]="matcher" formControlName="licenseNumber" matInput
+                               placeholder="Номер лицензии"
+                               type="text">
 
-<!--                        <mat-error>-->
-<!--                          <span-->
-<!--                              *ngIf="!form.get('keyMeta.properties.licenseNumber').valid && form.get('keyMeta.properties.licenseNumber').touched">-->
-<!--                            Пожалуйста введите номер лицензии-->
-<!--                          </span>-->
-<!--                        </mat-error>-->
-<!--                    </mat-form-field>-->
+                        <mat-error>
+                          <span
+                              *ngIf="!form.get('keyMeta.properties.licenseNumber').valid && form.get('keyMeta.properties.licenseNumber').touched">
+                            Пожалуйста введите номер лицензии
+                          </span>
+                        </mat-error>
+                    </mat-form-field>
 
-<!--                    <mat-form-field class="full-width">-->
-<!--                        <input [errorStateMatcher]="matcher" formControlName="comment" matInput placeholder="Комментарий"-->
-<!--                               type="text">-->
-<!--                    </mat-form-field>-->
+                    <mat-form-field class="full-width">
+                        <textarea [errorStateMatcher]="matcher" formControlName="comment" matInput placeholder="Комментарий"
+                               type="text"></textarea>
+                    </mat-form-field>
                 </div>
             </div>
 
 
-            <div formGroupName="files">
+            <div formGroupName="files" *ngIf="(keyGenerationParams | async) === null">
                 <mat-form-field class="full-width">
                     <ngx-mat-file-input #fileInput formControlName="publicKey"
                                         placeholder="Открытый ключ"></ngx-mat-file-input>
@@ -111,11 +111,16 @@
                 </mat-form-field>
             </div>
 
-
-            <button class="generate-button app-button" [disabled]="!form.valid" color="primary" mat-flat-button
-                    type="submit">
-                Создать
-            </button>
+            <div class="generate-button">
+                <button *ngIf="(keyGenerationParams | async) === null" class="app-button" [disabled]="!form.valid" color="primary" mat-flat-button
+                        type="submit">
+                    Выпустить
+                </button>
+                <button (click)="clearForm()" class="app-button" color="primary" mat-flat-button
+                        type="button">
+                    Очистить
+                </button>
+            </div>
         </form>
     </mat-card>
 </div>

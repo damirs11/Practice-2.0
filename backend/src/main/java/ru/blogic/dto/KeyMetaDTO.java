@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import ru.blogic.entity.KeyFile;
 import ru.blogic.entity.KeyMeta;
 import ru.blogic.entity.Properties;
 import ru.blogic.enums.LicenseType;
@@ -46,6 +47,8 @@ public class KeyMetaDTO {
     @JsonProperty("properties")
     private Map<String, String> properties;
 
+    private List<KeyFile> files;
+
     public KeyMetaDTO() {
     }
 
@@ -56,6 +59,7 @@ public class KeyMetaDTO {
         this.dateOfIssue = keyMeta.getDateOfIssue();
         this.dateOfExpiry = keyMeta.getDateOfExpiry();
         this.properties = keyMeta.getProperties().stream().collect(Collectors.toMap(Properties::getKey, Properties::getValue));
+        this.files = keyMeta.getFiles();
     }
 
     public UUID getId() {
@@ -106,6 +110,14 @@ public class KeyMetaDTO {
         this.properties = properties;
     }
 
+    public List<KeyFile> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<KeyFile> files) {
+        this.files = files;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -121,6 +133,7 @@ public class KeyMetaDTO {
                 .append(dateOfIssue, that.dateOfIssue)
                 .append(dateOfExpiry, that.dateOfExpiry)
                 .append(properties, that.properties)
+                .append(files, that.files)
                 .isEquals();
     }
 
@@ -133,6 +146,7 @@ public class KeyMetaDTO {
                 .append(dateOfIssue)
                 .append(dateOfExpiry)
                 .append(properties)
+                .append(files)
                 .toHashCode();
     }
 }

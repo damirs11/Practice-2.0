@@ -23,6 +23,10 @@ import org.springframework.data.domain.Pageable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -49,6 +53,7 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<KeyMetaDTO> findAll(Pageable pageable) {
         return keyRepository.findAll(pageable).map(KeyMetaDTO::new);
     }
@@ -57,6 +62,7 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<KeyMetaDTO> findAllByLicenseType(Pageable pageable) {
         return keyRepository.findAllByLicenseType(getLicenseType(), pageable).map(KeyMetaDTO::new);
     }
@@ -81,7 +87,11 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
      */
     @Override
     @Transactional()
-    public void generate(KeyMetaDTO keyMetaDTO, Map<String, MultipartFile> files) throws IOException, InterruptedException {
+    public KeyMetaDTO generate(KeyMetaDTO keyMetaDTO, Map<String, MultipartFile> files) throws IOException, InterruptedException {
+        keyMetaDTO.setId(UUID.randomUUID());
+        keyMetaDTO.setDateOfIssue(new Date());
+        keyMetaDTO.setLicenseType(getLicenseType());
+
         String pathToActivationFile = "nofile";
 
         if ((files != null) && files.containsKey("activationFile")) {
@@ -98,20 +108,23 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
                         keyMetaDTO.getProperties().get("coresCount"),
                         keyMetaDTO.getProperties().get("usersCount"),
                         keyMetaDTO.getProperties().get("moduleFlags"),
-                        FileStorageService.ROOT + File.separator + keyMetaDTO.getProperties().get("keyFileName"),
+                        keyMetaDTO.getProperties().get("keyFileName"),
                         pathToActivationFile
                 )
                 .start().waitFor();
 
         File keyFileTemp = new File(FileStorageService.ROOT + File.separator + keyMetaDTO.getProperties().get("keyFileName"));
-        KeyMeta keyMeta = new KeyMeta(keyMetaDTO);
-        keyMeta.setLicenseType(getLicenseType());
         KeyFile keyFile = new KeyFile(
                 keyMetaDTO.getProperties().get("keyFileName"),
                 MediaType.APPLICATION_OCTET_STREAM_VALUE,
-                keyMeta,
                 FileUtils.readFileToByteArray(keyFileTemp)
         );
-        this.keyFileRepository.save(keyFile);
+
+        keyMetaDTO.setFiles(Collections.singletonList(keyFile));
+        KeyMeta keyMeta = new KeyMeta(keyMetaDTO);
+
+        this.keyRepository.save(keyMeta);
+
+        return keyMetaDTO;
     }
 }

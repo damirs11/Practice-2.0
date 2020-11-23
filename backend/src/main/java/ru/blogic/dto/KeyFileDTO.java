@@ -1,5 +1,6 @@
 package ru.blogic.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -33,22 +34,17 @@ public class KeyFileDTO {
     private String fileType;
 
     /**
-     * Мета данные ключа
-     */
-    private KeyMetaDTO keyMetaDTO;
-
-    /**
      * Сам файл
      */
+    @JsonIgnore
     private byte[] data;
 
     public KeyFileDTO() {
     }
 
-    public KeyFileDTO(String fileName, String fileType, KeyMetaDTO keyMetaDTO, byte[] data) {
+    public KeyFileDTO(String fileName, String fileType, byte[] data) {
         this.fileName = fileName;
         this.fileType = fileType;
-        this.keyMetaDTO = keyMetaDTO;
         this.data = data;
     }
 
@@ -56,8 +52,7 @@ public class KeyFileDTO {
         this.id = keyFile.getId();
         this.fileName = keyFile.getFileName();
         this.fileType = keyFile.getFileType();
-        this.keyMetaDTO = new KeyMetaDTO(keyFile.getKeyMeta());
-        this.data = keyFile.getData();
+//        this.data = keyFile.getData();
     }
 
     public UUID getId() {
@@ -84,14 +79,6 @@ public class KeyFileDTO {
         this.fileType = fileType;
     }
 
-    public KeyMetaDTO getKeyMetaDTO() {
-        return keyMetaDTO;
-    }
-
-    public void setKeyMetaDTO(KeyMetaDTO keyMetaDTO) {
-        this.keyMetaDTO = keyMetaDTO;
-    }
-
     public byte[] getData() {
         return data;
     }
@@ -112,7 +99,6 @@ public class KeyFileDTO {
                 .append(id, that.id)
                 .append(fileName, that.fileName)
                 .append(fileType, that.fileType)
-                .append(keyMetaDTO, that.keyMetaDTO)
                 .append(data, that.data)
                 .isEquals();
     }
@@ -123,7 +109,6 @@ public class KeyFileDTO {
                 .append(id)
                 .append(fileName)
                 .append(fileType)
-                .append(keyMetaDTO)
                 .append(data)
                 .toHashCode();
     }

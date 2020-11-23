@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
@@ -41,9 +42,6 @@ public class UzedoKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
     private final KeyRepository keyRepository;
     private final KeyFileRepository keyFileRepository;
     private final FileStorageService fileStorageService;
-
-    @Value("${JAVA_14_PATH}")
-    private String JAVA_14_PATH;
 
     @Value("${PRIVATE_KEY_PATH}")
     private String PRIVATE_KEY_PATH;
@@ -62,6 +60,7 @@ public class UzedoKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Page<KeyMetaDTO> findAll(Pageable pageable) {
         return keyRepository.findAll(pageable).map(KeyMetaDTO::new);
     }
@@ -70,6 +69,7 @@ public class UzedoKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
      * {@inheritDoc}
      */
     @Override
+    @Transactional(readOnly = true)
     public Page<KeyMetaDTO> findAllByLicenseType(Pageable pageable) {
         return keyRepository.findAllByLicenseType(getLicenseType(), pageable).map(KeyMetaDTO::new);
     }
@@ -94,8 +94,9 @@ public class UzedoKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
      */
     @Override
     @Transactional()
-    public void generate(KeyMetaDTO keyMetaDTO, Map<String, MultipartFile> files) throws IOException {
+    public KeyMetaDTO generate(KeyMetaDTO keyMetaDTO, Map<String, MultipartFile> files) throws IOException {
         keyMetaDTO.setId(UUID.randomUUID());
+        keyMetaDTO.setDateOfIssue(new Date());
         keyMetaDTO.setLicenseType(getLicenseType());
 
         License license = new License();
@@ -119,12 +120,16 @@ public class UzedoKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
             e.printStackTrace(); //TODO: Сделать нормальную обработку
         }
 
-        keyMetaDTO.setLicenseType(getLicenseType());
         KeyFile keyFile = new KeyFile();
         keyFile.setData(license.serialized());
         keyFile.setFileName("UZEDO_LICENSE_" + new Date().toString());
         keyFile.setFileType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        keyFile.setKeyMeta(new KeyMeta(keyMetaDTO));
-        this.keyFileRepository.save(keyFile);
+
+        keyMetaDTO.setFiles(Collections.singletonList(keyFile));
+        KeyMeta keyMeta = new KeyMeta(keyMetaDTO);
+
+        this.keyRepository.save(keyMeta);
+
+        return keyMetaDTO;
     }
 }

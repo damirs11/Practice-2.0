@@ -4,6 +4,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.springframework.context.annotation.Lazy;
 import ru.blogic.dto.KeyFileDTO;
 
 import javax.persistence.*;
@@ -24,6 +25,7 @@ public class KeyFile {
      */
     @Id
     @NotNull
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     /**
@@ -41,14 +43,6 @@ public class KeyFile {
     private String fileType;
 
     /**
-     * Мета данные ключа
-     */
-    @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
-    @MapsId
-    @NotNull
-    private KeyMeta keyMeta;
-
-    /**
      * Сам файл
      */
     @Lob
@@ -58,10 +52,9 @@ public class KeyFile {
     public KeyFile() {
     }
 
-    public KeyFile(String fileName, String fileType, KeyMeta keyMeta, byte[] data) {
+    public KeyFile(String fileName, String fileType, byte[] data) {
         this.fileName = fileName;
         this.fileType = fileType;
-        this.keyMeta = keyMeta;
         this.data = data;
     }
 
@@ -69,8 +62,7 @@ public class KeyFile {
         this.id = keyFileDTO.getId();
         this.fileName = keyFileDTO.getFileName();
         this.fileType = keyFileDTO.getFileType();
-        this.keyMeta = new KeyMeta(keyFileDTO.getKeyMetaDTO());
-        this.data = keyFileDTO.getData();
+//        this.data = keyFileDTO.getData();
     }
 
     public UUID getId() {
@@ -97,14 +89,6 @@ public class KeyFile {
         this.fileType = fileType;
     }
 
-    public KeyMeta getKeyMeta() {
-        return keyMeta;
-    }
-
-    public void setKeyMeta(KeyMeta license) {
-        this.keyMeta = license;
-    }
-
     public byte[] getData() {
         return data;
     }
@@ -125,7 +109,6 @@ public class KeyFile {
                 .append(id, keyFile.id)
                 .append(fileName, keyFile.fileName)
                 .append(fileType, keyFile.fileType)
-                .append(keyMeta, keyFile.keyMeta)
                 .append(data, keyFile.data)
                 .isEquals();
     }
@@ -136,7 +119,6 @@ public class KeyFile {
                 .append(id)
                 .append(fileName)
                 .append(fileType)
-                .append(keyMeta)
                 .append(data)
                 .toHashCode();
     }

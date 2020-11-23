@@ -7,7 +7,7 @@
                     <input formControlName="id" matInput placeholder="Идентификатор" type="text" readonly>
                 </mat-form-field>
 
-                <mat-form-field class="full-width" *ngIf="republish">
+                <mat-form-field class="full-width" *ngIf="keyGenerationParams | async">
                     <input formControlName="previousLicense" matInput placeholder="Предыдущий Идентификатор лицензии" type="text" readonly>
                 </mat-form-field>
 
@@ -87,13 +87,13 @@
                     </mat-form-field>
 
                     <mat-form-field class="full-width">
-                        <input [errorStateMatcher]="matcher" formControlName="comment" matInput placeholder="Комментарий"
-                               type="text">
+                        <textarea [errorStateMatcher]="matcher" formControlName="comment" matInput placeholder="Комментарий"
+                              type="text"></textarea>
                     </mat-form-field>
                 </div>
             </div>
 
-            <div formGroupName="files">
+            <div formGroupName="files" *ngIf="(keyGenerationParams | async) === null">
                 <mat-form-field class="full-width">
                     <ngx-mat-file-input #fileInput formControlName="activationKeyFile"
                                         placeholder="Файл активации"></ngx-mat-file-input>
@@ -103,10 +103,16 @@
                 </mat-form-field>
             </div>
 
-            <button class="generate-button app-button" [disabled]="!form.valid" color="primary" mat-flat-button
-                    type="submit">
-                Создать
-            </button>
+            <div class="generate-button">
+                <button *ngIf="(keyGenerationParams | async) === null" class="app-button" [disabled]="!form.valid" color="primary" mat-flat-button
+                        type="submit">
+                    Выпустить
+                </button>
+                <button (click)="clearForm()" class="app-button" color="primary" mat-flat-button
+                        type="button">
+                    Очистить
+                </button>
+            </div>
         </form>
     </mat-card>
 </div>

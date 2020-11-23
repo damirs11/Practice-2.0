@@ -12,7 +12,7 @@ export default class KeyUtils {
     }
 
     /**
-     * Создает число основывая на флагах
+     * Создает число основываясь на флагах
      *
      * @param moduleFlags - массиво boolean
      */
@@ -27,5 +27,17 @@ export default class KeyUtils {
             }
         }
         return byteFlag;
+    }
+
+    /**
+     * Создает флаги основываясь на числе
+     *
+     * @param moduleFlags
+     */
+    static convertByteToBooleanModuleFlag(moduleFlags: number): Array<boolean> {
+        // tslint:disable-next-line:no-bitwise
+        const bits = (n, b = 8) => [...Array(b)].map((x, i) => (n >> i) & 1);
+
+        return bits(moduleFlags).slice(4).map(Boolean).reverse();
     }
 }

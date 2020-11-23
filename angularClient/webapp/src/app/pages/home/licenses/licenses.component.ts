@@ -44,7 +44,33 @@ export class LicensesComponent {
         this.homeFacade.getSelectedLicense().subscribe((license) => {
             switch (license) {
                 case LicenseType.DUMMY: {
-                    this.columnDefs = [];
+                    this.columnDefs = [
+                        {
+                            headerName: 'UUID',
+                            field: 'id',
+                        },
+                        {
+                            headerName: 'Имя организации',
+                            field: 'properties.organizationName',
+                        },
+                        {
+                            headerName: 'Число ядер',
+                            field: 'properties.coresCount',
+                        },
+                        {
+                            headerName: 'Число пользователей',
+                            field: 'properties.usersCount',
+                        },
+                        {
+                            headerName: 'Флаги',
+                            field: 'properties.moduleFlags',
+                            valueFormatter: (params) => this.moduleFlagsToLabel(params.value),
+                        },
+                        {
+                            headerName: 'Комментарий',
+                            field: 'properties.comment',
+                        },
+                    ];
                     break;
                 }
                 case LicenseType.UZEDO: {
@@ -106,8 +132,6 @@ export class LicensesComponent {
             }
         });
 
-        PageSettings.size = 2;
-
         this.gridOptions = {
             suppressRowDeselection: true,
             pagination: false,
@@ -128,7 +152,7 @@ export class LicensesComponent {
                 return data.id;
             },
             onRowClicked: (event: RowClickedEvent) =>
-                this.downloadKey(event.data.id, event.data.licenseType)
+                this.homeFacade.openNewLicenseModal(event.data, event.data.licenseType),
         };
 
         this.refreshData();
@@ -160,7 +184,7 @@ export class LicensesComponent {
      * Открывает диалоговое окно с генерацией лицензии
      */
     createLicense() {
-        this.homeFacade.openNewLicenseModal();
+        this.homeFacade.openNewLicenseModal(null, this.homeFacade.selectedLicenseValue);
     }
 
     moduleFlagsToLabel(moduleFlags: number): string {

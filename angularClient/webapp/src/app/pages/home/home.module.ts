@@ -12,7 +12,6 @@ import {UzedoKeyComponent} from '@pages/home/licenses/components/generate/compon
 import {LicensesComponent} from './licenses/licenses.component';
 import {GenerateComponent} from './licenses/components/generate/generate.component';
 import { PaginationToolbarComponent } from './licenses/components/pagination-toolbar/pagination-toolbar.component';
-import { BtnCellRendererComponent } from './licenses/components/btn-cell-renderer/btn-cell-renderer.component';
 
 @NgModule({
     declarations: [
@@ -22,7 +21,6 @@ import { BtnCellRendererComponent } from './licenses/components/btn-cell-rendere
         DummyKeyComponent,
         UzedoKeyComponent,
         PaginationToolbarComponent,
-        BtnCellRendererComponent,
     ],
     imports: [
         CommonModule,

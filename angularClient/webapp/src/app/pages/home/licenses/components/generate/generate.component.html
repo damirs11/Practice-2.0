@@ -1,30 +1,27 @@
 <div class="newLicense-dialog">
     <div mat-dialog-title>
-        <span>Создание ключа</span>
+        <span>{{keyGenerationParams.value === null ? 'Создание ключа' : 'Информация о ключе'}}</span>
         <button class="close-button" mat-icon-button mat-dialog-close>
             <mat-icon aria-hidden="true">
                 close
             </mat-icon>
         </button>
     </div>
+    <mat-form-field class="generate-select"  *ngIf="keyGenerationParams.value === null">
+        <mat-label>Выберите лицензию</mat-label>
+        <mat-select [(value)]="selectedLicense">
+            <mat-option *ngFor="let license of licenses | keyvalue"
+                        [value]="license.key">{{license.value}}</mat-option>
+        </mat-select>
+    </mat-form-field>
     <mat-dialog-content>
-        <mat-form-field class="generate-select">
-            <mat-label>Выберите лицензию</mat-label>
-            <mat-select [(value)]="selectedLicense">
-                <mat-option *ngFor="let license of licenses | keyvalue"
-                            [value]="license.key">{{license.value}}</mat-option>
-            </mat-select>
-        </mat-form-field>
-
-        <div>
-            <div [ngSwitch]="selectedLicense">
-                <ng-template [ngSwitchCase]="licenses.DUMMY">
-                    <app-dummy-key (generate)="generate($event)"></app-dummy-key>
-                </ng-template>
-                <ng-template [ngSwitchCase]="licenses.UZEDO">
-                    <app-uzedo-key (generate)="generate($event)"></app-uzedo-key>
-                </ng-template>
-            </div>
+        <div [ngSwitch]="selectedLicense">
+            <ng-template [ngSwitchCase]="licenses.DUMMY">
+                <app-dummy-key (generate)="generate($event)" (clear)="clearForm()" [keyGenerationParams]="keyGenerationParams.asObservable()"></app-dummy-key>
+            </ng-template>
+            <ng-template [ngSwitchCase]="licenses.UZEDO">
+                <app-uzedo-key (generate)="generate($event)" (clear)="clearForm()" [keyGenerationParams]="keyGenerationParams.asObservable()"></app-uzedo-key>
+            </ng-template>
         </div>
     </mat-dialog-content>
 </div>

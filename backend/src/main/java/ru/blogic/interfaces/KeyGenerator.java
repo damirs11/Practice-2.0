@@ -27,6 +27,7 @@ public interface KeyGenerator<KeyMeta, KeyFile> {
      *
      * @return ключи
      */
+    @Transactional(readOnly = true)
     Page<KeyMeta> findAll(Pageable pageable);
 
     /**
@@ -34,6 +35,7 @@ public interface KeyGenerator<KeyMeta, KeyFile> {
      *
      * @return ключи
      */
+    @Transactional(readOnly = true)
     Page<KeyMeta> findAllByLicenseType(Pageable pageable);
 
     /**
@@ -52,6 +54,6 @@ public interface KeyGenerator<KeyMeta, KeyFile> {
      * @param files
      */
     @Transactional()
-    void generate(KeyMeta keyInputParams, @Nullable Map<String, MultipartFile> files) throws IOException, InterruptedException;
+    KeyMeta generate(KeyMeta keyInputParams, @Nullable Map<String, MultipartFile> files) throws IOException, InterruptedException;
 
 }
