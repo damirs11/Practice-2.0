@@ -47,7 +47,7 @@ export class DummyKeyComponent implements OnInit {
             keyMeta: this.formBuilder.group({
                 id: [null],
                 previousLicense: [null],
-                dateOfIssue: [new Date(), Validators.required],
+                dateOfIssue: [null],
                 dateOfExpiry: [null, Validators.required],
                 properties: this.formBuilder.group({
                     organizationName: ['organizationName', Validators.required],
@@ -62,7 +62,7 @@ export class DummyKeyComponent implements OnInit {
                         },
                         Validators.required
                     ),
-                    keyFileName: ['keyFileName', Validators.required],
+                    licenseFileName: ['licenseFileName'],
                     comment: ['comment'],
                 }),
             }),
@@ -91,8 +91,8 @@ export class DummyKeyComponent implements OnInit {
                 this.form.controls.keyMeta.patchValue(keyGenerationParams);
                 this.form.disable();
             } else {
-                // this.form.reset();
-                // this.form.enable();
+                this.form.reset();
+                this.form.enable();
             }
         });
     }

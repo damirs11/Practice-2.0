@@ -13,9 +13,11 @@ import ru.blogic.dto.response.MessageResponse;
 import ru.blogic.entity.Role;
 import ru.blogic.entity.User;
 import ru.blogic.enums.RoleNameImpl;
+import ru.blogic.exception.RegisterException;
 import ru.blogic.repository.RoleRepository;
 import ru.blogic.repository.UserRepository;
 
+import javax.security.auth.login.LoginException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -47,7 +49,7 @@ class AuthServiceTest {
     AuthService authService;
 
     @Test
-    void authenticateUse_Success() throws ServletException {
+    void authenticateUse_Success() throws ServletException, LoginException {
         when(userRepository.findByUsername(any())).thenReturn(Optional.of(new User()));
 
         assertEquals(
@@ -57,7 +59,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void authenticateUse_WrongUsername() throws ServletException {
+    void authenticateUse_WrongUsername() throws ServletException, LoginException {
         when(userRepository.findByUsername(any())).thenReturn(Optional.empty());
 
         assertEquals(
@@ -67,7 +69,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void registerUser_Success() {
+    void registerUser_Success() throws RegisterException {
         Role role = new Role(RoleNameImpl.ROLE_USER);
 
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.empty());
@@ -83,7 +85,7 @@ class AuthServiceTest {
     }
 
     @Test
-    void registerUser_UserExists() {
+    void registerUser_UserExists() throws RegisterException {
         when(userRepository.findByUsername(any(String.class))).thenReturn(Optional.of(new User()));
 
         assertEquals(

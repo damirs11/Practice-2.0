@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
-import {EMPTY, Observable} from 'rxjs';
+import {EMPTY, Observable, throwError} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {AuthService} from '../service/auth/auth.service';
 import {LoggerService} from '../service/logger/logger.service';
@@ -30,15 +30,19 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     ): Observable<HttpEvent<any>> {
         return next.handle(req).pipe(
             catchError((error: HttpErrorResponse) => {
-                if (error.error instanceof Error) {
+                if (error.error instanceof ErrorEvent) {
                     this.logger.error(error);
-                }
+                } else {
+                    this.logger.log(`Error status: ${error.status} ${error.statusText}`);
 
-                if (error.status === StatusCodes.UNAUTHORIZED) {
-                    this.router.navigate(['/auth/login']);
+                    switch (error.status) {
+                        case StatusCodes.UNAUTHORIZED: {
+                            this.router.navigate(['/auth/login']);
+                            break;
+                        }
+                    }
                 }
-
-                return EMPTY;
+                return throwError(error);
             })
         );
     }

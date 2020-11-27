@@ -8,6 +8,7 @@ import ru.blogic.entity.KeyFile;
 import ru.blogic.entity.KeyMeta;
 import ru.blogic.entity.Properties;
 import ru.blogic.enums.LicenseType;
+import ru.blogic.enums.TypeOfFile;
 
 import java.util.Date;
 import java.util.List;
@@ -32,11 +33,13 @@ public class KeyMetaDTO {
     /**
      * Предыдущий Идентификатор лицензии
      */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID previousLicense;
 
     /**
      * Дата выпуска(формат дат yyyy-MM-dd)
      */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Date dateOfIssue;
 
     /**
@@ -47,7 +50,8 @@ public class KeyMetaDTO {
     @JsonProperty("properties")
     private Map<String, String> properties;
 
-    private List<KeyFile> files;
+    @JsonProperty("files")
+    private Map<TypeOfFile, UUID> files;
 
     public KeyMetaDTO() {
     }
@@ -59,7 +63,7 @@ public class KeyMetaDTO {
         this.dateOfIssue = keyMeta.getDateOfIssue();
         this.dateOfExpiry = keyMeta.getDateOfExpiry();
         this.properties = keyMeta.getProperties().stream().collect(Collectors.toMap(Properties::getKey, Properties::getValue));
-        this.files = keyMeta.getFiles();
+        this.files = keyMeta.getFiles().stream().collect(Collectors.toMap(KeyFile::getTypeOfFile, KeyFile::getId));
     }
 
     public UUID getId() {
@@ -110,11 +114,11 @@ public class KeyMetaDTO {
         this.properties = properties;
     }
 
-    public List<KeyFile> getFiles() {
+    public Map<TypeOfFile, UUID> getFiles() {
         return files;
     }
 
-    public void setFiles(List<KeyFile> files) {
+    public void setFiles(Map<TypeOfFile, UUID> files) {
         this.files = files;
     }
 

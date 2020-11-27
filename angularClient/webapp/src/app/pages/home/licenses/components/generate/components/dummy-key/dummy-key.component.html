@@ -74,13 +74,13 @@
                         <mat-checkbox class="child" formControlName="archive">Архив (2017)</mat-checkbox>
                     </div>
 
-                    <mat-form-field class="full-width">
-                        <input [errorStateMatcher]="matcher" formControlName="keyFileName" matInput
+                    <mat-form-field *ngIf="(keyGenerationParams | async) === null" class="full-width">
+                        <input [errorStateMatcher]="matcher" formControlName="licenseFileName" matInput
                                placeholder="Название файла ключа"
                                type="text">
 
                         <mat-error>
-                          <span *ngIf="!form.get('keyMeta.properties.keyFileName').valid && form.get('keyMeta.properties.keyFileName').touched">
+                          <span *ngIf="!form.get('keyMeta.properties.licenseFileName').valid && form.get('keyMeta.properties.licenseFileName').touched">
                             Пожалуйста введите имя файла ключа
                           </span>
                         </mat-error>
@@ -103,16 +103,7 @@
                 </mat-form-field>
             </div>
 
-            <div class="generate-button">
-                <button *ngIf="(keyGenerationParams | async) === null" class="app-button" [disabled]="!form.valid" color="primary" mat-flat-button
-                        type="submit">
-                    Выпустить
-                </button>
-                <button (click)="clearForm()" class="app-button" color="primary" mat-flat-button
-                        type="button">
-                    Очистить
-                </button>
-            </div>
+
         </form>
     </mat-card>
 </div>

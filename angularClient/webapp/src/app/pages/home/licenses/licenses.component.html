@@ -9,7 +9,8 @@
     class="ag-theme-material licenses-grid"
     [columnDefs]="columnDefs"
     [defaultColDef]="defaultColDef"
-    [gridOptions]="gridOptions">
+    [gridOptions]="gridOptions"
+    [frameworkComponents]="frameworkComponents">
 </ag-grid-angular>
 <app-pagination-toolbar class="ag-theme-material ag-grid" (refresh)="this.refreshData()"
                         [page]="keys | async"></app-pagination-toolbar>

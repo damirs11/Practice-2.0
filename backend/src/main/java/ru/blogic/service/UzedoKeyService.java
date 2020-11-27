@@ -4,6 +4,7 @@ import javax0.license3j.Feature;
 import javax0.license3j.License;
 import javax0.license3j.crypto.LicenseKeyPair;
 import javax0.license3j.io.KeyPairReader;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +19,7 @@ import ru.blogic.dto.KeyMetaDTO;
 import ru.blogic.entity.KeyFile;
 import ru.blogic.entity.KeyMeta;
 import ru.blogic.enums.LicenseType;
+import ru.blogic.enums.TypeOfFile;
 import ru.blogic.interfaces.KeyGenerator;
 import ru.blogic.repository.KeyFileRepository;
 import ru.blogic.repository.KeyRepository;
@@ -25,15 +27,13 @@ import ru.blogic.repository.KeyRepository;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class UzedoKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
@@ -47,6 +47,7 @@ public class UzedoKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
     private String PRIVATE_KEY_PATH;
 
     private final String DIGEST = "SHA-512";
+    private final List<String> exceptedProps = Collections.singletonList("licenseFileName");
 
     public UzedoKeyService(KeyRepository keyRepository, KeyFileRepository keyFileRepository, FileStorageService fileStorageService) {
         this.keyRepository = keyRepository;
@@ -109,9 +110,11 @@ public class UzedoKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
             license.add(Feature.Create.dateFeature("dateOfExpiry", keyMetaDTO.getDateOfExpiry()));
         }
 
-        keyMetaDTO.getProperties().entrySet().forEach((property -> {
-            license.add(Feature.Create.stringFeature(property.getKey(), property.getValue()));
-        }));
+        keyMetaDTO.getProperties().entrySet().stream()
+            .filter(property -> !exceptedProps.contains(property.getKey()))
+            .forEach((property -> {
+                license.add(Feature.Create.stringFeature(property.getKey(), property.getValue()));
+            }));
 
         try (final KeyPairReader privateKeyReader = new KeyPairReader(PRIVATE_KEY_PATH)) {
             LicenseKeyPair privateKeyPair = privateKeyReader.readPrivate();
@@ -120,13 +123,32 @@ public class UzedoKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
             e.printStackTrace(); //TODO: Сделать нормальную обработку
         }
 
-        KeyFile keyFile = new KeyFile();
-        keyFile.setData(license.serialized());
-        keyFile.setFileName("UZEDO_LICENSE_" + new Date().toString());
-        keyFile.setFileType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        List<KeyFile> filesToSave = new ArrayList<>();
 
-        keyMetaDTO.setFiles(Collections.singletonList(keyFile));
+        KeyFile licenseKeyFile = new KeyFile(
+            keyMetaDTO.getProperties()
+                    .getOrDefault(keyMetaDTO.getProperties().get(exceptedProps.get(0)),
+                            "UZEDO_LICENSE_" + new Date().toString()),
+            TypeOfFile.LICENSE_FILE,
+            MediaType.APPLICATION_OCTET_STREAM_VALUE,
+            license.serialized()
+        );
+        filesToSave.add(licenseKeyFile);
+
+        if ((files != null) && files.containsKey("publicKey")) {
+            fileStorageService.save(files.get("publicKey"));
+            KeyFile publicKey = new KeyFile(
+                    files.get("publicKey").getOriginalFilename(),
+                    TypeOfFile.PUBLIC_KEY,
+                    MediaType.APPLICATION_OCTET_STREAM_VALUE,
+                    FileUtils.readFileToByteArray(new File(FileStorageService.ROOT + File.separator + files.get("publicKey").getOriginalFilename()))
+            );
+            filesToSave.add(publicKey);
+        }
+
+
         KeyMeta keyMeta = new KeyMeta(keyMetaDTO);
+        keyMeta.setFiles(filesToSave);
 
         this.keyRepository.save(keyMeta);
 

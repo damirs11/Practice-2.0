@@ -19,8 +19,8 @@ export class UzedoKeyComponent implements OnInit {
      */
     @Output() generate: EventEmitter<FormDataType> = new EventEmitter<FormDataType>();
     /**
-    * Определяет, что делать при очистке формы
-    */
+     * Определяет, что делать при очистке формы
+     */
     @Output() clear: EventEmitter<void> = new EventEmitter<void>();
     /**
      * Это Перевыпуск лицензии?
@@ -50,14 +50,15 @@ export class UzedoKeyComponent implements OnInit {
             keyMeta: this.formBuilder.group({
                 id: [null],
                 previousLicense: [null],
-                dateOfIssue: [new Date(), Validators.required],
+                dateOfIssue: [null],
                 dateOfExpiry: [null],
                 properties: this.formBuilder.group({
                     version: ['v1', Validators.required],
                     issuedTo: [null, Validators.required],
                     issuedBy: [null, Validators.required],
                     licenseNumber: [null, Validators.required],
-                    organizationsList: [null, Validators.required],
+                    organizationsList: [[], Validators.required],
+                    licenseFileName: ['licenseFileName'],
                     comment: [null],
                 }),
             }),
@@ -70,14 +71,18 @@ export class UzedoKeyComponent implements OnInit {
         this.keyGenerationParams.subscribe((keyGenerationParams) => {
             if (keyGenerationParams !== null) {
 
+                console.log(keyGenerationParams);
+
                 keyGenerationParams.dateOfIssue = new Date(keyGenerationParams.dateOfIssue);
                 keyGenerationParams.dateOfExpiry = keyGenerationParams?.dateOfExpiry ? new Date(keyGenerationParams.dateOfExpiry) : null;
-                keyGenerationParams.properties['organizationsList'] = keyGenerationParams.properties['organizationsList'].split(';');
+                if (!Array.isArray(keyGenerationParams.properties['organizationsList'])) {
+                    keyGenerationParams.properties['organizationsList'] = keyGenerationParams.properties['organizationsList'].split(';');
+                }
 
                 this.form.controls.keyMeta.patchValue(keyGenerationParams);
                 this.form.disable();
             } else {
-                this.form.reset();
+                // this.form.reset();
                 this.form.enable();
             }
         });
@@ -95,7 +100,7 @@ export class UzedoKeyComponent implements OnInit {
         const input = $event.input;
 
         if (value.indexOf('_') > -1) {
-           return;
+            return;
         }
 
         // Add our innkpp

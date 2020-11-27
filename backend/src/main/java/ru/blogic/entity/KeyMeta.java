@@ -28,6 +28,7 @@ public class KeyMeta {
      * Тип лицензии
      */
     @Column(name = "license_type")
+    @Enumerated(EnumType.STRING)
     @NotNull
     private LicenseType licenseType;
 
@@ -70,7 +71,7 @@ public class KeyMeta {
         this.properties = keyMetaDTO.getProperties().entrySet().stream()
                 .map(entry -> new Properties(entry.getKey(), entry.getValue()))
                 .collect(Collectors.toList());
-        this.files = keyMetaDTO.getFiles();
+//        this.files = keyMetaDTO.getFiles();
     }
 
     public UUID getId() {

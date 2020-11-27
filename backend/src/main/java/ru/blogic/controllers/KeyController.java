@@ -109,7 +109,7 @@ public class KeyController {
                                        @RequestPart("keyMeta") @Valid KeyMetaDTO keyMetaDTO,
                                        @RequestPart(value = "files", required = false) MultipartFile[] files) {
 
-        Map<String, MultipartFile> filesMap = Arrays.stream(files).collect(Collectors.toMap(MultipartFile::getName, file -> file));
+        Map<String, MultipartFile> filesMap = Arrays.stream(files).collect(Collectors.toMap(MultipartFile::getOriginalFilename, file -> file));
 
         for (KeyGenerator<KeyMetaDTO, KeyFileDTO> s : keyServices) {
             if (licenseType == s.getLicenseType()) {

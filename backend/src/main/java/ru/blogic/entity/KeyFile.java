@@ -4,8 +4,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.context.annotation.Lazy;
 import ru.blogic.dto.KeyFileDTO;
+import ru.blogic.enums.TypeOfFile;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -28,6 +28,11 @@ public class KeyFile {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @Column(name = "type_of_file")
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private TypeOfFile typeOfFile;
+
     /**
      * Имя
      */
@@ -40,7 +45,7 @@ public class KeyFile {
      */
     @Column(name = "file_type")
     @NotNull
-    private String fileType;
+    private String dataType;
 
     /**
      * Сам файл
@@ -52,17 +57,18 @@ public class KeyFile {
     public KeyFile() {
     }
 
-    public KeyFile(String fileName, String fileType, byte[] data) {
+    public KeyFile(String fileName, TypeOfFile typeOfFile, String dataType, byte[] data) {
         this.fileName = fileName;
-        this.fileType = fileType;
+        this.typeOfFile = typeOfFile;
+        this.dataType = dataType;
         this.data = data;
     }
 
     public KeyFile(KeyFileDTO keyFileDTO) {
         this.id = keyFileDTO.getId();
+        this.typeOfFile = keyFileDTO.getTypeOfFile();
         this.fileName = keyFileDTO.getFileName();
-        this.fileType = keyFileDTO.getFileType();
-//        this.data = keyFileDTO.getData();
+        this.dataType = keyFileDTO.getFileType();
     }
 
     public UUID getId() {
@@ -73,6 +79,14 @@ public class KeyFile {
         this.id = id;
     }
 
+    public TypeOfFile getTypeOfFile() {
+        return typeOfFile;
+    }
+
+    public void setTypeOfFile(TypeOfFile typeOfFile) {
+        this.typeOfFile = typeOfFile;
+    }
+
     public String getFileName() {
         return fileName;
     }
@@ -81,12 +95,12 @@ public class KeyFile {
         this.fileName = fileName;
     }
 
-    public String getFileType() {
-        return fileType;
+    public String getDataType() {
+        return dataType;
     }
 
-    public void setFileType(String fileType) {
-        this.fileType = fileType;
+    public void setDataType(String fileType) {
+        this.dataType = fileType;
     }
 
     public byte[] getData() {
@@ -107,8 +121,9 @@ public class KeyFile {
 
         return new EqualsBuilder()
                 .append(id, keyFile.id)
+                .append(typeOfFile, keyFile.typeOfFile)
                 .append(fileName, keyFile.fileName)
-                .append(fileType, keyFile.fileType)
+                .append(dataType, keyFile.dataType)
                 .append(data, keyFile.data)
                 .isEquals();
     }
@@ -117,8 +132,9 @@ public class KeyFile {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(id)
+                .append(typeOfFile)
                 .append(fileName)
-                .append(fileType)
+                .append(dataType)
                 .append(data)
                 .toHashCode();
     }

@@ -12,6 +12,7 @@ import {UzedoKeyComponent} from '@pages/home/licenses/components/generate/compon
 import {LicensesComponent} from './licenses/licenses.component';
 import {GenerateComponent} from './licenses/components/generate/generate.component';
 import { PaginationToolbarComponent } from './licenses/components/pagination-toolbar/pagination-toolbar.component';
+import { DropdownMenuComponent } from './licenses/components/dropdown-menu/dropdown-menu.component';
 
 @NgModule({
     declarations: [
@@ -21,6 +22,7 @@ import { PaginationToolbarComponent } from './licenses/components/pagination-too
         DummyKeyComponent,
         UzedoKeyComponent,
         PaginationToolbarComponent,
+        DropdownMenuComponent,
     ],
     imports: [
         CommonModule,

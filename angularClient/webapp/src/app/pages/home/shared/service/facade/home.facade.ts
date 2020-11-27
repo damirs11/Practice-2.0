@@ -5,8 +5,8 @@ import {KeyGenerationParams} from '@api/license/key-generation-params';
 import {KeyService} from '../key/key.service';
 import {LoggerService} from '@shared/service/logger/logger.service';
 import {HomeStore} from '../../store/home.store';
-import {share, tap} from 'rxjs/operators';
-import {HttpResponse} from '@angular/common/http';
+import {tap} from 'rxjs/operators';
+import {HttpErrorResponse, HttpResponse} from '@angular/common/http';
 import {saveAs} from 'file-saver';
 import KeyUtils from '../../utils/keyUtils';
 import {AuthStore} from '@shared/store/auth.store';
@@ -40,11 +40,11 @@ export class HomeFacade {
         return this.homeStore.getKeys$();
     }
 
-    getSelectedLicense(): Observable<LicenseType>  {
+    getSelectedLicense(): Observable<LicenseType> {
         return this.homeStore.getSelectedLicense$();
     }
 
-    get selectedLicenseValue(): LicenseType  {
+    get selectedLicenseValue(): LicenseType {
         return this.homeStore.selectedLicenseValue$;
     }
 
@@ -55,8 +55,7 @@ export class HomeFacade {
     /**
      * Производит создание нового ключа основывая на данных из формы
      *
-     * @param $event
-     * @param licenseType
+     * @param $event - данные с формы
      */
     generate($event: FormDataType): Observable<KeyGenerationParams> {
         this.homeStore.setUpdating(true);
@@ -64,7 +63,6 @@ export class HomeFacade {
         const formData = new FormData();
         formData.append('keyMeta', new Blob([JSON.stringify($event.keyMeta)], {type: 'application/json'}));
         for (const [key, value] of Object.entries($event.files)) {
-            console.log(key, value);
             if (value !== null) {
                 formData.append('files', value, key);
             }
@@ -78,9 +76,9 @@ export class HomeFacade {
                 this.homeStore.setUpdating(false);
                 this.refreshData();
             },
-            (err) => {
+            (err: HttpErrorResponse) => {
                 this.homeStore.setUpdating(false);
-                const modalDialog = this.modalService.openErrorModal(err);
+                this.modalService.openErrorModal(err.error.message);
             },
             () => {
                 this.homeStore.setUpdating(false);
@@ -93,9 +91,8 @@ export class HomeFacade {
     openNewLicenseModal(keyGenerationParams?: KeyGenerationParams, licenseTypeByDefault?: LicenseType): void {
         const dialogRef = this.modalService.openNewLicenseModal((data) => {
             this.generate(data).subscribe(value => {
-                    console.log('generate', value);
-                    dialogRef.componentInstance.keyGenerationParams.next(value);
-                });
+                dialogRef.componentInstance.keyGenerationParams.next(value);
+            });
         }, licenseTypeByDefault ?? null, keyGenerationParams ?? null);
     }
 
@@ -139,7 +136,7 @@ export class HomeFacade {
                 this.router.navigate(['/auth/login']);
             },
             (err) => {
-                const modalDialog = this.modalService.openErrorModal(err);
+                this.modalService.openErrorModal(err);
             }
         );
     }

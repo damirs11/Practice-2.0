@@ -6,6 +6,9 @@ import {MatDialog, MatDialogConfig} from '@angular/material/dialog';
 import {ErrorModalComponent} from '@components/modals/error-modal/error-modal.component';
 import {AuthStore} from '@shared/store/auth.store';
 import {BaseAuth} from '@api/auth/base-auth';
+import {HttpErrorResponse} from '@angular/common/http';
+import {ModalService} from '@shared/service/modal/modal.service';
+import {message} from 'ag-grid-community/dist/lib/utils/general';
 
 @Injectable({
     providedIn: 'root'
@@ -22,8 +25,15 @@ export class AuthFacade {
         private router: Router,
         private route: ActivatedRoute,
         private modal: MatDialog,
+        private modalService: ModalService,
     ) {
         this.returnUrl = this.route.snapshot.queryParams.returnUrl || '/';
+
+        this.authStore.getCurrentUser().subscribe(user => {
+            if (user !== null) {
+                this.router.navigate([this.returnUrl]);
+            }
+        });
     }
 
     isUpdating$(): Observable<boolean> {
@@ -48,11 +58,7 @@ export class AuthFacade {
             },
             (err) => {
                 this.authStore.setUpdating(false);
-
-                const modalConfig = new MatDialogConfig();
-                modalConfig.data = err;
-
-                const modalDialog = this.modal.open(ErrorModalComponent, modalConfig);
+                this.modalService.openErrorModal(err.error.message);
             },
             () => this.authStore.setUpdating(false)
         );
@@ -69,13 +75,9 @@ export class AuthFacade {
 
         this.authService.registration(new BaseAuth(username, password)).subscribe(
             (res) => this.router.navigate(['/auth/login']),
-            (err) => {
+            (err: HttpErrorResponse) => {
                 this.authStore.setUpdating(false);
-
-                const modalConfig = new MatDialogConfig();
-                modalConfig.data = err;
-
-                const modalDialog = this.modal.open(ErrorModalComponent, modalConfig);
+                this.modalService.openErrorModal(err.error.message);
             },
             () => this.authStore.setUpdating(false)
         );

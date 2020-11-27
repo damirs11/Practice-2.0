@@ -14,6 +14,7 @@ import ru.blogic.dto.KeyMetaDTO;
 import ru.blogic.entity.KeyFile;
 import ru.blogic.entity.KeyMeta;
 import ru.blogic.enums.LicenseType;
+import ru.blogic.enums.TypeOfFile;
 import ru.blogic.interfaces.KeyGenerator;
 import ru.blogic.repository.KeyFileRepository;
 import ru.blogic.repository.KeyRepository;
@@ -38,8 +39,10 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
     private final KeyFileRepository keyFileRepository;
     private final FileStorageService fileStorageService;
 
-    @Value("${LICENSE_PATH}")
+    @Value("${DUMMY_LICENSE_PATH}")
     private String LICENSE_PATH;
+
+    private static final String LICENSE_FILE_KEY = "LICENSE_FILE";
 
     public DummyKeyService(KeyRepository keyRepository, KeyFileRepository keyFileRepository, FileStorageService fileStorageService) {
         this.keyRepository = keyRepository;
@@ -94,10 +97,13 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
 
         String pathToActivationFile = "nofile";
 
-        if ((files != null) && files.containsKey("activationFile")) {
-            fileStorageService.save(files.get("activationFile"));
-            pathToActivationFile = FileStorageService.ROOT + File.separator + files.get("activationFile").getOriginalFilename();
+        if ((files != null) && files.containsKey("activationKeyFile")) {
+            fileStorageService.save(files.get("activationKeyFile"));
+            pathToActivationFile = FileStorageService.ROOT + File.separator + files.get("activationKeyFile").getOriginalFilename();
         }
+
+        String licenseFileName = keyMetaDTO.getProperties()
+                .getOrDefault("licenseFileName", "DUMMY_LICENSE_" + new Date().toString());
 
         new ProcessBuilder()
                 .inheritIO()
@@ -108,20 +114,20 @@ public class DummyKeyService implements KeyGenerator<KeyMetaDTO, KeyFileDTO> {
                         keyMetaDTO.getProperties().get("coresCount"),
                         keyMetaDTO.getProperties().get("usersCount"),
                         keyMetaDTO.getProperties().get("moduleFlags"),
-                        keyMetaDTO.getProperties().get("keyFileName"),
+                        FileStorageService.ROOT + File.separator + licenseFileName,
                         pathToActivationFile
                 )
                 .start().waitFor();
 
-        File keyFileTemp = new File(FileStorageService.ROOT + File.separator + keyMetaDTO.getProperties().get("keyFileName"));
         KeyFile keyFile = new KeyFile(
-                keyMetaDTO.getProperties().get("keyFileName"),
+                licenseFileName,
+                TypeOfFile.LICENSE_FILE,
                 MediaType.APPLICATION_OCTET_STREAM_VALUE,
-                FileUtils.readFileToByteArray(keyFileTemp)
+                FileUtils.readFileToByteArray(new File(FileStorageService.ROOT + File.separator + licenseFileName))
         );
 
-        keyMetaDTO.setFiles(Collections.singletonList(keyFile));
         KeyMeta keyMeta = new KeyMeta(keyMetaDTO);
+        keyMeta.setFiles(Collections.singletonList(keyFile));
 
         this.keyRepository.save(keyMeta);
 

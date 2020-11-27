@@ -13,9 +13,11 @@ import ru.blogic.dto.response.MessageResponse;
 import ru.blogic.entity.Role;
 import ru.blogic.entity.User;
 import ru.blogic.enums.RoleNameImpl;
+import ru.blogic.exception.RegisterException;
 import ru.blogic.repository.RoleRepository;
 import ru.blogic.repository.UserRepository;
 
+import javax.security.auth.login.LoginException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
@@ -47,9 +49,9 @@ public class AuthService {
      * @param loginRequest сущность с данными для логина
      * @return ответ
      */
-    public MessageResponse authenticateUser(LoginRequest loginRequest, HttpServletRequest request) {
+    public MessageResponse authenticateUser(LoginRequest loginRequest, HttpServletRequest request) throws LoginException {
         if (!userRepository.findByUsername(loginRequest.getUsername()).isPresent()) {
-            return new MessageResponse("Логин или пароль введины не правильно");
+            throw new LoginException("Логин или пароль введины не правильно");
         }
         try {
             request.login(loginRequest.getUsername(), loginRequest.getPassword());
@@ -66,9 +68,9 @@ public class AuthService {
      * @param registrationRequest сущность с данными для регистации
      * @return ответ
      */
-    public MessageResponse registerUser(RegistrationRequest registrationRequest) {
+    public MessageResponse registerUser(RegistrationRequest registrationRequest) throws RegisterException {
         if (userRepository.findByUsername(registrationRequest.getUsername()).isPresent()) {
-            return new MessageResponse("Имя уже занято");
+            throw new RegisterException("Имя уже занято");
         }
 
         User user = new User(

@@ -1,5 +1,6 @@
 package ru.blogic.controllers.security;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -8,8 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.blogic.dto.request.LoginRequest;
 import ru.blogic.dto.request.RegistrationRequest;
+import ru.blogic.dto.response.MessageResponse;
+import ru.blogic.exception.RegisterException;
 import ru.blogic.service.security.AuthService;
 
+import javax.security.auth.login.LoginException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -36,7 +40,11 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(HttpServletRequest request, @Valid @RequestBody LoginRequest loginRequest) {
-        return ResponseEntity.ok(authService.authenticateUser(loginRequest, request));
+        try {
+            return ResponseEntity.ok(authService.authenticateUser(loginRequest, request));
+        } catch (LoginException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse(e.getMessage()));
+        }
     }
 
     /**
@@ -47,7 +55,11 @@ public class AuthController {
      */
     @PostMapping("/registration")
     public ResponseEntity<?> registerUser(@Valid @RequestBody RegistrationRequest registrationRequest) {
-        return ResponseEntity.ok(authService.registerUser(registrationRequest));
+        try {
+            return ResponseEntity.ok(authService.registerUser(registrationRequest));
+        } catch (RegisterException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new MessageResponse(e.getMessage()));
+        }
     }
 
     /**

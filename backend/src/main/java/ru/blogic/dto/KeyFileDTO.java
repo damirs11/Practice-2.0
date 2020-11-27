@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import ru.blogic.entity.KeyFile;
+import ru.blogic.enums.TypeOfFile;
 
 import java.util.UUID;
 
@@ -23,14 +24,19 @@ public class KeyFileDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID id;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private TypeOfFile typeOfFile;
+
     /**
      * Имя
      */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String fileName;
 
     /**
      * Тип файла
      */
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String fileType;
 
     /**
@@ -42,17 +48,19 @@ public class KeyFileDTO {
     public KeyFileDTO() {
     }
 
-    public KeyFileDTO(String fileName, String fileType, byte[] data) {
+    public KeyFileDTO(String fileName, TypeOfFile typeOfFile, String fileType, byte[] data) {
         this.fileName = fileName;
+        this.typeOfFile = typeOfFile;
         this.fileType = fileType;
         this.data = data;
     }
 
     public KeyFileDTO(KeyFile keyFile) {
         this.id = keyFile.getId();
+        this.typeOfFile = keyFile.getTypeOfFile();
         this.fileName = keyFile.getFileName();
-        this.fileType = keyFile.getFileType();
-//        this.data = keyFile.getData();
+        this.fileType = keyFile.getDataType();
+        this.data = keyFile.getData();
     }
 
     public UUID getId() {
@@ -61,6 +69,14 @@ public class KeyFileDTO {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public TypeOfFile getTypeOfFile() {
+        return typeOfFile;
+    }
+
+    public void setTypeOfFile(TypeOfFile typeOfFile) {
+        this.typeOfFile = typeOfFile;
     }
 
     public String getFileName() {
@@ -97,6 +113,7 @@ public class KeyFileDTO {
 
         return new EqualsBuilder()
                 .append(id, that.id)
+                .append(typeOfFile, that.typeOfFile)
                 .append(fileName, that.fileName)
                 .append(fileType, that.fileType)
                 .append(data, that.data)
@@ -107,6 +124,7 @@ public class KeyFileDTO {
     public int hashCode() {
         return new HashCodeBuilder(17, 37)
                 .append(id)
+                .append(typeOfFile)
                 .append(fileName)
                 .append(fileType)
                 .append(data)

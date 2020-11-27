@@ -6,7 +6,7 @@ import {BehaviorSubject} from 'rxjs';
 import {KeyGenerationParams} from '@api/license/key-generation-params';
 
 export interface DialogData {
-    keyGenerationParams: KeyGenerationParams
+    keyGenerationParams: KeyGenerationParams;
     licenseTypeByDefault: LicenseType;
 }
 

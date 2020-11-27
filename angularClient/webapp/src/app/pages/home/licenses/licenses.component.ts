@@ -5,6 +5,7 @@ import {LicenseType} from '@api/license/enums/license-type';
 import {ColDef, GridApi, GridOptions, RowClickedEvent} from 'ag-grid-community';
 import {DatePipe} from '@angular/common';
 import {PageSettings} from '@api/license/pageSettings';
+import {DropdownMenuComponent} from '@pages/home/licenses/components/dropdown-menu/dropdown-menu.component';
 
 /**
  * Компонент для логина
@@ -21,16 +22,58 @@ import {PageSettings} from '@api/license/pageSettings';
 export class LicensesComponent {
     licenses = LicenseType;
     gridOptions: GridOptions;
+    rowClassRules;
 
     columnDefs: ColDef[];
     defaultColDef;
     gridApi: GridApi;
+    frameworkComponents: any;
+    predefineCol: ColDef[] = [
+        {
+            columnGroupShow: 'nonClickable',
+            headerName: '',
+            cellRenderer: 'dropdownMenuRenderer',
+            cellRendererParams: {
+                dropdownData: [
+                    {
+                        buttonClick: (rowData) => this.homeFacade.openNewLicenseModal(rowData, rowData.licenseType),
+                        icon: 'info',
+                        label: 'Подробнее',
+                    },
+                    {
+                        buttonClick: (rowData) => this.homeFacade.downloadKey(rowData.files.LICENSE_FILE, rowData.licenseType),
+                        icon: 'get_app',
+                        label: 'Скачать лицензию',
+                        isFileExists: (rowData) => {
+                            return rowData.files?.LICENSE_FILE !== undefined;
+                        },
+                    },
+                    {
+                        buttonClick: (rowData) => this.homeFacade.downloadKey(rowData.files.PUBLIC_KEY, rowData.licenseType),
+                        icon: 'get_app',
+                        label: 'Скачать откр. ключ',
+                        isFileExists: (rowData) => rowData.files.PUBLIC_KEY !== undefined,
+                    }
+                ]
+            },
+            editable: false,
+            sortable: false,
+            flex: 0.2,
+            filter: false,
+            resizable: false,
+            lockVisible: true,
+        }
+    ];
 
     constructor(
         private logger: LoggerService,
         private homeFacade: HomeFacade,
         private date: DatePipe
     ) {
+        this.frameworkComponents = {
+            dropdownMenuRenderer: DropdownMenuComponent,
+        };
+
         this.defaultColDef = {
             editable: false,
             sortable: true,
@@ -70,6 +113,7 @@ export class LicensesComponent {
                             headerName: 'Комментарий',
                             field: 'properties.comment',
                         },
+                        ...this.predefineCol
                     ];
                     break;
                 }
@@ -103,6 +147,7 @@ export class LicensesComponent {
                             headerName: 'Комментарий',
                             field: 'properties.comment',
                         },
+                        ...this.predefineCol
                     ];
                     break;
                 }
@@ -127,6 +172,7 @@ export class LicensesComponent {
                             valueFormatter: (params) => this.date.transform(params.value, 'dd.MM.yyyy'),
                             initialSort: 'desc'
                         },
+                        ...this.predefineCol
                     ];
                 }
             }
@@ -151,9 +197,17 @@ export class LicensesComponent {
             getRowNodeId(data) {
                 return data.id;
             },
-            onRowClicked: (event: RowClickedEvent) =>
-                this.homeFacade.openNewLicenseModal(event.data, event.data.licenseType),
+            onRowClicked: (event: RowClickedEvent) => {
+                if (event.api.getFocusedCell().column.getColumnGroupShow() !== 'nonClickable') {
+                    this.homeFacade.openNewLicenseModal(event.data, event.data.licenseType);
+                }
+            },
         };
+
+        // this.rowClassRules: {
+        //     'green-outer': (params) => true,
+        //     // 'red-outer': (params) => new Date(params.data.dateOfIssue).getTime() <= new Date(params.data.dateOfExpiry).getTime(),
+        // },
 
         this.refreshData();
     }

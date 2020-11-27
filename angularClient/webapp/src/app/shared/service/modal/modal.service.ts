@@ -15,8 +15,12 @@ export class ModalService {
     ) {
     }
 
-    openErrorModal(data: { error: string }) {
-        const dialogRef = this.dialog.open(ErrorModalComponent, {data});
+    openErrorModal(message: string) {
+        const dialogRef = this.dialog.open(ErrorModalComponent, {
+            data: {
+                message
+            }
+        });
     }
 
     openNewLicenseModal(generate, licenseTypeByDefault?: LicenseType, keyGenerationParams?: KeyGenerationParams) {
