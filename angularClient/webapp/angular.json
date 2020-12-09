@@ -23,7 +23,8 @@
             "polyfills": "src/polyfills.ts",
             "aot": true,
             "assets": [
-              "src/images"
+              "src/images",
+              "src/locale"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",
@@ -90,7 +91,8 @@
             "tsConfig": "./tsconfig.spec.json",
             "karmaConfig": "./karma.conf.js",
             "assets": [
-              "src/images"
+              "src/images",
+              "src/locale"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/deeppurple-amber.css",

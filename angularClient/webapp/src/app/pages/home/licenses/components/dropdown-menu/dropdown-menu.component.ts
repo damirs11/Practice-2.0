@@ -15,7 +15,6 @@ export class DropdownMenuComponent implements ICellRendererAngularComp {
     }
 
     agInit(params: ICellRendererParams): void {
-        console.log(params);
         this.params = params;
     }
 

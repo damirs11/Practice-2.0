@@ -37,8 +37,92 @@ body {
 }
 
 .app-button {
-    &:hover {
-        background-color: #4A238E !important;
-        transition: all 0.05s 0.05s;
+    &:not([disabled]) {
+        &:hover {
+            background-color: #4A238E !important;
+            transition: all 0.05s 0.05s;
+        }
+    }
+}
+
+.custom-mat-dialog-container {
+
+    .mat-dialog-container {
+        display: flex !important;
+        flex-direction: column;
+        padding: 0;
+
+        > * {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+
+            .mat-dialog-title {
+                flex: 0;
+                padding: 12px 12px 4px 25px;
+                margin: 0;
+                background: #4A238E;
+                color: white;
+
+                .close-button {
+                    float: right;
+                    position: relative;
+                    top: -3px;
+                }
+            }
+
+            .dialog-content {
+                flex: 1;
+                padding: 0;
+                overflow: hidden;
+
+                .license-selector {
+                    width: 100%;
+                    padding-top: 20px;
+
+                    .mat-form-field-flex {
+                        padding: 0 25px;
+                    }
+                }
+
+                .ng-scrollbar {
+                    max-height: 65vh;
+
+                    .mat-dialog-content {
+                        padding: 0 25px;
+                        margin: 0;
+                        max-height: 100%;
+                    }
+                }
+
+            }
+
+            .mat-dialog-actions {
+                flex: 0;
+                margin-bottom: 0;
+                padding: 2px;
+                background: #4a238e;
+
+                button {
+                    background: white;
+                    color: #4a238e;
+
+                    &[disabled=true]{
+                        background: #fff6;
+                        color: #4a238e;
+
+                        &:hover {
+                            background: #fff6;
+                            color: #4a238e;
+                        }
+                    }
+
+                    &:hover {
+                        background-color: #fff6;
+                        transition: all 0.05s 0.05s;
+                    }
+                }
+            }
+        }
     }
 }

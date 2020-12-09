@@ -1,7 +1,13 @@
-<h2 mat-dialog-title>Ошибка</h2>
-<mat-dialog-content>
-    {{data.message}}
-</mat-dialog-content>
+<div mat-dialog-title>
+    <span>Ошибка</span>
+</div>
+<div class="dialog-content">
+    <ng-scrollbar>
+        <mat-dialog-content>
+            {{data.message}}
+        </mat-dialog-content>
+    </ng-scrollbar>
+</div>
 <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close>Закрыть</button>
+    <button class="closebtn" mat-button mat-dialog-close>Закрыть</button>
 </mat-dialog-actions>

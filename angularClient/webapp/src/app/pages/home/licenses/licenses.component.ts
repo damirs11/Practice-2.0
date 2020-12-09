@@ -85,6 +85,7 @@ export class LicensesComponent {
         };
 
         this.homeFacade.getSelectedLicense().subscribe((license) => {
+            this.columnDefs = [];
             switch (license) {
                 case LicenseType.DUMMY: {
                     this.columnDefs = [
